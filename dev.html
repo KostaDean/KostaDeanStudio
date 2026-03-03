@@ -701,6 +701,19 @@ body.bestFlash::before{
 
 #addTimeBtn,#addTimeOverlayBtn{padding:10px 16px;border-radius:14px;background:#f7931a;color:#fff;font-weight:800;border:none;box-shadow:0 4px 14px rgba(247,147,26,0.45);} 
 
+/* When a $1 checkout is completed and the user returns, we "arm" the button to apply +5 minutes */
+#addTimeOverlayBtn.armed{ 
+  box-shadow:
+    0 0 0 2px rgba(46,204,113,0.65),
+    0 0 22px rgba(46,204,113,0.85),
+    0 4px 14px rgba(247,147,26,0.35);
+  animation: greenPulse 1.1s ease-in-out infinite;
+}
+@keyframes greenPulse{
+  0%,100%{ transform: translateZ(0) scale(1); filter: brightness(1); }
+  50%{ transform: translateZ(0) scale(1.03); filter: brightness(1.12); }
+}
+
 #uploadBtn,#recBtn{padding:6px 10px !important;min-width:auto !important;font-weight:700;letter-spacing:0 !important;}
 </style>
 
@@ -745,9 +758,9 @@ body.bestFlash::before{
 <!-- status is kept off-layout to prevent iPhone Safari from shifting the header -->
 <div id="status" class="sr-only" aria-live="polite"></div>
 <div id="rightGroup"><button id="panelBtn" title="Show/hide the control panel">Panel</button>
-<a href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC"
+<a href="https://www.paypal.com/paypalme/ConstantinosRagazas"
    target="_blank"
-   rel="noopener noreferrer"
+   rel="noopener"
    id="donateBtn"
    style="
      padding:10px 16px;
@@ -786,7 +799,7 @@ body.bestFlash::before{
   <button id="resetWeekHighBtn" title="Reset WeeklyHigh to 2 (testing)">Reset WeekHigh</button>
 </div>
 <div class="row" style="display:flex; gap:12px; justify-content:space-between; align-items:center;">
-  <button id="addTimeOverlayBtn" title="Add more play time">Add Time</button>
+  <button id="addTimeOverlayBtn" title="Add more play time">More Time</button>
   <span class="pill" style="margin-left:auto; margin-right:auto;">Time: <b id="timeLeftOverlay">05:00</b></span>
   <button id="closeFromOverlay">Close</button>
 </div>
@@ -797,7 +810,11 @@ body.bestFlash::before{
 <input accept="image/*" id="bgFileInput" style="display:none" type="file"/>
 <script>
 
-  // === iOS Safari bottom bar mitigation (visualViewport) ===
+  
+  // === PayPal links (Kosta Dean Creative) ===
+  const PAYPAL_DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC";
+  const ADDTIME_PAYMENT_URL = "https://www.paypal.com/ncp/payment/AXBCUP7FMYRTJ";
+// === iOS Safari bottom bar mitigation (visualViewport) ===
   function __updateViewportVars(){
     try{
       const vv = window.visualViewport;
@@ -1032,23 +1049,77 @@ function fmtTime(s){
         // time expired -> end current session and disable Play
         try{ runToken++; }catch(e){}
         try{ showFinalScore(); }catch(e){}
-        try{ setStatus("Time is up. Tap \"Add Time\" to continue."); }catch(e){}
+        try{ setStatus("Time is up. Tap \"More Time\" to continue."); }catch(e){}
         renderPlayMeta();
       }
     }, 1000);
+  }
+
+  function syncAddTimeUI(){
+    if(!addTimeBtn) return;
+    const KEY = "KDC_addTimePending";
+    const windowMs = 15*60*1000; // 15 minutes to return and claim
+    const now = Date.now();
+    const pendingRaw = localStorage.getItem(KEY);
+    const pendingTs = pendingRaw ? parseInt(pendingRaw, 10) : NaN;
+    const pendingValid = Number.isFinite(pendingTs) && (now - pendingTs) < windowMs;
+
+    if(pendingValid){
+      addTimeBtn.textContent = "Add";
+      addTimeBtn.classList.add("armed");
+    }else{
+      addTimeBtn.textContent = "More Time";
+      addTimeBtn.classList.remove("armed");
+      if(pendingRaw) localStorage.removeItem(KEY);
+    }
   }
 
   // init play meta
   loadPlayMeta();
   renderPlayMeta();
   ensurePlayTimer();
+  syncAddTimeUI();
+
+  // iOS/Safari often returns to the previous page via back/forward cache (no reload).
+  // These hooks refresh the button state when the page becomes visible again.
+  window.addEventListener("pageshow", syncAddTimeUI);
+  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) syncAddTimeUI(); });
 
   if(addTimeBtn){
-    addTimeBtn.addEventListener("click", ()=>{
+    addTimeBtn.addEventListener("click", ()=>{ 
+      const now = Date.now();
+      const KEY = "KDC_addTimePending";
+      const windowMs = 15*60*1000; // 15 minutes to return and claim
+      const pendingRaw = localStorage.getItem(KEY);
+      const pending = pendingRaw ? parseInt(pendingRaw, 10) : 0;
+
+      // First tap: send user to the fixed $1 "Add more time" checkout
+      if(!pending){
+        localStorage.setItem(KEY, String(now));
+        try{ savePlayMeta(); }catch(e){}
+        addTimeBtn.classList.remove("armed");
+        addTimeBtn.textContent = "More Time";
+        setStatus("Opening PayPal… complete the $1 payment, then come back and tap Add to apply +5 minutes.");
+        window.location.href = ADDTIME_PAYMENT_URL;
+        return;
+      }
+
+      // Second tap: if they came back within the window, grant time
+      if(now - pending > windowMs){
+        localStorage.removeItem(KEY);
+        addTimeBtn.classList.remove("armed");
+        addTimeBtn.textContent = "More Time";
+        setStatus("Payment window expired. Tap More Time again to reopen PayPal.");
+        return;
+      }
+
+      localStorage.removeItem(KEY);
       timeLeftS += 5*60;
       savePlayMeta();
       renderPlayMeta();
-      setStatus("Added 5 minutes.");
+      addTimeBtn.classList.remove("armed");
+      addTimeBtn.textContent = "More Time";
+      setStatus("Added 5 minutes. Thank you!");
     });
   }
 
