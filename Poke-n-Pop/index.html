@@ -1,109 +1,90 @@
+
 <!DOCTYPE html>
-<html lang='en'>
+<html>
 <head>
-<meta charset='UTF-8'/>
-<meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no'/>
-<title>Piglet Escape Game</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Piglet Escape</title>
 <style>
-:root{--bg:#143d63;--pink:#e79cab;--text:#eef6ff;--ui:rgba(4,15,26,.92);}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
-#wrap{position:fixed;inset:0;background:var(--bg);}
-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;}
-#panel{position:absolute;top:54px;right:10px;z-index:39;display:none;background:var(--ui);color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 14px;width:270px;font-size:14px;box-shadow:0 12px 30px rgba(0,0,0,.25);}
-#panelHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-#panelTitle{font-weight:700;font-size:16px;}
-.row{margin:10px 0;}
-.label{font-size:13px;opacity:.92;margin-bottom:4px;}
-.value{font-weight:700;}
-input[type=range]{width:100%;}
-.hint{font-size:12px;opacity:.82;line-height:1.28;margin-top:8px;}
-#score{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:50;background:rgba(5,16,24,.48);color:white;text-align:center;}
-#scoreCard{background:rgba(6,18,29,.94);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:22px 24px;min-width:230px;box-shadow:0 20px 40px rgba(0,0,0,.35);}
-#scoreTime{font-size:34px;font-weight:700;margin:8px 0 12px;}
-#scoreSmall{font-size:14px;opacity:.82}
-#playBtn{margin-top:14px;padding:10px 14px;border-radius:10px;border:0;background:#2a83ff;color:white;font-size:15px;}
+html,body{margin:0;height:100%;overflow:hidden;background:#143d63;font-family:sans-serif}
+canvas{display:block;width:100%;height:100%}
 </style>
 </head>
 <body>
-<div id='wrap'>
-<canvas id='game'></canvas>
-<div id='panel' data-hidden='1'>
-<div id='panelHead'><div id='panelTitle'>Control Panel</div></div>
-<div class='row'>
-<div class='label'>Difficulty: <span id='difficultyVal' class='value'>1.00</span></div>
-<input id='difficultySlider' type='range' min='0.60' max='2.20' step='0.05' value='1.00'>
-</div>
-<div class='row'>
-<div class='label'>Circle speed now: <span id='speedNowVal' class='value'>155</span></div>
-</div>
-<div class='hint'>
-Double-tap empty background to hide/show this panel.<br>
-Inner half of a circle pops it. Outer half triggers the piglet escape.<br>
-While one piglet is escaping, further taps are disabled.<br>
-Each pop now makes the remaining circles dramatically faster.
-</div>
-</div>
-<div id='score'>
-<div id='scoreCard'>
-<div id='scoreSmall'>Elapsed time</div>
-<div id='scoreTime'>0.00 s</div>
-<div id='scoreSmall'>from first capture to final finish</div>
-<button id='playBtn' type='button'>Play Again</button>
-</div>
-</div>
-</div>
+<canvas id="c"></canvas>
 <script>
-(()=> {
-const canvas=document.getElementById('game'), ctx=canvas.getContext('2d');
-const panel=document.getElementById('panel'), difficultySlider=document.getElementById('difficultySlider');
-const difficultyVal=document.getElementById('difficultyVal'), speedNowVal=document.getElementById('speedNowVal');
-const score=document.getElementById('score'), scoreTime=document.getElementById('scoreTime'), playBtn=document.getElementById('playBtn');
-const escapeSprite=new Image(); escapeSprite.src='escape.png';
-const lookSprite=new Image(); lookSprite.src='look_back.png';
-const sounds=[new Audio('pig_oink.mp3'), new Audio('pig_oink1.mp3')];
-const FRAME_W=512, FRAME_H=512, BG='#143d63', PINK='#e79cab', BASE_R=34, PIG_COUNT=10;
-let W=0,H=0,pigs=[],gameEnded=false,firstCaptureAt=null,finalScoreMs=0,difficulty=1.0,currentSpeedCap=155;
-let lastBgTapTime=0,lastBgX=0,lastBgY=0,inputLocked=false,ac=null,masterGain=null,lastCollisionSoundAt=0;
-function ensureAudio(){ if(!ac){ ac=new (window.AudioContext||window.webkitAudioContext)(); masterGain=ac.createGain(); masterGain.gain.value=0.14; masterGain.connect(ac.destination);} if(ac.state==='suspended') ac.resume().catch(()=>{}); }
-function collisionTick(strength=1){ if(!ac||!masterGain) return; const now=ac.currentTime, osc=ac.createOscillator(), gain=ac.createGain(); osc.type='triangle'; osc.frequency.setValueAtTime(170+80*strength,now); osc.frequency.exponentialRampToValueAtTime(92,now+.05); gain.gain.setValueAtTime(.0001,now); gain.gain.exponentialRampToValueAtTime(.022*Math.min(1.8,strength),now+.004); gain.gain.exponentialRampToValueAtTime(.0001,now+.06); osc.connect(gain); gain.connect(masterGain); osc.start(now); osc.stop(now+.07); }
-function resize(){ W=window.innerWidth; H=window.innerHeight; canvas.width=W; canvas.height=H; }
-resize(); addEventListener('resize',resize,{passive:true});
-function rand(a,b){ return a+Math.random()*(b-a); }
-function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
-function dist(ax,ay,bx,by){ return Math.hypot(ax-bx,ay-by); }
-function baseCircleSpeed(){ return 55+difficulty*100; }
-function popSpeedBoost(){ return 22+difficulty*18; }
-function updateLabels(){ difficultyVal.textContent=difficulty.toFixed(2); speedNowVal.textContent=currentSpeedCap.toFixed(0); }
-function showPanel(show){ panel.style.display=show?'block':'none'; panel.dataset.hidden=show?'0':'1'; }
-function togglePanel(){ showPanel(panel.dataset.hidden==='1'); }
-['pointerdown','pointerup','click'].forEach(ev=>{ panel.addEventListener(ev,e=>e.stopPropagation(),{passive:false}); score.addEventListener(ev,e=>e.stopPropagation(),{passive:false}); });
-difficultySlider.oninput=function(){ difficulty=Number(difficultySlider.value); currentSpeedCap=baseCircleSpeed(); updateLabels(); normalizeCircleSpeeds(true); };
-function normalizeCircleSpeeds(forceSet=false){ const targetMax=currentSpeedCap, targetMin=Math.max(36,targetMax*.78); for(const p of pigs){ if(p.state!=='circle') continue; const a=Math.atan2(p.vy,p.vx)||rand(0,Math.PI*2); let s=Math.hypot(p.vx,p.vy); s=forceSet?targetMax:clamp(s,targetMin,targetMax); p.vx=Math.cos(a)*s; p.vy=Math.sin(a)*s; } }
-function playOink(){ const base=sounds[(Math.random()*sounds.length)|0], a=base.cloneNode(); a.volume=1.0; a.play().catch(()=>{}); }
-function makePig(){ const r=BASE_R, margin=Math.max(r+10,28), x=rand(margin,W-margin), y=rand(margin+10,H-margin), a=rand(0,Math.PI*2), s=rand(Math.max(36,currentSpeedCap*.78),currentSpeedCap); return {x,y,r,vx:Math.cos(a)*s,vy:Math.sin(a)*s,state:'circle',t:0,frame:0,frameTime:0,dust:[],startX:x,startY:y,targetX:x,targetY:y,isFinal:false,wobbleSeed:rand(0,1000)}; }
-function separateInitialOverlaps(){ const pad=2; for(let pass=0;pass<140;pass++){ let moved=false; for(let i=0;i<pigs.length;i++) for(let j=i+1;j<pigs.length;j++){ const a=pigs[i],b=pigs[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),min=a.r+b.r+pad; if(d<min){ const nx=d>.0001?dx/d:Math.cos(pass+i+j), ny=d>.0001?dy/d:Math.sin(pass+i+j), push=(min-Math.max(d,.001))/2; a.x-=nx*push; a.y-=ny*push; b.x+=nx*push; b.y+=ny*push; a.x=clamp(a.x,a.r,W-a.r); a.y=clamp(a.y,a.r,H-a.r); b.x=clamp(b.x,b.r,W-b.r); b.y=clamp(b.y,b.r,H-b.r); moved=true; } } if(!moved) break; } }
-function resetGame(){ difficulty=Number(difficultySlider.value); currentSpeedCap=baseCircleSpeed(); pigs=Array.from({length:PIG_COUNT},makePig); separateInitialOverlaps(); gameEnded=false; firstCaptureAt=null; finalScoreMs=0; inputLocked=false; score.style.display='none'; updateLabels(); }
-resetGame(); playBtn.onclick=resetGame;
-function countCircles(){ return pigs.filter(p=>p.state==='circle').length; }
-function showScore(){ gameEnded=true; scoreTime.textContent=(finalScoreMs/1000).toFixed(2)+' s'; score.style.display='flex'; }
-function bounceWalls(p){ if(p.x<p.r){p.x=p.r;p.vx=Math.abs(p.vx)} if(p.x>W-p.r){p.x=W-p.r;p.vx=-Math.abs(p.vx)} if(p.y<p.r){p.y=p.r;p.vy=Math.abs(p.vy)} if(p.y>H-p.r){p.y=H-p.r;p.vy=-Math.abs(p.vy)} }
-function moveCircle(p,dt){ p.x+=p.vx*dt; p.y+=p.vy*dt; bounceWalls(p); }
-function collide(a,b){ if(a.state!=='circle'||b.state!=='circle') return; const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),min=a.r+b.r; if(d<min&&d>.0001){ const nx=dx/d, ny=dy/d, overlap=min-d; a.x-=nx*overlap/2; a.y-=ny*overlap/2; b.x+=nx*overlap/2; b.y+=ny*overlap/2; const dvx=b.vx-a.vx,dvy=b.vy-a.vy,vn=dvx*nx+dvy*ny; if(vn<0){ const impulse=-vn; a.vx-=impulse*nx; a.vy-=impulse*ny; b.vx+=impulse*nx; b.vy+=impulse*ny; const now=performance.now(); if(now-lastCollisionSoundAt>40){ lastCollisionSoundAt=now; collisionTick(Math.min(2.0,Math.abs(vn)/110)); } } bounceWalls(a); bounceWalls(b); } }
-function poof(p){ for(let i=0;i<13;i++){ const a=rand(0,Math.PI*2), s=rand(18,55), life=rand(.26,.42); p.dust.push({x:p.x,y:p.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life,maxLife:life}); } }
-function startEscape(p,tapX,tapY,isFinal){ inputLocked=true; playOink(); p.state='preReact'; p.t=.14; p.frame=0; p.frameTime=0; p.dust=[]; p.startX=p.x; p.startY=p.y; p.isFinal=isFinal; if(firstCaptureAt==null) firstCaptureAt=performance.now(); let dx=p.x-tapX, dy=p.y-tapY, len=Math.hypot(dx,dy); if(!len){ const a=rand(0,Math.PI*2); dx=Math.cos(a); dy=Math.sin(a); len=1; } dx/=len; dy/=len; const safeDist=Math.min(190,Math.max(120,.20*Math.min(W,H))); p.targetX=clamp(p.x+dx*safeDist,p.r+16,W-p.r-16); p.targetY=clamp(p.y+dy*safeDist,p.r+16,H-p.r-16); }
-function topCircleAt(x,y){ for(let i=pigs.length-1;i>=0;i--){ const p=pigs[i]; if(p.state!=='circle') continue; if(dist(x,y,p.x,p.y)<=p.r) return p; } return null; }
-function updateDust(p,dt){ for(const d of p.dust){ d.life-=dt; d.x+=d.vx*dt; d.y+=d.vy*dt; } p.dust=p.dust.filter(d=>d.life>0); }
-function tick(p,dt){ if(p.state==='gone') return; if(p.state==='circle'){ moveCircle(p,dt); return; } if(p.state==='pop'){ p.t-=dt; if(p.t<=0) p.state='gone'; return; } if(p.state==='preReact'){ p.t-=dt; if(p.t<=0){ p.state='react'; p.t=p.isFinal?.42:.34; p.frame=0; p.frameTime=0; } return; } if(p.state==='react'){ p.t-=dt; p.frameTime+=dt; if(p.frameTime>.09){ p.frameTime=0; p.frame=(p.frame+1)%3; } if(p.t<=0){ poof(p); p.state='dust'; p.t=0; } updateDust(p,dt); return; } if(p.state==='dust'){ p.t+=dt/(p.isFinal?.68:.54); const t=Math.min(1,p.t), tx=p.startX+(p.targetX-p.startX)*t, ty=p.startY+(p.targetY-p.startY)*t; p.dust.push({x:tx,y:ty,vx:0,vy:0,life:.34,maxLife:.34}); if(t>=1){ p.x=p.targetX; p.y=p.targetY; p.state='look'; p.t=p.isFinal?1.0:.55; p.frame=0; p.frameTime=0; } updateDust(p,dt); return; } if(p.state==='look'){ p.t-=dt; p.frameTime+=dt; if(p.frameTime>.12){ p.frameTime=0; p.frame=(p.frame+1)%2; } if(p.t<=0){ if(p.isFinal){ p.state='gone'; inputLocked=false; finalScoreMs=performance.now()-firstCaptureAt; setTimeout(showScore,100); } else { p.state='circle'; inputLocked=false; const a=rand(0,Math.PI*2), s=rand(Math.max(36,currentSpeedCap*.78),currentSpeedCap); p.vx=Math.cos(a)*s; p.vy=Math.sin(a)*s; } } updateDust(p,dt); } }
-function drawDust(p){ for(const d of p.dust){ const a=Math.max(0,d.life/d.maxLife); ctx.globalAlpha=a*.82; ctx.beginPath(); ctx.arc(d.x,d.y,6+(1-a)*7,0,Math.PI*2); ctx.fillStyle='#d7ceb0'; ctx.fill(); } ctx.globalAlpha=1; }
-function drawCircle(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=PINK; ctx.fill(); }
-function drawSprite(img,frameIndex,x,y,size,wobble=0){ if(!img.complete||!img.naturalWidth) return; ctx.save(); ctx.translate(x,y); if(wobble) ctx.rotate(wobble); ctx.drawImage(img,frameIndex*FRAME_W,0,FRAME_W,FRAME_H,-size/2,-size/2,size,size); ctx.restore(); }
-function canvasPoint(e){ const rect=canvas.getBoundingClientRect(), cx=typeof e.clientX==='number'?e.clientX:0, cy=typeof e.clientY==='number'?e.clientY:0; return {x:cx-rect.left,y:cy-rect.top}; }
-function onTap(e){ e.preventDefault(); ensureAudio(); if(gameEnded) return; const {x,y}=canvasPoint(e); if(inputLocked){ const now=performance.now(), close=Math.hypot(x-lastBgX,y-lastBgY)<36, bg=!topCircleAt(x,y); if(bg&&now-lastBgTapTime<320&&close){ togglePanel(); lastBgTapTime=0; } else if(bg){ lastBgTapTime=now; lastBgX=x; lastBgY=y; } return; } const hit=topCircleAt(x,y); if(!hit){ const now=performance.now(), close=Math.hypot(x-lastBgX,y-lastBgY)<36; if(now-lastBgTapTime<320&&close){ togglePanel(); lastBgTapTime=0; } else { lastBgTapTime=now; lastBgX=x; lastBgY=y; } return; } const circlesBefore=countCircles(); if(circlesBefore===1){ startEscape(hit,x,y,true); return; } const d=dist(x,y,hit.x,hit.y); if(d<hit.r*.5){ if(firstCaptureAt==null) firstCaptureAt=performance.now(); hit.state='pop'; hit.t=.20; currentSpeedCap=Math.min(currentSpeedCap+popSpeedBoost(), baseCircleSpeed()+220); updateLabels(); for(const p of pigs){ if(p!==hit&&p.state==='circle'){ const a=Math.atan2(p.vy,p.vx)||rand(0,Math.PI*2), current=Math.hypot(p.vx,p.vy), boosted=Math.min(current+popSpeedBoost(),currentSpeedCap), raised=Math.max(boosted,currentSpeedCap*.92); p.vx=Math.cos(a)*raised; p.vy=Math.sin(a)*raised; } } return; } startEscape(hit,x,y,false); }
-canvas.addEventListener('pointerup',onTap,{passive:false});
-let prev=performance.now();
-function loop(now){ const dt=Math.min(.033,(now-prev)/1000); prev=now; ctx.clearRect(0,0,W,H); ctx.fillStyle=BG; ctx.fillRect(0,0,W,H); for(const p of pigs) tick(p,dt); for(let i=0;i<pigs.length;i++) for(let j=i+1;j<pigs.length;j++) collide(pigs[i],pigs[j]); for(const p of pigs){ if(p.state==='gone') continue; drawDust(p); if(p.state==='circle') drawCircle(p); else if(p.state==='pop'){ const k=Math.max(0,p.t/.20); ctx.globalAlpha=k; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*(1+(1-k)*.6),0,Math.PI*2); ctx.fillStyle=PINK; ctx.fill(); ctx.globalAlpha=1; } else if(p.state==='react'){ const wobble=Math.sin((.34-Math.max(0,p.t))*36+p.wobbleSeed)*.12; drawSprite(escapeSprite,p.frame,p.x,p.y,84,wobble); } else if(p.state==='look') drawSprite(lookSprite,p.frame,p.x,p.y,84,0); } requestAnimationFrame(loop); }
-requestAnimationFrame(loop);
-})();
+const c=document.getElementById("c")
+const x=c.getContext("2d")
+let W,H
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+resize()
+addEventListener("resize",resize)
+
+let speed=4
+let circles=[]
+let N=10
+
+for(let i=0;i<N;i++){
+circles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*speed,vy:(Math.random()-0.5)*speed,r:28})
+}
+
+let audioCtx=null
+function collisionSound(){
+if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)()
+const o=audioCtx.createOscillator()
+const g=audioCtx.createGain()
+o.type="triangle"
+o.frequency.value=160+Math.random()*80
+g.gain.value=0.05
+o.connect(g)
+g.connect(audioCtx.destination)
+o.start()
+o.stop(audioCtx.currentTime+0.05)
+}
+
+function popBoost(){
+speed+=2
+for(const p of circles){
+const a=Math.atan2(p.vy,p.vx)
+p.vx=Math.cos(a)*speed
+p.vy=Math.sin(a)*speed
+}
+}
+
+c.addEventListener("pointerdown",e=>{
+const rect=c.getBoundingClientRect()
+const mx=e.clientX-rect.left
+const my=e.clientY-rect.top
+for(let i=circles.length-1;i>=0;i--){
+const p=circles[i]
+const d=Math.hypot(mx-p.x,my-p.y)
+if(d<p.r){
+circles.splice(i,1)
+popBoost()
+break
+}
+}
+})
+
+function step(){
+x.clearRect(0,0,W,H)
+for(let p of circles){
+p.x+=p.vx
+p.y+=p.vy
+
+if(p.x<p.r||p.x>W-p.r){p.vx*=-1;collisionSound()}
+if(p.y<p.r||p.y>H-p.r){p.vy*=-1;collisionSound()}
+
+x.beginPath()
+x.arc(p.x,p.y,p.r,0,Math.PI*2)
+x.fillStyle="#e79cab"
+x.fill()
+}
+
+requestAnimationFrame(step)
+}
+
+step()
 </script>
 </body>
 </html>
