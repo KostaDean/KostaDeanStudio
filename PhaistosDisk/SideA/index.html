@@ -279,13 +279,13 @@ function drawBoard() {
     } else {
       dh = canvas.height; dw = dh * imgAspect; dy = 0; dx = (canvas.width - dw)/2;
     }
-    ctx.globalAlpha = 0.35;
+    ctx.globalAlpha = 0.72;
     ctx.drawImage(bgImg, dx, dy, dw, dh);
     ctx.globalAlpha = 1;
   }
 
-  rimLabels.forEach(label => drawPoly(rimPolys[label], "rgba(232,107,107,.22)", "rgba(232,107,107,.92)", 2));
-  trackLabels.forEach(label => drawPoly(trackPolys[label], "rgba(99,167,255,.20)", "rgba(99,167,255,.92)", 2));
+  rimLabels.forEach(label => drawPoly(rimPolys[label], "rgba(232,107,107,.12)", "rgba(232,107,107,.92)", 2));
+  trackLabels.forEach(label => drawPoly(trackPolys[label], "rgba(99,167,255,.10)", "rgba(99,167,255,.92)", 2));
   drawTrackPath();
 
   if (game.started && currentPlayer()) {
@@ -296,8 +296,8 @@ function drawBoard() {
   // player landing/current track cell highlight in player color
   game.players.forEach((p) => {
     if (trackPolys[p.track]) {
-      const fill = p.color.replace(".98", ".22");
-      drawPoly(trackPolys[p.track], fill, p.color, 3);
+      const fill = p.color.replace(".98", ".16");
+      drawPoly(trackPolys[p.track], fill, p.color, 4);
     }
   });
 
