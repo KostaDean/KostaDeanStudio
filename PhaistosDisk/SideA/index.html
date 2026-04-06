@@ -3,59 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phaistos Disk Integrated Game v2</title>
+<title>Phaistos Disk Integrated Game v3 Visual</title>
 <style>
-:root {
+:root{
   --bg:#101112; --panel:#17191b; --panel2:#111315; --line:#2c2f33; --text:#f2f2f2; --muted:#bfc3c9; --accent:#ffe36c;
 }
-* { box-sizing:border-box; }
-body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
-.wrap { max-width:1100px; margin:0 auto; padding:14px; }
-.card { background:var(--panel); border:1px solid var(--line); border-radius:24px; padding:14px; margin-bottom:14px; }
-.row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-h1 { margin:0 0 10px; font-size:24px; }
-h2 { margin:0 0 8px; font-size:18px; color:var(--muted); font-weight:600; }
-button, select {
-  font-size:16px; padding:10px 14px; border-radius:999px; border:1px solid #666; background:#efefef; color:#111;
-}
-button:disabled { opacity:.55; }
-.badge { display:inline-block; padding:4px 8px; border-radius:999px; background:#232629; border:1px solid #383d43; color:#d7dce2; font-size:12px; }
-.status { font-size:20px; line-height:1.4; }
-.players { display:grid; gap:10px; }
-.player-card { background:var(--panel2); border:1px solid #2b2e33; border-radius:18px; padding:12px; }
-.player-card.current { box-shadow:0 0 0 2px var(--accent) inset, 0 0 20px rgba(255,227,108,.15); }
-.player-card.out { opacity:.55; }
-.swatch { width:20px; height:20px; border-radius:50%; display:inline-block; margin-right:10px; vertical-align:middle; border:2px solid rgba(255,255,255,.45); }
-.board-card { display:grid; grid-template-columns:1fr; gap:12px; }
-@media (min-width:860px) { .board-card { grid-template-columns:1fr 260px; align-items:start; } }
-.board-wrap { position:relative; width:100%; background:#fff; border-radius:24px; overflow:hidden; border:1px solid #444; }
-#boardCanvas { display:block; width:100%; height:auto; background:#000; }
-.side { display:grid; gap:12px; }
-.dice-box,.log,.legend { background:var(--panel2); border:1px solid #2b2e33; border-radius:18px; padding:14px; }
-.dice-hit { display:grid; place-items:center; gap:10px; cursor:pointer; user-select:none; }
-.dice-row { display:flex; gap:10px; justify-content:center; }
-.die { width:64px; height:64px; border-radius:14px; background:#f7f7f7; border:2px solid #ccc; position:relative; box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 8px 18px rgba(0,0,0,.25); }
-.pip { width:10px; height:10px; background:#222; border-radius:50%; position:absolute; }
-.log { min-height:130px; max-height:280px; overflow:auto; font-size:14px; line-height:1.45; color:#d7d7d7; }
-.legend { font-size:14px; color:var(--muted); line-height:1.5; }
-.pill { display:inline-block; padding:3px 8px; border-radius:999px; background:#232629; border:1px solid #383d43; margin:2px 6px 2px 0; }
-.small { color:var(--muted); font-size:13px; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:14px;margin-bottom:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+h1{margin:0 0 10px;font-size:24px}
+h2{margin:0 0 8px;font-size:18px;color:var(--muted);font-weight:600}
+button,select{font-size:16px;padding:10px 14px;border-radius:999px;border:1px solid #666;background:#efefef;color:#111}
+button:disabled{opacity:.55}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#232629;border:1px solid #383d43;color:#d7dce2;font-size:12px}
+.status{font-size:20px;line-height:1.4}
+.players{display:grid;gap:10px}
+.player-card{background:var(--panel2);border:1px solid #2b2e33;border-radius:18px;padding:12px}
+.player-card.current{box-shadow:0 0 0 2px var(--accent) inset,0 0 20px rgba(255,227,108,.15)}
+.player-card.out{opacity:.55}
+.swatch{width:20px;height:20px;border-radius:50%;display:inline-block;margin-right:10px;vertical-align:middle;border:2px solid rgba(255,255,255,.45)}
+.board-card{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:860px){.board-card{grid-template-columns:1fr 260px;align-items:start}}
+.board-wrap{position:relative;width:100%;background:#000;border-radius:24px;overflow:hidden;border:1px solid #444}
+#boardCanvas{display:block;width:100%;height:auto;background:#000}
+.side{display:grid;gap:12px}
+.dice-box,.log,.legend{background:var(--panel2);border:1px solid #2b2e33;border-radius:18px;padding:14px}
+.dice-hit{display:grid;place-items:center;gap:10px;cursor:pointer;user-select:none}
+.dice-row{display:flex;gap:10px;justify-content:center}
+.die{width:64px;height:64px;border-radius:14px;background:#f7f7f7;border:2px solid #ccc;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 18px rgba(0,0,0,.25)}
+.pip{width:10px;height:10px;background:#222;border-radius:50%;position:absolute}
+.log{min-height:130px;max-height:280px;overflow:auto;font-size:14px;line-height:1.45;color:#d7d7d7}
+.legend{font-size:14px;color:var(--muted);line-height:1.5}
+.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#232629;border:1px solid #383d43;margin:2px 6px 2px 0}
+.small{color:var(--muted);font-size:13px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
-    <h1>Phaistos Disk Integrated Game Prototype v2</h1>
+    <h1>Phaistos Disk Integrated Game Prototype v3</h1>
     <div class="row">
       <label>Players:
-        <select id="playerCount">
-          <option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
-        </select>
+        <select id="playerCount"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
       </label>
       <button id="newGameBtn">New Game</button>
-      <span class="badge">Random rim staging</span>
-      <span class="badge">Exact T19 required</span>
-      <span class="badge">T18 fails</span>
+      <span class="badge">Photo dominant</span>
+      <span class="badge">Outline overlay</span>
       <span class="badge">T19 wins without symbol match</span>
       <span class="badge">Animated movement</span>
     </div>
@@ -73,28 +68,21 @@ button:disabled { opacity:.55; }
   </div>
 
   <div class="card board-card">
-    <div class="board-wrap">
-      <canvas id="boardCanvas" width="920" height="920"></canvas>
-    </div>
+    <div class="board-wrap"><canvas id="boardCanvas" width="920" height="920"></canvas></div>
     <div class="side">
       <div class="dice-box">
         <div id="diceHit" class="dice-hit">
           <div>Tap the dice to roll</div>
-          <div class="dice-row">
-            <div class="die" id="die1"></div>
-            <div class="die" id="die2"></div>
-          </div>
+          <div class="dice-row"><div class="die" id="die1"></div><div class="die" id="die2"></div></div>
           <div id="rollText">No roll yet</div>
         </div>
       </div>
-
       <div class="legend">
-        <div><span class="pill" style="background:rgba(232,107,107,.34);">Rim compartments</span></div>
-        <div><span class="pill" style="background:rgba(99,167,255,.34);">Track compartments</span></div>
-        <div><span class="pill" style="background:rgba(255,215,0,.25);">Active player's rim staging</span></div>
-        <div class="small">Player dots use player colors on the Track. The landing Track cell is highlighted in the current player's color. The actual Disk image is shown under the traced overlay.</div>
+        <div><span class="pill">Rim = thin red outline</span></div>
+        <div><span class="pill">Track = thin blue outline</span></div>
+        <div><span class="pill">Landing cell glows in player color</span></div>
+        <div class="small">Labels are reduced. Only active rim and current landing cell are labeled clearly.</div>
       </div>
-
       <div class="log" id="log"></div>
     </div>
   </div>
@@ -152,33 +140,13 @@ function drawPoly(points, fill, stroke, lineWidth=2) {
   ctx.moveTo(tx(points[0].x), ty(points[0].y));
   for (let i = 1; i < points.length; i++) ctx.lineTo(tx(points[i].x), ty(points[i].y));
   ctx.closePath();
-  ctx.fillStyle = fill;
-  ctx.fill();
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
   ctx.lineWidth = lineWidth;
   ctx.strokeStyle = stroke;
   ctx.stroke();
 }
-function drawTrackPath() {
-  ctx.beginPath();
-  const c0 = trackCenters[trackLabels[0]];
-  ctx.moveTo(tx(c0.x), ty(c0.y));
-  for (let i = 1; i < trackLabels.length; i++) {
-    const c = trackCenters[trackLabels[i]];
-    ctx.lineTo(tx(c.x), ty(c.y));
-  }
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = "rgba(255,255,255,.30)";
-  ctx.stroke();
-}
 function pipPositions(value) {
-  const map = {
-    1:[[50,50]],
-    2:[[25,25],[75,75]],
-    3:[[25,25],[50,50],[75,75]],
-    4:[[25,25],[75,25],[25,75],[75,75]],
-    5:[[25,25],[75,25],[50,50],[25,75],[75,75]],
-    6:[[25,25],[75,25],[25,50],[75,50],[25,75],[75,75]]
-  };
+  const map = {1:[[50,50]],2:[[25,25],[75,75]],3:[[25,25],[50,50],[75,75]],4:[[25,25],[75,25],[25,75],[75,75]],5:[[25,25],[75,25],[50,50],[25,75],[75,75]],6:[[25,25],[75,25],[25,50],[75,50],[25,75],[75,75]]};
   return map[value];
 }
 function renderDie(el, value) {
@@ -191,23 +159,12 @@ function renderDie(el, value) {
     el.appendChild(pip);
   });
 }
-
-const COLORS = [
-  "rgba(104,204,127,.98)",
-  "rgba(255,215,0,.98)",
-  "rgba(232,107,107,.98)",
-  "rgba(99,167,255,.98)",
-  "rgba(186,126,255,.98)",
-  "rgba(255,149,102,.98)"
-];
-
+const COLORS = ["rgba(104,204,127,.98)","rgba(255,215,0,.98)","rgba(232,107,107,.98)","rgba(99,167,255,.98)","rgba(186,126,255,.98)","rgba(255,149,102,.98)"];
 let game = { players: [], current: 0, started: false, winner: null, animating: false };
 let animationState = null;
 
 function randItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function makePlayer(i) {
-  return { id: i+1, color: COLORS[i % COLORS.length], rim: randItem(rimLabels), track: "T01", alive: true, won: false };
-}
+function makePlayer(i) { return { id: i+1, color: COLORS[i % COLORS.length], rim: randItem(rimLabels), track: "T01", alive: true, won: false }; }
 function currentPlayer() { return game.players[game.current]; }
 function nextLivingPlayerIndex(startIdx) {
   if (!game.players.length) return 0;
@@ -249,13 +206,26 @@ function updateSharedInfo(player, targetTrack = null) {
     : `No shared symbols for <strong>${player.rim}</strong> × <strong>${t}</strong>.`;
 }
 
-function cellCenter(cell) {
-  return cell.startsWith("R") ? rimCenters[cell] : trackCenters[cell];
+function drawGlowPoly(points, color) {
+  if (!points || points.length < 2) return;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(tx(points[0].x), ty(points[0].y));
+  for (let i = 1; i < points.length; i++) ctx.lineTo(tx(points[i].x), ty(points[i].y));
+  ctx.closePath();
+  ctx.shadowBlur = 22;
+  ctx.shadowColor = color;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 5;
+  ctx.stroke();
+  ctx.fillStyle = color.replace(".98",".10");
+  ctx.fill();
+  ctx.restore();
 }
 
 function drawMarkerAt(center, color, activeStroke) {
   if (!center) return;
-  const rr = Math.max(7, (center.r || 20) * SCALE * 0.50);
+  const rr = Math.max(8, (center.r || 20) * SCALE * 0.52);
   ctx.beginPath();
   ctx.arc(tx(center.x), ty(center.y), rr, 0, Math.PI * 2);
   ctx.fillStyle = color;
@@ -279,40 +249,48 @@ function drawBoard() {
     } else {
       dh = canvas.height; dw = dh * imgAspect; dy = 0; dx = (canvas.width - dw)/2;
     }
-    ctx.globalAlpha = 0.72;
+    ctx.globalAlpha = 0.94;
     ctx.drawImage(bgImg, dx, dy, dw, dh);
     ctx.globalAlpha = 1;
   }
 
-  rimLabels.forEach(label => drawPoly(rimPolys[label], "rgba(232,107,107,.12)", "rgba(232,107,107,.92)", 2));
-  trackLabels.forEach(label => drawPoly(trackPolys[label], "rgba(99,167,255,.10)", "rgba(99,167,255,.92)", 2));
-  drawTrackPath();
+  // thin outline only
+  rimLabels.forEach(label => drawPoly(rimPolys[label], null, "rgba(255,110,110,.78)", 1.8));
+  trackLabels.forEach(label => drawPoly(trackPolys[label], null, "rgba(90,165,255,.78)", 1.8));
 
-  if (game.started && currentPlayer()) {
-    const p = currentPlayer();
-    if (rimPolys[p.rim]) drawPoly(rimPolys[p.rim], "rgba(255,215,0,.18)", "rgba(255,215,0,.98)", 3);
+  // active rim staging
+  if (game.started && currentPlayer() && rimPolys[currentPlayer().rim]) {
+    drawGlowPoly(rimPolys[currentPlayer().rim], "rgba(255,215,0,.98)");
   }
 
-  // player landing/current track cell highlight in player color
+  // landing/current track cell highlight per player
   game.players.forEach((p) => {
-    if (trackPolys[p.track]) {
-      const fill = p.color.replace(".98", ".16");
-      drawPoly(trackPolys[p.track], fill, p.color, 4);
+    if (trackPolys[p.track]) drawGlowPoly(trackPolys[p.track], p.color);
+  });
+
+  // reduced labels: only active rim + occupied track cells
+  ctx.fillStyle = "rgba(255,255,255,.92)";
+  ctx.font = "18px Arial";
+  if (game.started && currentPlayer() && rimPolys[currentPlayer().rim]) {
+    const c = centroid(rimPolys[currentPlayer().rim]);
+    ctx.fillText(currentPlayer().rim, tx(c.x)+4, ty(c.y)-4);
+  }
+  const shown = new Set(game.players.map(p => p.track));
+  shown.forEach(label => {
+    if (trackPolys[label]) {
+      const c = centroid(trackPolys[label]);
+      ctx.fillText(label, tx(c.x)+4, ty(c.y)-4);
     }
   });
 
-  ctx.fillStyle = "#fff";
-  ctx.font = "15px Arial";
-  rimLabels.forEach(label => { const c = centroid(rimPolys[label]); ctx.fillText(label, tx(c.x)+4, ty(c.y)-4); });
-  trackLabels.forEach(label => { const c = centroid(trackPolys[label]); ctx.fillText(label, tx(c.x)+4, ty(c.y)-4); });
-
+  // rim markers
   game.players.forEach((p, idx) => {
     const rimC = rimCenters[p.rim];
     if (rimC) {
-      const rr = Math.max(8, (rimC.r || 20) * SCALE * 0.52);
+      const rr = Math.max(7, (rimC.r || 20) * SCALE * 0.46);
       ctx.beginPath();
       ctx.arc(tx(rimC.x), ty(rimC.y), rr, 0, Math.PI * 2);
-      ctx.fillStyle = p.color.replace(".98", ".75");
+      ctx.fillStyle = p.color.replace(".98",".68");
       ctx.fill();
       ctx.lineWidth = idx === game.current ? 3 : 1.5;
       ctx.strokeStyle = idx === game.current ? "rgba(255,215,0,.98)" : "#111";
@@ -320,15 +298,12 @@ function drawBoard() {
     }
   });
 
+  // track markers except animated
   game.players.forEach((p, idx) => {
     if (animationState && animationState.playerId === p.id) return;
-    const trackC = trackCenters[p.track];
-    if (trackC) drawMarkerAt(trackC, p.color, idx === game.current);
+    drawMarkerAt(trackCenters[p.track], p.color, idx === game.current);
   });
-
-  if (animationState) {
-    drawMarkerAt(animationState.pos, animationState.color, true);
-  }
+  if (animationState) drawMarkerAt(animationState.pos, animationState.color, true);
 
   updatePlayerCards();
 }
@@ -361,20 +336,16 @@ function animateMovement(player, fromTrack, toTrack, callback) {
   const steps = [];
   for (let i = fromIdx + 1; i <= toIdx; i++) steps.push(trackLabels[i]);
   if (!steps.length) { callback(); return; }
-
   game.animating = true;
   let i = 0;
-
   function stepAnim() {
     const cell = steps[i];
-    const center = trackCenters[cell];
-    animationState = { playerId: player.id, color: player.color, pos: center };
+    animationState = { playerId: player.id, color: player.color, pos: trackCenters[cell] };
     setStatus(`Player ${player.id} moving... ${cell}`);
     drawBoard();
     i += 1;
-    if (i < steps.length) {
-      setTimeout(stepAnim, 280);
-    } else {
+    if (i < steps.length) setTimeout(stepAnim, 260);
+    else {
       animationState = null;
       game.animating = false;
       callback();
@@ -400,23 +371,19 @@ function endTurnAdvanceIfNeeded() {
 function doRoll() {
   if (!game.started || game.winner || game.animating) return;
   const p = currentPlayer();
-  if (!p.alive || p.won) {
-    game.current = nextLivingPlayerIndex(game.current);
-    drawBoard();
-    return;
-  }
+  if (!p.alive || p.won) { game.current = nextLivingPlayerIndex(game.current); drawBoard(); return; }
 
   const d1 = 1 + Math.floor(Math.random() * 6);
   const d2 = 1 + Math.floor(Math.random() * 6);
   renderDie(document.getElementById('die1'), d1);
   renderDie(document.getElementById('die2'), d2);
-  document.getElementById('rollText').textContent = `Rolled ${d1} + ${d2} = ${d1 + d2}`;
+  document.getElementById('rollText').textContent = `Rolled ${d1} + ${d2} = ${d1+d2}`;
 
   const currentIndex = trackLabels.indexOf(p.track);
   const targetIndex = currentIndex + d1 + d2;
 
   if (targetIndex > trackLabels.length - 1) {
-    addLog(`Player ${p.id} rolled <strong>${d1 + d2}</strong> from <strong>${p.track}</strong> but needs exact T19, so there is no move.`);
+    addLog(`Player ${p.id} rolled <strong>${d1+d2}</strong> from <strong>${p.track}</strong> but needs exact T19, so there is no move.`);
     setStatus(`Player ${p.id} overshot T19 and stays on ${p.track}.`);
     updateSharedInfo(p);
     endTurnAdvanceIfNeeded();
@@ -437,7 +404,6 @@ function doRoll() {
   const oldTrack = p.track;
   animateMovement(p, oldTrack, target, () => {
     p.track = target;
-
     if (target === "T18") {
       p.alive = false;
       addLog(`Player ${p.id} moved to <strong>T18</strong> and fails.${shared.length ? " Shared symbols: " + shared.join(", ") + "." : ""}`);
@@ -451,7 +417,6 @@ function doRoll() {
       addLog(`Player ${p.id} moved to <strong>${target}</strong>. Shared symbols with ${p.rim}: ${shared.join(", ")}.`);
       setStatus(`Player ${p.id} moved to ${target}.`);
     }
-
     updateSharedInfo(p);
     endTurnAdvanceIfNeeded();
   });
