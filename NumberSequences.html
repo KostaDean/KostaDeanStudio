@@ -1,333 +1,40 @@
-<html><head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Worksheet Maker v5</title>
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Student Worksheet</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 16px; }
-textarea { width: 100%; height: 220px; font-size: 16px; }
-button { margin: 10px 8px 10px 0; padding: 10px 14px; font-size: 16px; }
-.note { font-size: 15px; line-height: 1.45; color: #333; margin-bottom: 10px; }
-#sheet { margin-top: 20px; }
-.titleLine { font-size: 24px; font-weight: 700; margin: 16px 0; }
-.labeledLine { font-size: 19px; font-weight: 600; margin: 12px 0 6px 0; }
-.sequenceWrap {
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 4px 0 10px 0;
-  margin-bottom: 10px;
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-  border-radius: 8px;
-}
-.sequenceLine { display: inline-block; min-width: max-content; font-size: 17px; }
-.token { margin-right: 2px; }
-.sep { margin-right: 5px; }
-.blankInput {
-  width: 24px;
-  height: 24px;
-  border: 1px solid #c026d3;
-  background: #f9a8d4;
-  border-radius: 4px;
-  text-align: center;
-  font-size: 15px;
-  padding: 0;
-  vertical-align: middle;
-}
-.ok { background: #bbf7d0 !important; border-color: #15803d; }
-.bad { background: #fecaca !important; border-color: #b91c1c; }
-.lineDone { background: #f0fdf4; }
-.msg { font-size: 16px; font-weight: 600; min-height: 22px; margin: 8px 0 14px 0; }
-.banner {
-  display: none;
-  margin: 10px 0 16px 0;
-  padding: 12px;
-  font-size: 24px;
-  font-weight: 700;
-  text-align: center;
-  border: 2px solid #92400e;
-  border-radius: 12px;
-  background: linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a);
-}
-.downloadBox {
-  width: 100%;
-  height: 140px;
-  font-size: 13px;
-  font-family: monospace;
-  display: none;
-}
-.flash-bad { animation: flashBad .35s ease; }
-.flash-win { animation: flashWin .7s ease 5; }
-@keyframes flashBad { 0% { background:#fecaca; } 50% { background:#ef4444; } 100% { background:white; } }
-@keyframes flashWin { 0% { background:#fde68a; } 25% { background:#86efac; } 50% { background:#93c5fd; } 75% { background:#f9a8d4; } 100% { background:white; } }
-</style>
-<meta name="viewport" content="width=device-width"></head>
-<body>
-
-<h2>Worksheet Maker</h2>
-
-<div class="note">
-First line = worksheet title.<br>
-A label like <b>Example:</b> or <b>Exercises:</b> goes on its own line.<br>
-The sequence goes on the next line, using commas.<br>
-Use plain values for shown items and <b>[value]</b> for hidden answers.<br>
-Pink boxes are hidden-answer spaces. The row auto-scrolls while typing near the edge and snaps back when the last pink box in that row is filled.
-</div>
-
-<textarea id="input">Number Sequences
-Example:
-1, [2], 3, [4], 5, [6], 7, [8], 9, [10], 11, [12], 13, [14], 15, [16]
-Exercises:
-5, 10, [15], 20, [25], 30, 35, [40], 45, [50], 55, [60], 65, [70], 75, [80]
-2, 4, [6], 8, [10], [12], 14, 16, 18, [20], 22, [24], 26, [28], 30, [32]</textarea>
-
-<br>
-<button onclick="render()">Preview</button>
-<button onclick="downloadStudent()">Download Student File</button>
+:root{--bg:#f6f7fb;--ink:#1f2937;--line:#475569;--pink:#f9a8d4;--pinkline:#c026d3;--ok:#bbf7d0;--bad:#fecaca}
+*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button{margin:10px 8px 10px 0;padding:10px 14px;font-size:16px;border:2px solid var(--line);border-radius:12px;background:white}
+.titleLine{font-size:24px;font-weight:700;margin:16px 0}.labelLine{font-size:20px;font-weight:700;margin:14px 0 6px}.textLine{font-size:18px;margin:8px 0 10px;line-height:1.5}
+.sequenceWrap{overflow-x:auto;white-space:nowrap;padding:4px 0 10px;margin:0 0 10px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;border-radius:8px}
+.sequenceLine{display:inline-block;min-width:max-content;font-size:17px;line-height:1.8}.sep{margin-right:6px}
+.blankInput{width:24px;height:24px;padding:0;border:1px solid var(--pinkline);border-radius:4px;background:var(--pink);text-align:center;font-size:15px;vertical-align:middle}
+.blankInput.ok{background:var(--ok)!important;border-color:#15803d}.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.lineDone{background:#f0fdf4}.msg{font-size:16px;font-weight:700;min-height:22px;margin:8px 0}
+.banner{display:none;margin:10px 0 16px;padding:12px;text-align:center;font-size:24px;font-weight:700;border:2px solid #92400e;border-radius:12px;background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)}
+.flash-bad{animation:flashBad .35s ease}.flash-win{animation:flashWin .7s ease 5}
+@keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}
+@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
+</style></head><body>
 <button onclick="checkAll()">Check All</button>
 <button onclick="resetAnswers()">Reset</button>
 <button onclick="revealAnswers()">Reveal Answers</button>
-<button onclick="toggleHtmlBox()">Show Student HTML</button>
-
-<div class="msg" id="msg"></div>
-<div class="banner" id="banner" style="display: none;">YOU ARE A WINNER!</div>
-<div id="sheet"><div class="titleLine">Number Sequences</div><div class="labeledLine">Example:</div><div class="sequenceWrap" data-seq="0"><div class="sequenceLine"><span class="token">1</span><span class="sep">,</span><input class="blankInput" data-seq="0" data-answer="2" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">3</span><span class="sep">,</span><input class="blankInput" data-seq="0" data-answer="4" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">5</span><span class="sep">,</span><input class="blankInput" data-seq="0" data-answer="6" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">7</span><span class="sep">,</span><input class="blankInput" data-seq="0" data-answer="8" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">9</span><span class="sep">,</span><input class="blankInput" data-seq="0" data-answer="10" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">11</span><span class="sep">,</span><input class="blankInput" data-seq="0" data-answer="12" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">13</span><span class="sep">,</span><input class="blankInput" data-seq="0" data-answer="14" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">15</span><span class="sep">,</span><input class="blankInput" data-seq="0" data-answer="16" oninput="markPending(this)" onfocus="keepVisible(this)"></div></div><div class="labeledLine">Answer:</div><div class="sequenceWrap" data-seq="1"><div class="sequenceLine"><span class="token">1</span><span class="sep">,</span><span class="token">2</span><span class="sep">,</span><span class="token">3</span><span class="sep">,</span><span class="token">4</span><span class="sep">,</span><span class="token">5</span><span class="sep">,</span><span class="token">6</span><span class="sep">,</span><span class="token">7</span><span class="sep">,</span><span class="token">8</span><span class="sep">,</span><span class="token">9</span><span class="sep">,</span><span class="token">10</span><span class="sep">,</span><span class="token">11</span><span class="sep">,</span><span class="token">12</span><span class="sep">,</span><span class="token">13</span><span class="sep">,</span><span class="token">14</span><span class="sep">,</span><span class="token">15</span><span class="sep">,</span><span class="token">16</span></div></div><div class="labeledLine">Exercises:</div><div class="sequenceWrap" data-seq="2"><div class="sequenceLine"><span class="token">5</span><span class="sep">,</span><span class="token">10</span><span class="sep">,</span><input class="blankInput" data-seq="2" data-answer="15" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">20</span><span class="sep">,</span><input class="blankInput" data-seq="2" data-answer="25" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">30</span><span class="sep">,</span><span class="token">35</span><span class="sep">,</span><input class="blankInput" data-seq="2" data-answer="40" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">45</span><span class="sep">,</span><input class="blankInput" data-seq="2" data-answer="50" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">55</span><span class="sep">,</span><input class="blankInput" data-seq="2" data-answer="60" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">65</span><span class="sep">,</span><input class="blankInput" data-seq="2" data-answer="70" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">75</span><span class="sep">,</span><input class="blankInput" data-seq="2" data-answer="80" oninput="markPending(this)" onfocus="keepVisible(this)"></div></div><div class="sequenceWrap" data-seq="3"><div class="sequenceLine"><span class="token">2</span><span class="sep">,</span><span class="token">4</span><span class="sep">,</span><input class="blankInput" data-seq="3" data-answer="6" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">8</span><span class="sep">,</span><input class="blankInput" data-seq="3" data-answer="10" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><input class="blankInput" data-seq="3" data-answer="12" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">14</span><span class="sep">,</span><span class="token">16</span><span class="sep">,</span><span class="token">18</span><span class="sep">,</span><input class="blankInput" data-seq="3" data-answer="20" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">22</span><span class="sep">,</span><input class="blankInput" data-seq="3" data-answer="24" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">26</span><span class="sep">,</span><input class="blankInput" data-seq="3" data-answer="28" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">30</span><span class="sep">,</span><input class="blankInput" data-seq="3" data-answer="32" oninput="markPending(this)" onfocus="keepVisible(this)"></div></div><div class="sequenceWrap" data-seq="4"><div class="sequenceLine"><input class="blankInput" data-seq="4" data-answer="1" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">4</span><span class="sep">,</span><span class="token">7</span><span class="sep">,</span><span class="token">10</span><span class="sep">,</span><input class="blankInput" data-seq="4" data-answer="13" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">16</span><span class="sep">,</span><span class="token">19</span><span class="sep">,</span><input class="blankInput" data-seq="4" data-answer="22" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">25</span><span class="sep">,</span><input class="blankInput" data-seq="4" data-answer="28" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">31</span><span class="sep">,</span><input class="blankInput" data-seq="4" data-answer="34" oninput="markPending(this)" onfocus="keepVisible(this)"><span class="sep">,</span><span class="token">37</span></div></div></div>
-
-<textarea id="studentHtmlBox" class="downloadBox" style="display: none;"></textarea>
-
+<div class="msg" id="msg"></div><div class="banner" id="banner">YOU ARE A WINNER!</div><div id="sheet"></div>
 <script>
-let audioCtx = null;
-
-function splitTokens(line){
-  return line.split(",").map(x => x.trim()).filter(x => x);
-}
-function isHidden(token){
-  return token.startsWith("[") && token.endsWith("]");
-}
-function esc(s){
-  return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"','&quot;');
-}
-function getAudio(){
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if(audioCtx.state === "suspended") audioCtx.resume();
-  return audioCtx;
-}
-function playTone(freq, type, start, duration, gainValue){
-  const ctx=getAudio(), osc=ctx.createOscillator(), gain=ctx.createGain();
-  osc.type=type; osc.frequency.setValueAtTime(freq, start);
-  gain.gain.setValueAtTime(0.0001, start);
-  gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-  osc.connect(gain).connect(ctx.destination);
-  osc.start(start); osc.stop(start + duration + 0.03);
-}
-function playBad(){
-  const t=getAudio().currentTime + 0.01;
-  playTone(220,"sawtooth",t,0.18,0.08);
-  playTone(180,"sawtooth",t+0.12,0.20,0.08);
-}
-function playWin(){
-  const t=getAudio().currentTime + 0.02;
-  [523.25,659.25,783.99,1046.5,1318.51].forEach((f,i)=>playTone(f,"square",t+i*0.12,0.25,0.12));
-}
-function flash(kind){
-  document.body.classList.remove("flash-bad","flash-win");
-  void document.body.offsetWidth;
-  if(kind === "bad") document.body.classList.add("flash-bad");
-  if(kind === "win") document.body.classList.add("flash-win");
-}
-function renderSheet(){
-  const lines = document.getElementById("input").value.split("\n");
-  const sheet = document.getElementById("sheet");
-  sheet.innerHTML = "";
-  document.getElementById("msg").textContent = "";
-  document.getElementById("banner").style.display = "none";
-
-  let first = true;
-  let seqIndex = 0;
-
-  lines.forEach(raw => {
-    const line = raw.trim();
-    if(!line) return;
-
-    const div = document.createElement("div");
-
-    if(first){
-      div.className = "titleLine";
-      div.textContent = line;
-      sheet.appendChild(div);
-      first = false;
-      return;
-    }
-
-    if(line.endsWith(":")){
-      div.className = "labeledLine";
-      div.textContent = line;
-      sheet.appendChild(div);
-      return;
-    }
-
-    const wrap = document.createElement("div");
-    wrap.className = "sequenceWrap";
-    wrap.dataset.seq = seqIndex;
-
-    const inner = document.createElement("div");
-    inner.className = "sequenceLine";
-
-    let html = "";
-    const tokens = splitTokens(line);
-
-    tokens.forEach((t, i) => {
-      if(isHidden(t)){
-        const ans = t.slice(1,-1).trim();
-        html += '<input class="blankInput" data-seq="' + seqIndex + '" data-answer="' + esc(ans) + '" oninput="markPending(this)" onfocus="keepVisible(this)">';
-      } else {
-        html += '<span class="token">' + esc(t) + '</span>';
-      }
-      if(i < tokens.length - 1){
-        html += '<span class="sep">,</span>';
-      }
-    });
-
-    inner.innerHTML = html;
-    wrap.appendChild(inner);
-    sheet.appendChild(wrap);
-    seqIndex++;
-  });
-}
-function render(){
-  renderSheet();
-}
-function markPending(el){
-  el.classList.remove("ok","bad");
-  keepVisible(el);
-
-  const seq = el.dataset.seq;
-  const all = Array.from(document.querySelectorAll('input[data-seq="' + seq + '"]'));
-  if(all.length && all.every(inp => inp.value.trim() !== "")){
-    const wrap = document.querySelector('.sequenceWrap[data-seq="' + seq + '"]');
-    if(wrap){
-      wrap.scrollTo({ left: 0, behavior: "smooth" });
-    }
-  }
-}
-function keepVisible(el){
-  const wrap = el.closest(".sequenceWrap");
-  if(!wrap) return;
-  const left = el.offsetLeft;
-  const right = left + el.offsetWidth;
-  const viewLeft = wrap.scrollLeft;
-  const viewRight = viewLeft + wrap.clientWidth;
-  const pad = 30;
-
-  if(right + pad > viewRight){
-    wrap.scrollTo({ left: right - wrap.clientWidth + pad, behavior: "smooth" });
-  } else if(left - pad < viewLeft){
-    wrap.scrollTo({ left: Math.max(0, left - pad), behavior: "smooth" });
-  }
-}
-function normalize(v){
-  return String(v).trim();
-}
-function checkSequence(seq){
-  const inputs = Array.from(document.querySelectorAll('input[data-seq="' + seq + '"]'));
-  if(!inputs.length) return true;
-  let ok = true;
-
-  inputs.forEach(inp => {
-    const ans = normalize(inp.dataset.answer);
-    const val = normalize(inp.value);
-    inp.classList.remove("ok","bad");
-    if(val === ans){
-      inp.classList.add("ok");
-    } else {
-      inp.classList.add("bad");
-      ok = false;
-    }
-  });
-
-  const wrap = document.querySelector('.sequenceWrap[data-seq="' + seq + '"]');
-  if(wrap){
-    wrap.classList.remove("lineDone");
-    if(ok) wrap.classList.add("lineDone");
-    wrap.scrollTo({ left: 0, behavior: "smooth" });
-  }
-  return ok;
-}
-function checkAll(){
-  const seqs = [...new Set(Array.from(document.querySelectorAll(".sequenceWrap")).map(w => w.dataset.seq))];
-  if(!seqs.length) return;
-  let allOk = true;
-  seqs.forEach(seq => {
-    const ok = checkSequence(seq);
-    if(!ok) allOk = false;
-  });
-  if(allOk){
-    document.getElementById("msg").textContent = "All lines are correct.";
-    document.getElementById("banner").style.display = "block";
-    playWin();
-    flash("win");
-  } else {
-    document.getElementById("msg").textContent = "Some answers need fixing. You can edit them and check again.";
-    playBad();
-    flash("bad");
-  }
-}
-function resetAnswers(){
-  document.querySelectorAll(".blankInput").forEach(inp => {
-    inp.value = "";
-    inp.classList.remove("ok","bad");
-  });
-  document.querySelectorAll(".sequenceWrap").forEach(w => {
-    w.classList.remove("lineDone");
-    w.scrollTo({ left: 0, behavior: "smooth" });
-  });
-  document.getElementById("msg").textContent = "";
-  document.getElementById("banner").style.display = "none";
-}
-function revealAnswers(){
-  document.querySelectorAll(".blankInput").forEach(inp => {
-    inp.value = inp.dataset.answer;
-    inp.classList.remove("bad");
-    inp.classList.add("ok");
-  });
-  document.querySelectorAll(".sequenceWrap").forEach(w => {
-    w.classList.add("lineDone");
-    w.scrollTo({ left: 0, behavior: "smooth" });
-  });
-  document.getElementById("msg").textContent = "Answers revealed.";
-  document.getElementById("banner").style.display = "block";
-  playWin();
-  flash("win");
-}
-function buildStudentHtml(){
-  return document.documentElement.outerHTML;
-}
-function toggleHtmlBox(){
-  const box = document.getElementById("studentHtmlBox");
-  if(box.style.display === "block"){
-    box.style.display = "none";
-  } else {
-    box.value = buildStudentHtml();
-    box.style.display = "block";
-  }
-}
-function downloadStudent(){
-  const html = buildStudentHtml();
-  document.getElementById("studentHtmlBox").value = html;
-  const blob = new Blob([html], {type:"text/html"});
-  const a = document.createElement("a");
-  const href = URL.createObjectURL(blob);
-  a.href = href;
-  a.download = "worksheet_v5.html";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(href), 1000);
-}
-render();
-</script>
-
-
-
-</body></html>
+let audioCtx=null; const blocks=[{"type":"title","text":"Number Sequences"},{"type":"label","text":"Directions:"},{"type":"text","text":"Fill in the pink boxes with the missing numbers."},{"type":"label","text":"Example:"},{"type":"sequence","tokens":["1","[2]","3","[4]","5","[6]","7","[8]","9","[10]","11","[12]"]},{"type":"label","text":"Answer:"},{"type":"sequence","tokens":["1","2","3","4","5","6","7","8","9","10","11","12"]},{"type":"label","text":"Exercises:"},{"type":"sequence","tokens":["5","10","[15]","20","[25]","30","35","[40]","45","[50]","55","[60]","65","[70]"]},{"type":"sequence","tokens":["2","4","[6]","8","[10]","[12]","14","16","18","[20]","22","[24]","26","[28]"]},{"type":"sequence","tokens":["[2]","5","8","11","[14]","17","20","[23]","26","29","[32]"]}];
+function esc(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
+function normalize(v){return String(v).trim()}
+function isHidden(token){return token.startsWith("[")&&token.endsWith("]")}
+function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()} if(audioCtx.state==="suspended") audioCtx.resume(); return audioCtx}
+function playTone(freq,type,start,duration,gainValue){const ctx=getAudio(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,start);gain.gain.setValueAtTime(0.0001,start);gain.gain.exponentialRampToValueAtTime(gainValue,start+0.02);gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);osc.connect(gain).connect(ctx.destination);osc.start(start);osc.stop(start+duration+0.03)}
+function playBad(){const t=getAudio().currentTime+0.01;playTone(220,"sawtooth",t,0.18,0.08);playTone(180,"sawtooth",t+0.12,0.20,0.08)}
+function playWin(){const t=getAudio().currentTime+0.02;[523.25,659.25,783.99,1046.5,1318.51].forEach((f,i)=>playTone(f,"square",t+i*0.12,0.25,0.12))}
+function flash(kind){document.body.classList.remove("flash-bad","flash-win");void document.body.offsetWidth;if(kind==="bad")document.body.classList.add("flash-bad");if(kind==="win")document.body.classList.add("flash-win")}
+function renderStudent(){const sheet=document.getElementById("sheet");sheet.innerHTML="";let seqIndex=0;blocks.forEach(block=>{const div=document.createElement("div");if(block.type==="title"){div.className="titleLine";div.textContent=block.text;sheet.appendChild(div)}else if(block.type==="label"){div.className="labelLine";div.textContent=block.text;sheet.appendChild(div)}else if(block.type==="text"){div.className="textLine";div.textContent=block.text;sheet.appendChild(div)}else if(block.type==="sequence"){const wrap=document.createElement("div");wrap.className="sequenceWrap";wrap.dataset.seq=seqIndex;const inner=document.createElement("div");inner.className="sequenceLine";let html="";block.tokens.forEach((t,i)=>{if(isHidden(t)){const ans=t.slice(1,-1).trim();html+='<input class="blankInput" data-seq="'+seqIndex+'" data-answer="'+esc(ans)+'">'}else{html+='<span>'+esc(t)+'</span>'}if(i<block.tokens.length-1)html+='<span class="sep">,</span>'});inner.innerHTML=html;wrap.appendChild(inner);sheet.appendChild(wrap);seqIndex++}});sheet.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("input",function(){markPending(inp)});inp.addEventListener("focus",function(){keepVisible(inp)})})}
+function markPending(el){el.classList.remove("ok","bad");keepVisible(el);const seq=el.dataset.seq;const all=Array.from(document.querySelectorAll('input[data-seq="'+seq+'"]'));if(all.length&&all.every(inp=>inp.value.trim()!=="")){const wrap=document.querySelector('.sequenceWrap[data-seq="'+seq+'"]');if(wrap)wrap.scrollTo({left:0,behavior:"smooth"})}}
+function keepVisible(el){const wrap=el.closest(".sequenceWrap");if(!wrap)return;const left=el.offsetLeft,right=left+el.offsetWidth,viewLeft=wrap.scrollLeft,viewRight=viewLeft+wrap.clientWidth,pad=30;if(right+pad>viewRight){wrap.scrollTo({left:right-wrap.clientWidth+pad,behavior:"smooth"})}else if(left-pad<viewLeft){wrap.scrollTo({left:Math.max(0,left-pad),behavior:"smooth"})}}
+function checkSequence(seq){const inputs=Array.from(document.querySelectorAll('input[data-seq="'+seq+'"]'));if(!inputs.length)return true;let ok=true;inputs.forEach(inp=>{const ans=normalize(inp.dataset.answer),val=normalize(inp.value);inp.classList.remove("ok","bad");if(val===ans)inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});const wrap=document.querySelector('.sequenceWrap[data-seq="'+seq+'"]');if(wrap){wrap.classList.remove("lineDone");if(ok)wrap.classList.add("lineDone");wrap.scrollTo({left:0,behavior:"smooth"})}return ok}
+function checkAll(){const seqs=[...new Set(Array.from(document.querySelectorAll('.sequenceWrap')).map(w=>w.dataset.seq))];if(!seqs.length)return;let allOk=true;seqs.forEach(seq=>{if(!checkSequence(seq))allOk=false});if(allOk){document.getElementById("msg").textContent="All lines are correct.";document.getElementById("banner").style.display="block";playWin();flash("win")}else{document.getElementById("msg").textContent="Some answers need fixing. Edit them and check again.";playBad();flash("bad")}}
+function resetAnswers(){document.querySelectorAll('.blankInput').forEach(inp=>{inp.value="";inp.classList.remove("ok","bad")});document.querySelectorAll('.sequenceWrap').forEach(w=>{w.classList.remove("lineDone");w.scrollTo({left:0,behavior:"smooth"})});document.getElementById("msg").textContent="";document.getElementById("banner").style.display="none"}
+function revealAnswers(){document.querySelectorAll('.blankInput').forEach(inp=>{inp.value=inp.dataset.answer;inp.classList.remove("bad");inp.classList.add("ok")});document.querySelectorAll('.sequenceWrap').forEach(w=>{w.classList.add("lineDone");w.scrollTo({left:0,behavior:"smooth"})});document.getElementById("msg").textContent="Answers revealed.";document.getElementById("banner").style.display="block";playWin();flash("win")}
+renderStudent();
+</script></body></html>
