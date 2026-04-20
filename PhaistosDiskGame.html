@@ -44,6 +44,13 @@ canvas#board{display:block;max-width:100%;height:auto;background:#000;margin:0 a
 .bannerOn{animation:bannerDrop 1.8s ease both}
 @keyframes flashWin{0%{opacity:0}12%{opacity:.82}35%{opacity:0}55%{opacity:.95}80%{opacity:0}100%{opacity:0}}
 @keyframes bannerDrop{0%{transform:translateX(-50%) translateY(-140%);opacity:0}15%{transform:translateX(-50%) translateY(0);opacity:1}82%{transform:translateX(-50%) translateY(0);opacity:1}100%{transform:translateX(-50%) translateY(-140%);opacity:0}}
+#readmeModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;overflow:auto;padding:18px}
+#readmeCard{max-width:920px;margin:18px auto;background:#111;color:#eee;border:1px solid #555;border-radius:20px;padding:22px;text-align:left;line-height:1.5;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+#readmeCard h2,#readmeCard h3{margin-top:0;color:#fff}
+#readmeCard p{margin:10px 0}
+#readmeTop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+#closeReadmeBtn{padding:10px 16px;border-radius:14px;border:1px solid #666;background:#222;color:#fff}
+
 </style>
 </head>
 <body>
@@ -61,6 +68,7 @@ canvas#board{display:block;max-width:100%;height:auto;background:#000;margin:0 a
     </label>
     <button id="toggleSideBtn">Side: B</button>
     <button id="newBtn">New Game</button>
+    <button id="readmeBtn">ReadMe</button>
     <button id="setupBtn">Roll Setup</button>
     <button id="rollBtn">Roll Turn</button>
     <button id="logToggleBtn">Show Play Log</button>
@@ -838,6 +846,80 @@ function ready(){
 sideImgs.A.onload = ready;
 sideImgs.B.onload = ready;
 window.addEventListener('resize', ()=>draw(null, null));
+
+const readmeBtn = document.getElementById("readmeBtn");
+const readmeModal = document.getElementById("readmeModal");
+const closeReadmeBtn = document.getElementById("closeReadmeBtn");
+if(readmeBtn && readmeModal){
+  readmeBtn.onclick = () => { readmeModal.style.display = "block"; };
+}
+if(closeReadmeBtn && readmeModal){
+  closeReadmeBtn.onclick = () => { readmeModal.style.display = "none"; };
+}
+if(readmeModal){
+  readmeModal.addEventListener("click", (e) => {
+    if(e.target === readmeModal) readmeModal.style.display = "none";
+  });
+}
+
 </script>
+
+<div id="readmeModal">
+  <div id="readmeCard">
+    <div id="readmeTop">
+      <h2>Phaistos Disk Game – ReadMe</h2>
+      <button id="closeReadmeBtn">Close</button>
+    </div>
+
+    <h3>Game Rules – Side A</h3>
+    <p><b>Setup:</b> Off-disk counts as 1. Players roll for unique rim staging compartments. Turn order follows the rim order of the assigned staging compartments.</p>
+    <p><b>Movement:</b> Two dice are rolled. A move to a non-final track compartment is legal only when that landing compartment shares at least one available symbol with that player's staging compartment.</p>
+    <p><b>Occupation:</b> After landing, the player claims one matching available symbol in that compartment.</p>
+    <p><b>Finish:</b> Exact finish is required. A player finishes only by landing exactly on T19, the final rosette compartment.</p>
+    <p><b>T18:</b> Landing on T18 puts that player out, but the game continues for the remaining active players.</p>
+
+    <h3>Game Rules – Side B</h3>
+    <p><b>Setup:</b> Side B has 12 rim compartments, and the rim staging count begins directly with R01 as count 1. This differs from Side A, which has 11 rim compartments and counts the off-disk state as count 1. Because of this Side B revision, the highest initiation roll receives R01, while the remaining players roll for unique remaining rim staging compartments. Turn order again follows rim order.</p>
+    <p><b>Movement:</b> The same symbol-matching rule is used as on Side A.</p>
+    <p><b>Finish:</b> Overshoot wins. Reaching or passing the final winning compartment completes that player's run.</p>
+    <p><b>Multiple finishers:</b> Each active player may finish independently; there is no single automatic winner by elimination.</p>
+
+    <h3>Historical Note</h3>
+    <p>The Phaistos Disk was discovered in 1908 by Luigi Pernier at the Minoan palace site of Phaistos in Crete and first published in 1909.</p>
+    <p>It is generally dated to the Bronze Age, commonly in the second millennium BCE. The Disk is a fired clay object stamped with repeated signs arranged in a spiral on both sides.</p>
+    <p>This game interpretation treats the object not primarily as a text, but as a procedural spiral race board: the rim serving as staging space, the inward spiral as track progression, and the repeated figures as playable symbol-matching positions.</p>
+    <p>Within this interpretation, differences between Side A and Side B may reflect iterative manufacture and rule revision rather than inscription alone, including the different staging counts on the rim and the different finish conditions.</p>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var readmeBtn = document.getElementById("readmeBtn");
+  var readmeModal = document.getElementById("readmeModal");
+  var closeReadmeBtn = document.getElementById("closeReadmeBtn");
+
+  if (readmeBtn && readmeModal) {
+    readmeBtn.addEventListener("click", function () {
+      readmeModal.style.display = "block";
+    });
+  }
+
+  if (closeReadmeBtn && readmeModal) {
+    closeReadmeBtn.addEventListener("click", function () {
+      readmeModal.style.display = "none";
+    });
+  }
+
+  if (readmeModal) {
+    readmeModal.addEventListener("click", function (e) {
+      if (e.target === readmeModal) {
+        readmeModal.style.display = "none";
+      }
+    });
+  }
+});
+</script>
+
 </body>
 </html>
