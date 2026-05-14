@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Algebraic Equations Interactive</title>
+<style>
+:root{--bg:#f6f7fb;--ink:#1f2937;--line:#334155;--pink:#f9a8d4;--pinkline:#c026d3;--ok:#bbf7d0;--bad:#fecaca;--accent:#7c3aed}
+*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.lesson{max-width:900px;margin:0 auto;background:white;border:2px solid var(--line);border-radius:20px;padding:18px;overflow:hidden}
+h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}h2{font-size:26px;margin:22px 0 10px}p{font-size:20px;line-height:1.45}
+.speakBtn{padding:6px 10px;font-size:18px;border:2px solid var(--line);border-radius:10px;background:white}
+.ruleBox{border:3px solid var(--line);border-radius:14px;padding:12px;margin:16px 0;background:#fff}.blueBox{background:#ecfeff;border:2px solid #06b6d4;border-radius:12px;padding:10px;margin:10px 0}.stepBox{border-left:5px solid #cbd5e1;padding-left:12px;margin:10px 0}
+.eqLine,.exLine{font-size:24px;line-height:1.8;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.var{font-style:italic;font-weight:800;color:#2563eb}.green{color:#15803d;font-weight:800}.red{color:#dc2626;font-weight:800}
+.frac{display:inline-grid;grid-template-rows:auto auto;justify-items:center;min-width:42px;margin:0 4px;vertical-align:middle}.frac .top{border-bottom:2px solid var(--ink);padding:0 6px;font-size:26px;line-height:1.05}.frac .bottom{padding:0 6px;font-size:26px;line-height:1.05}
+.blankInput{width:100px;height:38px;padding:0 3px;border:2px solid var(--pinkline);border-radius:8px;background:var(--pink);text-align:center;font-size:22px}.blankInput.wide{width:150px}.blankInput.ok{background:var(--ok)!important;border-color:#15803d}.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.answerText{display:inline-block;min-width:54px;text-align:center;font-weight:700;color:#166534}.ex{margin:18px 0 24px;border-top:1px solid #e5e7eb;padding-top:14px}.exNum{display:inline-block;width:45px}.exExpr{margin-left:40px;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.doneWrap{text-align:right;margin-top:8px;padding-right:18px}.doneBtn{padding:8px 14px;border:2px solid var(--line);border-radius:12px;background:white;font-size:18px;font-weight:700}
+.rowMsg{font-size:26px;font-weight:800;margin:6px 0;display:none;text-align:right}.rowMsg.bad{display:block;color:#991b1b}.rowMsg.good{display:block;color:var(--accent)}
+.banner{display:none;margin:14px 0 16px;padding:16px;text-align:center;font-size:36px;font-weight:800;border:3px solid #92400e;border-radius:16px;background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)}
+.donateWrap{display:none;text-align:center;margin:10px 0 18px}.donateText{font-size:20px;font-weight:700;margin-bottom:8px}.donateBtn{display:inline-block;padding:12px 18px;border:2px solid #92400e;border-radius:14px;background:#f59e0b;color:#111827;font-weight:700;text-decoration:none}
+.confetti{position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:999}.piece{position:absolute;width:12px;height:12px;animation:fall linear forwards;background:#f87171}
+@keyframes fall{0%{transform:translateY(0);opacity:1}100%{transform:translateY(100vh);opacity:0}}.flash-bad{animation:flashBad .35s ease}.flash-win{animation:flashWin .7s ease 5}.flash-good{animation:flashGood .45s ease}
+@keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
+@media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:86px}.blankInput.wide{width:130px}.exExpr{margin-left:25px}}
+</style>
+</head>
+<body>
+<div class="lesson">
+<div class="banner" id="banner">YOU ARE A WINNER!</div><div id="donateWrap" class="donateWrap"><div class="donateText">Please support this work:</div><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a></div>
+<h1>Algebraic Equations</h1>
+<div class="eqLine"><button class="speakBtn" id="speakIntro" type="button">🔊</button><span>Two quantities with equal value but different form make an <b>algebraic equation</b>.</span></div>
+
+<div class="ruleBox"><h2>What is an equation?</h2><p>An equation says that two forms have the same value.</p>
+<div class="eqLine"><span class="frac"><span class="top">2<span class="var">x</span> − 4</span><span class="bottom">5</span></span> = 3<span class="var">x</span> + 1</div>
+<p>This is an algebraic equation in the unknown <span class="var">x</span>.</p><p>By <b>isolating</b> <span class="var">x</span>, using rules that keep the equation <b>balanced</b>, we find the value of the unknown.</p></div>
+
+<div class="ruleBox"><h2>Rules for solving equations</h2>
+<div class="blueBox"><p><b>1) You can add or subtract the same quantity on both sides of the equation.</b></p><div class="eqLine">If <span class="var">a</span> = <span class="var">b</span>, then <span class="var">a</span> + <span class="var">c</span> = <span class="var">b</span> + <span class="var">c</span></div></div>
+<div class="blueBox"><p><b>2) You can multiply or divide both sides of the equation by the same non-zero quantity.</b></p><div class="eqLine">If <span class="var">a</span> = <span class="var">b</span>, then 5<span class="var">a</span> = 5<span class="var">b</span></div></div>
+<p>Using just these two rules and properties of numbers, we can solve the equation.</p></div>
+
+<div class="ruleBox"><h2>Solving the example</h2>
+<div class="eqLine">Solve: <span class="frac"><span class="top">2<span class="var">x</span> − 4</span><span class="bottom">5</span></span> = 3<span class="var">x</span> + 1</div>
+<div class="stepBox">
+<div class="eqLine">5(<span class="frac"><span class="top">2<span class="var">x</span> − 4</span><span class="bottom">5</span></span>) = 5(3<span class="var">x</span> + 1)</div>
+<div class="eqLine">2<span class="var">x</span> − 4 = 15<span class="var">x</span> + 5</div>
+<div class="eqLine">2<span class="var">x</span> − 4 − 2<span class="var">x</span> = 15<span class="var">x</span> + 5 − 2<span class="var">x</span></div>
+<div class="eqLine">−4 = 13<span class="var">x</span> + 5</div>
+<div class="eqLine">−4 − 5 = 13<span class="var">x</span> + 5 − 5</div>
+<div class="eqLine">−9 = 13<span class="var">x</span></div>
+<div class="eqLine"><span class="frac"><span class="top">−9</span><span class="bottom">13</span></span> = <span class="var">x</span></div>
+</div><div class="eqLine green">So x = −9/13.</div></div>
+
+<h2>Exercises: Fill in the pink boxes</h2>
+<div class="ex"><div class="exLine"><span class="exNum">1)</span><span class="exExpr"><span class="var">x</span> + 5 = 12, so <span class="var">x</span> = <input class="blankInput" data-answer="7" data-row="1"></span></div><div class="rowMsg" id="rowMsg_1"></div><div class="doneWrap"><button class="doneBtn" data-row="1">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">2)</span><span class="exExpr"><span class="var">x</span> − 4 = 9, so <span class="var">x</span> = <input class="blankInput" data-answer="13" data-row="2"></span></div><div class="rowMsg" id="rowMsg_2"></div><div class="doneWrap"><button class="doneBtn" data-row="2">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">3)</span><span class="exExpr">3<span class="var">x</span> = 21, so <span class="var">x</span> = <input class="blankInput" data-answer="7" data-row="3"></span></div><div class="rowMsg" id="rowMsg_3"></div><div class="doneWrap"><button class="doneBtn" data-row="3">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">4)</span><span class="exExpr">5<span class="var">x</span> + 3 = 18, so <span class="var">x</span> = <input class="blankInput" data-answer="3" data-row="4"></span></div><div class="rowMsg" id="rowMsg_4"></div><div class="doneWrap"><button class="doneBtn" data-row="4">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">5)</span><span class="exExpr">2<span class="var">x</span> − 4 = 10, so <span class="var">x</span> = <input class="blankInput" data-answer="7" data-row="5"></span></div><div class="rowMsg" id="rowMsg_5"></div><div class="doneWrap"><button class="doneBtn" data-row="5">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">6)</span><span class="exExpr"><span class="frac"><span class="top">2<span class="var">x</span> − 4</span><span class="bottom">5</span></span> = 3<span class="var">x</span> + 1, so <span class="var">x</span> = <input class="blankInput wide" data-answer="-9/13" data-alt="−9/13" data-row="6"></span></div><div class="rowMsg" id="rowMsg_6"></div><div class="doneWrap"><button class="doneBtn" data-row="6">Done</button></div></div>
+</div><div id="confetti" class="confetti"></div>
+<script>
+let audioCtx=null;function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()}if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function playTone(f,t,s,d,g){const c=getAudio(),o=c.createOscillator(),x=c.createGain();o.type=t;o.frequency.setValueAtTime(f,s);x.gain.setValueAtTime(.0001,s);x.gain.exponentialRampToValueAtTime(g,s+.02);x.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(x).connect(c.destination);o.start(s);o.stop(s+d+.03)}
+function playBad(){const t=getAudio().currentTime+.01;playTone(220,"sawtooth",t,.18,.08);playTone(180,"sawtooth",t+.12,.2,.08)}
+function playGood(){const t=getAudio().currentTime+.01;playTone(523.25,"triangle",t,.18,.1);playTone(659.25,"triangle",t+.12,.2,.1);playTone(783.99,"triangle",t+.24,.22,.12)}
+function playWin(){const t=getAudio().currentTime+.02;[523.25,659.25,783.99,1046.5,1318.51].forEach((f,i)=>playTone(f,"square",t+i*.12,.25,.12))}
+function flash(k){document.body.classList.remove("flash-bad","flash-win","flash-good");void document.body.offsetWidth;document.body.classList.add("flash-"+k)}
+function launchConfetti(){const c=document.getElementById("confetti");c.innerHTML="";const colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185","#38bdf8"];for(let i=0;i<160;i++){const p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.8+Math.random()*1.2)+"s";c.appendChild(p)}setTimeout(()=>c.innerHTML="",3200)}
+function speakText(t){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.95;window.speechSynthesis.speak(u)}
+document.getElementById("speakIntro").addEventListener("click",()=>speakText("Algebraic equations. Two quantities with equal value but different form make an equation. To solve, isolate the unknown using rules that keep the equation balanced."))
+function norm(s){return String(s).trim().toLowerCase().replace("−","-").replace(/[()]/g,"").replace(/\s+/g,"")}
+function answerSet(inp){const raw=[inp.dataset.answer||"",inp.dataset.alt||""];const set=new Set();raw.forEach(a=>{const n=norm(a);if(!n)return;set.add(n);if(n.startsWith("+"))set.add(n.slice(1));if(/^\d+(\.\d+)?$/.test(n))set.add("+"+n)});return set}
+function clearRowMessage(r){const m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
+function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),80);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");launchConfetti();setTimeout(launchConfetti,900);setTimeout(launchConfetti,1800)}}
+function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];let ok=true;inputs.forEach(inp=>{const val=norm(inp.value),allowed=answerSet(inp);inp.classList.remove("ok","bad");if(allowed.has(val)){inp.classList.add("ok")}else{inp.classList.add("bad");ok=false}});const msg=document.getElementById("rowMsg_"+r);if(ok){inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=inp.dataset.answer;inp.replaceWith(s)});msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";playGood();flash("good");maybeCelebrateWorksheet()}else{msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";playBad();flash("bad")}}
+document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
+document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
+</script></body></html>
