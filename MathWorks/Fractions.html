@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Fractions Lesson Interactive</title>
+<style>
+:root{
+  --bg:#f6f7fb; --ink:#1f2937; --line:#475569; --pink:#f9a8d4; --pinkline:#c026d3;
+  --ok:#bbf7d0; --bad:#fecaca; --accent:#7c3aed;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+h1{margin:0 0 12px;font-size:34px}
+h2{margin:20px 0 10px;font-size:26px}
+p{font-size:20px;line-height:1.45;margin:8px 0 14px}
+.lesson{max-width:900px;margin:0 auto;background:white;border:2px solid var(--line);border-radius:20px;padding:18px}
+.row{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin:10px 0 16px}
+.speakBtn{padding:6px 10px;font-size:18px;line-height:1;border:2px solid var(--line);border-radius:10px;background:white}
+.barWrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:10px 0}
+.compareStack{display:flex;flex-direction:column;gap:14px;margin:12px 0 16px}
+.compareRow{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.compareNote{font-size:22px}
+.barLabel{font-size:22px}
+.bar{display:grid;border:3px solid var(--line);height:44px;min-width:180px;background:white}
+.part{border-right:2px solid var(--line);height:100%}
+.part:last-child{border-right:none}
+.shaded{background:repeating-linear-gradient(135deg,#cbd5e1 0,#cbd5e1 7px,#94a3b8 7px,#94a3b8 13px)}
+.eqLine{font-size:34px;font-weight:700;margin:10px 0 0}
+.frac{display:inline-grid;grid-template-rows:auto auto;justify-items:center;align-items:center;min-width:42px;vertical-align:middle;margin:0 6px}
+.frac .top{border-bottom:2px solid var(--ink);padding:0 6px;font-size:34px;line-height:1.1}
+.frac .bottom{padding:0 6px;font-size:34px;line-height:1.1}
+.note{font-size:20px;line-height:1.5}
+.rule{font-size:21px;margin-top:8px}
+.exercise{margin:18px 0 22px}
+.exerciseLine{font-size:30px;line-height:1.9;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.blankInput{
+  width:42px;height:34px;padding:0 3px;border:2px solid var(--pinkline);border-radius:8px;background:var(--pink);
+  text-align:center;font-size:24px;vertical-align:middle
+}
+.blankInput.ok{background:var(--ok)!important;border-color:#15803d}
+.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.doneWrap{margin:8px 0 0;text-align:right}
+.doneBtn{padding:8px 14px;border:2px solid var(--line);border-radius:12px;background:white;font-size:18px;font-weight:700}
+.rowMsg{font-size:26px;font-weight:800;margin:6px 0;display:none;text-align:right;color:var(--accent)}
+.rowMsg.bad{display:block;color:#991b1b}
+.rowMsg.good{display:block}
+.banner{
+  display:none;margin:14px 0 16px;padding:16px;text-align:center;font-size:36px;font-weight:800;
+  border:3px solid #92400e;border-radius:16px;
+  background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)
+}
+.donateWrap{display:none;text-align:center;margin:10px 0 18px}
+.donateText{font-size:20px;font-weight:700;margin-bottom:8px}
+.donateBtn{
+  display:inline-block;padding:12px 18px;border:2px solid #92400e;border-radius:14px;background:#f59e0b;
+  color:#111827;font-weight:700;text-decoration:none
+}
+.confetti{position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:999}
+.piece{
+  position:absolute;width:12px;height:12px;
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  animation:fall linear forwards
+}
+@keyframes fall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+.flash-bad{animation:flashBad .35s ease}
+.flash-win{animation:flashWin .7s ease 5}
+.flash-good{animation:flashGood .45s ease}
+@keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}
+@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
+@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
+.small{font-size:18px}
+@media (max-width:700px){
+  .exerciseLine{font-size:24px}
+  .frac .top,.frac .bottom{font-size:28px}
+  p,.note,.rule,.barLabel{font-size:18px}
+  h1{font-size:30px}
+}
+</style>
+</head>
+<body>
+<div class="lesson">
+  <div class="banner" id="banner">YOU ARE A WINNER!</div>
+  <div id="donateWrap" class="donateWrap">
+    <div class="donateText">Please support this work:</div>
+    <a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a>
+  </div>
+
+  <h1>Fractions</h1>
+
+  <div class="row">
+    <button class="speakBtn" type="button" id="speakIntro">🔊</button>
+    <p style="margin:0">What are fractions? When you break your leg, you fracture it in two parts.</p>
+  </div>
+
+  <div class="barWrap">
+    <div class="bar" style="grid-template-columns:1fr;width:170px">
+      <div class="part"></div>
+    </div>
+    <div class="barLabel">one whole</div>
+  </div>
+
+  <div class="barWrap">
+    <div class="bar" style="grid-template-columns:repeat(5,1fr);width:170px">
+      <div class="part"></div><div class="part"></div><div class="part"></div><div class="part"></div><div class="part"></div>
+    </div>
+    <div class="barLabel">one whole divided into 5 equal parts</div>
+  </div>
+
+  <div class="barWrap">
+    <div class="bar" style="grid-template-columns:repeat(5,1fr);width:170px">
+      <div class="part shaded"></div><div class="part shaded"></div><div class="part shaded"></div><div class="part"></div><div class="part"></div>
+    </div>
+    <div class="barLabel">shaded amount: 3 out of 5 equal parts</div>
+  </div>
+
+  <div class="note">
+    <div class="eqLine">
+      <span class="frac"><span class="top">3</span><span class="bottom">5</span></span>
+      = shaded amount of the whole
+    </div>
+    <div class="small" style="margin-top:6px">
+      <b>Numerator</b> = number of parts taken &nbsp;&nbsp;|&nbsp;&nbsp;
+      <b>Denominator</b> = number of parts divided
+    </div>
+  </div>
+
+  <h2>When are two fractions equal?</h2>
+
+  <div class="compareStack">
+    <div class="compareRow">
+      <div class="bar" style="grid-template-columns:repeat(6,1fr);width:240px">
+        <div class="part shaded"></div><div class="part shaded"></div><div class="part shaded"></div><div class="part shaded"></div><div class="part"></div><div class="part"></div>
+      </div>
+      <div class="compareNote">
+        <span class="frac"><span class="top">4</span><span class="bottom">6</span></span>
+        = shaded amount of the whole
+      </div>
+    </div>
+
+    <div class="compareRow">
+      <div class="bar" style="grid-template-columns:repeat(3,1fr);width:240px">
+        <div class="part shaded"></div><div class="part shaded"></div><div class="part"></div>
+      </div>
+      <div class="compareNote">
+        <span class="frac"><span class="top">2</span><span class="bottom">3</span></span>
+        = shaded amount of the whole
+      </div>
+    </div>
+  </div>
+
+  <p>These two shaded amounts are equal, so <span class="frac"><span class="top">4</span><span class="bottom">6</span></span> = <span class="frac"><span class="top">2</span><span class="bottom">3</span></span>.</p>
+
+  <div class="rule">
+    <b>Rule:</b> For any fraction, multiplying the numerator and the denominator by the same number keeps the fractions equal.
+  </div>
+
+  <div class="eqLine" style="margin-top:14px">
+    <span class="frac"><span class="top">3</span><span class="bottom">5</span></span>
+    =
+    <span class="frac"><span class="top">3 × 2</span><span class="bottom">5 × 2</span></span>
+    =
+    <span class="frac"><span class="top">6</span><span class="bottom">10</span></span>
+  </div>
+
+  <div class="compareStack" style="margin-top:14px">
+    <div class="compareRow">
+      <div class="bar" style="grid-template-columns:repeat(5,1fr);width:260px">
+        <div class="part shaded"></div><div class="part shaded"></div><div class="part shaded"></div><div class="part"></div><div class="part"></div>
+      </div>
+      <div class="compareNote">
+        <span class="frac"><span class="top">3</span><span class="bottom">5</span></span>
+      </div>
+    </div>
+    <div class="compareRow">
+      <div class="bar" style="grid-template-columns:repeat(10,1fr);width:260px">
+        <div class="part shaded"></div><div class="part shaded"></div><div class="part shaded"></div><div class="part shaded"></div><div class="part shaded"></div><div class="part shaded"></div><div class="part"></div><div class="part"></div><div class="part"></div><div class="part"></div>
+      </div>
+      <div class="compareNote">
+        <span class="frac"><span class="top">6</span><span class="bottom">10</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="eqLine">
+    <span class="frac"><span class="top">3</span><span class="bottom">5</span></span>
+    =
+    <span class="frac"><span class="top">6</span><span class="bottom">10</span></span>
+  </div>
+
+  <h2>Exercises: Fill in the pink box</h2>
+
+  <div class="exercise" data-row="1">
+    <div class="exerciseLine">
+      <span>1)</span>
+      <span class="frac"><span class="top">3</span><span class="bottom">5</span></span>
+      <span>=</span>
+      <span class="frac"><span class="top">3 × <input class="blankInput" data-answer="4" data-row="1"></span><span class="bottom">5 × 4</span></span>
+    </div>
+    <div class="rowMsg" id="rowMsg_1"></div>
+    <div class="doneWrap"><button class="doneBtn" type="button" data-row="1">Done</button></div>
+  </div>
+
+  <div class="exercise" data-row="2">
+    <div class="exerciseLine">
+      <span>2)</span>
+      <span class="frac"><span class="top">2</span><span class="bottom">3</span></span>
+      <span>=</span>
+      <span class="frac"><span class="top">2 × 4</span><span class="bottom">3 × <input class="blankInput" data-answer="4" data-row="2"></span></span>
+    </div>
+    <div class="rowMsg" id="rowMsg_2"></div>
+    <div class="doneWrap"><button class="doneBtn" type="button" data-row="2">Done</button></div>
+  </div>
+
+  <div class="exercise" data-row="3">
+    <div class="exerciseLine">
+      <span>3)</span>
+      <span class="frac"><span class="top">2</span><span class="bottom">5</span></span>
+      <span>=</span>
+      <span class="frac"><span class="top">2 × <input class="blankInput" data-answer="2" data-row="3"></span><span class="bottom">10</span></span>
+    </div>
+    <div class="rowMsg" id="rowMsg_3"></div>
+    <div class="doneWrap"><button class="doneBtn" type="button" data-row="3">Done</button></div>
+  </div>
+</div>
+
+<div id="confetti" class="confetti"></div>
+
+<script>
+let audioCtx=null;
+function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()} if(audioCtx.state==="suspended") audioCtx.resume(); return audioCtx}
+function playTone(freq,type,start,duration,gainValue){const ctx=getAudio(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,start);gain.gain.setValueAtTime(0.0001,start);gain.gain.exponentialRampToValueAtTime(gainValue,start+0.02);gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);osc.connect(gain).connect(ctx.destination);osc.start(start);osc.stop(start+duration+0.03)}
+function playBad(){const t=getAudio().currentTime+0.01;playTone(220,"sawtooth",t,0.18,0.08);playTone(180,"sawtooth",t+0.12,0.20,0.08)}
+function playGood(){const t=getAudio().currentTime+0.01;playTone(523.25,"triangle",t,0.18,0.10);playTone(659.25,"triangle",t+0.12,0.20,0.10);playTone(783.99,"triangle",t+0.24,0.22,0.12)}
+function playWin(){const t=getAudio().currentTime+0.02;[523.25,659.25,783.99,1046.5,1318.51].forEach((f,i)=>playTone(f,"square",t+i*0.12,0.25,0.12))}
+function flash(kind){document.body.classList.remove("flash-bad","flash-win","flash-good");void document.body.offsetWidth;if(kind==="bad")document.body.classList.add("flash-bad");if(kind==="win")document.body.classList.add("flash-win");if(kind==="good")document.body.classList.add("flash-good")}
+function launchConfetti(){const container=document.getElementById("confetti");container.innerHTML="";const colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185","#38bdf8"];for(let i=0;i<160;i++){const piece=document.createElement("div");piece.className="piece";piece.style.left=Math.random()*100+"%";piece.style.background=colors[Math.floor(Math.random()*colors.length)];piece.style.animationDuration=(1.8+Math.random()*1.2)+"s";container.appendChild(piece)}setTimeout(()=>container.innerHTML="",3200)}
+function speakText(text){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const utter=new SpeechSynthesisUtterance(text);utter.rate=0.95;utter.pitch=1.0;window.speechSynthesis.speak(utter)}
+document.getElementById("speakIntro").addEventListener("click",()=>speakText("What are fractions? When you break your leg, you fracture it in two parts. Can you see the pattern? Fill in the pink boxes with the missing numbers."))
+function clearRowMessage(row){const rowMsg=document.getElementById("rowMsg_"+row);rowMsg.className="rowMsg";rowMsg.textContent=""}
+function maybeCelebrateWorksheet(){const remaining=document.querySelectorAll(".blankInput");if(remaining.length===0){const banner=document.getElementById("banner");const donate=document.getElementById("donateWrap");banner.style.display="block";donate.style.display="block";setTimeout(()=>{window.scrollTo({top:0,behavior:"smooth"});},80);setTimeout(()=>{banner.scrollIntoView({behavior:"smooth",block:"start"});},420);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");setTimeout(()=>flash("win"),500);setTimeout(()=>flash("win"),1000);setTimeout(()=>flash("win"),1500);launchConfetti();setTimeout(()=>launchConfetti(),900);setTimeout(()=>launchConfetti(),1800)}}
+function finishRow(row){
+  const inputs=[...document.querySelectorAll('.blankInput[data-row="'+row+'"]')];
+  let ok=true;
+  inputs.forEach(inp=>{
+    const ans=String(inp.dataset.answer).trim();
+    const val=String(inp.value).trim();
+    inp.classList.remove("ok","bad");
+    if(val===ans) inp.classList.add("ok");
+    else {inp.classList.add("bad"); ok=false;}
+  });
+  const rowMsg=document.getElementById("rowMsg_"+row);
+  if(ok){
+    inputs.forEach(inp=>{
+      const span=document.createElement("span");
+      span.className="answerText";
+      span.textContent=inp.dataset.answer;
+      inp.replaceWith(span);
+    });
+    rowMsg.className="rowMsg good";
+    rowMsg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';
+    const done=document.querySelector('.doneBtn[data-row="'+row+'"]');
+    if(done) done.parentElement.style.display="none";
+    playGood(); setTimeout(playGood,180); flash("good"); setTimeout(()=>flash("good"),180);
+    maybeCelebrateWorksheet();
+  }else{
+    rowMsg.className="rowMsg bad";
+    rowMsg.textContent="Some answers need fixing.";
+    playBad(); flash("bad");
+  }
+}
+document.querySelectorAll(".doneBtn").forEach(btn=>{btn.addEventListener("click",()=>finishRow(btn.dataset.row));});
+document.querySelectorAll(".blankInput").forEach(inp=>{
+  inp.addEventListener("focus",()=>{
+    if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}
+    clearRowMessage(inp.dataset.row);
+  });
+  inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();}});
+});
+</script>
+</body>
+</html>
