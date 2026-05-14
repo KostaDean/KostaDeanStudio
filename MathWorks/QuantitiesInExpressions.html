@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantities In An Expression Interactive</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f4f6fb;
+padding:20px;
+color:#1f2937;
+}
+.lesson{
+max-width:900px;
+margin:auto;
+background:white;
+border:3px solid #334155;
+border-radius:20px;
+padding:20px;
+}
+h1{
+text-align:center;
+font-size:38px;
+}
+.box{
+border:3px solid #334155;
+border-radius:16px;
+padding:16px;
+margin:20px 0;
+background:#ffffff;
+}
+.exercise{
+margin:20px 0;
+padding-top:15px;
+border-top:1px solid #ccc;
+font-size:24px;
+}
+input{
+width:140px;
+height:40px;
+font-size:22px;
+text-align:center;
+background:pink;
+border:3px solid purple;
+border-radius:10px;
+}
+button{
+padding:8px 16px;
+font-size:20px;
+border-radius:10px;
+margin-left:10px;
+}
+.correct{
+background:#bbf7d0 !important;
+}
+</style>
+</head>
+<body>
+<div class="lesson">
+
+<h1>QUANTITIES IN AN EXPRESSION</h1>
+
+<div class="box">
+<p><b>A quantity</b> is a numerical value.</p>
+
+<p>An expression using numbers, variables, operation signs (+, −, ×, ÷), and grouping symbols such as ( ), [ ], and { } is a quantity that has form and can be calculated.</p>
+
+<p>An expression contains other quantities. Learning to see the quantities in an expression is very important.</p>
+</div>
+
+<div class="box">
+<h2>Example</h2>
+
+<p>What are the quantities in the expression</p>
+
+<p style="font-size:30px;text-align:center;">
+((a+1)[4+2(b+c)])
+<br>
+—————————————
+<br>
+3(b+5d)
+</p>
+
+<p>The following are quantities inside the expression:</p>
+
+<ul style="font-size:22px;line-height:1.8;">
+<li>(a + 1)</li>
+<li>4 + 2(b + c)</li>
+<li>(b + c)</li>
+<li>(b + 5d)</li>
+<li>3(b + 5d)</li>
+</ul>
+</div>
+
+<div class="box">
+<h2>Quantities NOT in this expression</h2>
+
+<p>These may look like quantities, but they are <b>not</b> quantities in this expression because they do not appear as complete parts of the expression as written:</p>
+
+<ul style="font-size:22px;line-height:1.8;">
+<li><b>4 + 2b</b> is <b>not</b> a quantity in this expression.</li>
+<li><b>(a + 1) / 3b</b> is <b>not</b> a quantity in this expression.</li>
+<li><b>2(b + c) / 3(b + 5d)</b> is <b>not</b> a quantity in this expression.</li>
+</ul>
+
+<p><b>Important:</b> A quantity must be a complete part of the expression as it is written, not just pieces taken from different places.</p>
+</div>
+
+<div class="box">
+<h2>Important idea</h2>
+
+<p>A quantity is something that can be treated as one value inside a larger expression.</p>
+
+<p>Expressions are built from smaller quantities.</p>
+</div>
+
+<h2>Exercises: Fill in the pink boxes</h2>
+
+<div class="exercise">
+1) A quantity is a numerical
+<input id="a1">
+<button onclick="check('a1','value')">Done</button>
+</div>
+
+<div class="exercise">
+2) Expressions contain smaller
+<input id="a2">
+<button onclick="check('a2','quantities')">Done</button>
+</div>
+
+<div class="exercise">
+3) In 2(b+c), the grouped quantity is
+<input id="a3">
+<button onclick="checkMulti('a3',['b+c','b + c'])">Done</button>
+</div>
+
+<div class="exercise">
+4) In 3(b+5d), the grouped quantity is
+<input id="a4">
+<button onclick="checkMulti('a4',['b+5d','b + 5d'])">Done</button>
+</div>
+
+<div class="exercise">
+5) Grouping symbols include ( ), [ ], and
+<input id="a5">
+<button onclick="checkMulti('a5',['{}','{ }'])">Done</button>
+</div>
+
+</div>
+
+<script>
+function normalize(s){
+return s.toLowerCase().replace(/\s+/g,'');
+}
+
+function check(id,ans){
+let x=document.getElementById(id);
+if(normalize(x.value)==normalize(ans)){
+x.classList.add('correct');
+celebrate();
+}
+}
+
+function checkMulti(id,list){
+let x=document.getElementById(id);
+let v=normalize(x.value);
+for(let i=0;i<list.length;i++){
+if(v==normalize(list[i])){
+x.classList.add('correct');
+celebrate();
+}
+}
+}
+
+function celebrate(){
+if(document.querySelectorAll('.correct').length===5){
+alert('🎉 YOU ARE A WINNER! 🎺');
+}
+}
+</script>
+
+</body>
+</html>
