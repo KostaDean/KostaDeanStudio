@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Signed Numbers Multiplication Interactive</title>
+<style>
+:root{--bg:#f6f7fb;--ink:#1f2937;--line:#334155;--pink:#f9a8d4;--pinkline:#c026d3;--ok:#bbf7d0;--bad:#fecaca;--accent:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.lesson{max-width:900px;margin:0 auto;background:white;border:2px solid var(--line);border-radius:20px;padding:18px;overflow:hidden}
+h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}
+h2{font-size:26px;margin:22px 0 10px}
+p{font-size:20px;line-height:1.45}
+.row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.speakBtn{padding:6px 10px;font-size:18px;border:2px solid var(--line);border-radius:10px;background:white}
+.ruleBox{border:3px solid var(--line);border-radius:14px;padding:12px;margin:16px 0;background:#fff}
+.eqLine,.exLine{font-size:24px;line-height:1.8;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.exLine{justify-content:flex-start}.exNum{display:inline-block;width:55px}.exExpr{margin-left:70px;display:inline-flex;align-items:center;gap:8px}
+.pos{color:#15803d;font-weight:800}.neg{color:#dc2626;font-weight:800}
+.vectorPair{display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap;margin:12px 0}
+.vectorCard{border:3px solid var(--line);border-radius:14px;background:#f8fafc;padding:10px;text-align:center;min-width:260px}
+.vectorCard svg{width:260px;height:88px;max-width:100%}
+.signTable{border-collapse:collapse;margin:14px auto;font-size:22px}
+.signTable td,.signTable th{border:2px solid var(--line);padding:9px 12px;text-align:center}
+.signTable th{background:#f8fafc}
+.blankInput{width:76px;height:38px;padding:0 3px;border:2px solid var(--pinkline);border-radius:8px;background:var(--pink);text-align:center;font-size:22px}
+.blankInput.ok{background:var(--ok)!important;border-color:#15803d}
+.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.answerText{display:inline-block;min-width:54px;text-align:center;font-weight:700;color:#166534}
+.ex{margin:18px 0 24px;border-top:1px solid #e5e7eb;padding-top:14px}
+.doneWrap{text-align:right;margin-top:8px;padding-right:30px}
+.doneBtn{padding:8px 14px;border:2px solid var(--line);border-radius:12px;background:white;font-size:18px;font-weight:700}
+.rowMsg{font-size:26px;font-weight:800;margin:6px 0;display:none;text-align:right}
+.rowMsg.bad{display:block;color:#991b1b}
+.rowMsg.good{display:block;color:var(--accent)}
+.banner{display:none;margin:14px 0 16px;padding:16px;text-align:center;font-size:36px;font-weight:800;border:3px solid #92400e;border-radius:16px;background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)}
+.donateWrap{display:none;text-align:center;margin:10px 0 18px}
+.donateText{font-size:20px;font-weight:700;margin-bottom:8px}
+.donateBtn{display:inline-block;padding:12px 18px;border:2px solid #92400e;border-radius:14px;background:#f59e0b;color:#111827;font-weight:700;text-decoration:none}
+.confetti{position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:999}
+.piece{position:absolute;width:12px;height:12px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.flash-bad{animation:flashBad .35s ease}.flash-win{animation:flashWin .7s ease 5}.flash-good{animation:flashGood .45s ease}
+@keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}
+@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
+@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
+@media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:68px}.signTable{font-size:18px}.signTable td,.signTable th{padding:7px}}
+</style>
+</head>
+<body>
+<div class="lesson">
+<div class="banner" id="banner">YOU ARE A WINNER!</div>
+<div id="donateWrap" class="donateWrap"><div class="donateText">Please support this work:</div><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a></div>
+
+<h1>Signed Numbers Multiplication</h1>
+
+<div class="row">
+<button class="speakBtn" id="speakIntro" type="button">🔊</button>
+<p style="margin:0"><b>Important:</b> The negative of a number is that number in the <b>opposite direction</b>.</p>
+</div>
+
+<div class="ruleBox">
+<h2>The negative means “opposite”</h2>
+<p>The negative of <span class="pos">(+4)</span> is <span class="neg">(−4)</span>. The negative of <span class="neg">(−5)</span> is <span class="pos">(+5)</span>.</p>
+
+<div class="vectorPair">
+<div class="vectorCard">
+<svg viewBox="0 0 260 88">
+<line x1="40" y1="34" x2="200" y2="34" stroke="#15803d" stroke-width="6" stroke-linecap="round"/><polyline points="188,24 200,34 188,44" fill="none" stroke="#15803d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="40" y1="18" x2="40" y2="50" stroke="#334155" stroke-width="5"/>
+<line x1="80" y1="21" x2="80" y2="47" stroke="#15803d" stroke-width="4"/><line x1="120" y1="21" x2="120" y2="47" stroke="#15803d" stroke-width="4"/><line x1="160" y1="21" x2="160" y2="47" stroke="#15803d" stroke-width="4"/><line x1="200" y1="21" x2="200" y2="47" stroke="#15803d" stroke-width="4"/>
+<text x="120" y="78" text-anchor="middle" font-size="18" fill="#15803d" font-weight="800">(+4)</text>
+</svg>
+</div>
+<div class="vectorCard">
+<svg viewBox="0 0 260 88">
+<line x1="200" y1="34" x2="40" y2="34" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/><polyline points="52,24 40,34 52,44" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="200" y1="18" x2="200" y2="50" stroke="#334155" stroke-width="5"/>
+<line x1="160" y1="21" x2="160" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="120" y1="21" x2="120" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="80" y1="21" x2="80" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="40" y1="21" x2="40" y2="47" stroke="#dc2626" stroke-width="4"/>
+<text x="120" y="78" text-anchor="middle" font-size="18" fill="#dc2626" font-weight="800">−(+4) = (−4)</text>
+</svg>
+</div>
+</div>
+
+<div class="vectorPair">
+<div class="vectorCard">
+<svg viewBox="0 0 260 88">
+<line x1="210" y1="34" x2="30" y2="34" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/><polyline points="42,24 30,34 42,44" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="210" y1="18" x2="210" y2="50" stroke="#334155" stroke-width="5"/>
+<line x1="174" y1="21" x2="174" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="138" y1="21" x2="138" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="102" y1="21" x2="102" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="66" y1="21" x2="66" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="30" y1="21" x2="30" y2="47" stroke="#dc2626" stroke-width="4"/>
+<text x="120" y="78" text-anchor="middle" font-size="18" fill="#dc2626" font-weight="800">(−5)</text>
+</svg>
+</div>
+<div class="vectorCard">
+<svg viewBox="0 0 260 88">
+<line x1="30" y1="34" x2="210" y2="34" stroke="#15803d" stroke-width="6" stroke-linecap="round"/><polyline points="198,24 210,34 198,44" fill="none" stroke="#15803d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="30" y1="18" x2="30" y2="50" stroke="#334155" stroke-width="5"/>
+<line x1="66" y1="21" x2="66" y2="47" stroke="#15803d" stroke-width="4"/><line x1="102" y1="21" x2="102" y2="47" stroke="#15803d" stroke-width="4"/><line x1="138" y1="21" x2="138" y2="47" stroke="#15803d" stroke-width="4"/><line x1="174" y1="21" x2="174" y2="47" stroke="#15803d" stroke-width="4"/><line x1="210" y1="21" x2="210" y2="47" stroke="#15803d" stroke-width="4"/>
+<text x="120" y="78" text-anchor="middle" font-size="18" fill="#15803d" font-weight="800">−(−5) = (+5)</text>
+</svg>
+</div>
+</div>
+</div>
+
+<div class="ruleBox">
+<h2>Multiplying by −1</h2>
+<p>To multiply by <b>(−1)</b> is to take the <b>opposite</b> of the number.</p>
+<div class="eqLine">(−1) × (+4) = (−4)</div>
+<div class="eqLine">(−1) × (−5) = −(−5) = (+5)</div>
+<p>Often we do not write the multiplication sign ×, but write the numbers next to each other.</p>
+<div class="eqLine">(−2)(+4) means (−2) × (+4)</div>
+</div>
+
+<div class="ruleBox">
+<h2>Multiplying two signed numbers</h2>
+<p><b>Rule:</b> Multiplying two numbers with the <b>same sign</b> is positive. Multiplying two numbers with <b>different signs</b> is negative.</p>
+<table class="signTable">
+<tr><th>Signs</th><th>Result sign</th><th>Example</th></tr>
+<tr><td>(+)(+)</td><td class="pos">positive</td><td>(+2)(+4) = (+8)</td></tr>
+<tr><td>(−)(−)</td><td class="pos">positive</td><td>(−2)(−4) = (+8)</td></tr>
+<tr><td>(−)(+)</td><td class="neg">negative</td><td>(−2)(+4) = (−8)</td></tr>
+<tr><td>(+)(−)</td><td class="neg">negative</td><td>(+2)(−4) = (−8)</td></tr>
+</table>
+</div>
+
+<h2>Exercises: Fill in the pink boxes</h2>
+<div class="ex"><div class="exLine"><span class="exNum">1)</span><span class="exExpr">−(+6) = <input class="blankInput" data-answer="-6" data-alt="(−6)" data-row="1"></span></div><div class="rowMsg" id="rowMsg_1"></div><div class="doneWrap"><button class="doneBtn" data-row="1">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">2)</span><span class="exExpr">−(−7) = <input class="blankInput" data-answer="+7" data-alt="(+7)" data-row="2"></span></div><div class="rowMsg" id="rowMsg_2"></div><div class="doneWrap"><button class="doneBtn" data-row="2">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">3)</span><span class="exExpr">(−1)(+9) = <input class="blankInput" data-answer="-9" data-alt="(−9)" data-row="3"></span></div><div class="rowMsg" id="rowMsg_3"></div><div class="doneWrap"><button class="doneBtn" data-row="3">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">4)</span><span class="exExpr">(−1)(−8) = <input class="blankInput" data-answer="+8" data-alt="(+8)" data-row="4"></span></div><div class="rowMsg" id="rowMsg_4"></div><div class="doneWrap"><button class="doneBtn" data-row="4">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">5)</span><span class="exExpr">(−3)(+4) = <input class="blankInput" data-answer="-12" data-alt="(−12)" data-row="5"></span></div><div class="rowMsg" id="rowMsg_5"></div><div class="doneWrap"><button class="doneBtn" data-row="5">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">6)</span><span class="exExpr">(−3)(−4) = <input class="blankInput" data-answer="+12" data-alt="(+12)" data-row="6"></span></div><div class="rowMsg" id="rowMsg_6"></div><div class="doneWrap"><button class="doneBtn" data-row="6">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">7)</span><span class="exExpr">(+5)(−6) = <input class="blankInput" data-answer="-30" data-alt="(−30)" data-row="7"></span></div><div class="rowMsg" id="rowMsg_7"></div><div class="doneWrap"><button class="doneBtn" data-row="7">Done</button></div></div>
+
+</div>
+<div id="confetti" class="confetti"></div>
+<script>
+let audioCtx=null;
+function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()}if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function playTone(f,t,s,d,g){const c=getAudio(),o=c.createOscillator(),x=c.createGain();o.type=t;o.frequency.setValueAtTime(f,s);x.gain.setValueAtTime(.0001,s);x.gain.exponentialRampToValueAtTime(g,s+.02);x.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(x).connect(c.destination);o.start(s);o.stop(s+d+.03)}
+function playBad(){const t=getAudio().currentTime+.01;playTone(220,"sawtooth",t,.18,.08);playTone(180,"sawtooth",t+.12,.2,.08)}
+function playGood(){const t=getAudio().currentTime+.01;playTone(523.25,"triangle",t,.18,.1);playTone(659.25,"triangle",t+.12,.2,.1);playTone(783.99,"triangle",t+.24,.22,.12)}
+function playWin(){const t=getAudio().currentTime+.02;[523.25,659.25,783.99,1046.5,1318.51].forEach((f,i)=>playTone(f,"square",t+i*.12,.25,.12))}
+function flash(k){document.body.classList.remove("flash-bad","flash-win","flash-good");void document.body.offsetWidth;document.body.classList.add("flash-"+k)}
+function launchConfetti(){const c=document.getElementById("confetti");c.innerHTML="";const colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185","#38bdf8"];for(let i=0;i<160;i++){const p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.8+Math.random()*1.2)+"s";c.appendChild(p)}setTimeout(()=>c.innerHTML="",3200)}
+function speakText(t){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.95;window.speechSynthesis.speak(u)}
+document.getElementById("speakIntro").addEventListener("click",()=>speakText("Signed numbers multiplication. The negative of a number is the number in the opposite direction. Multiplying by negative one takes the opposite. Same signs give a positive answer. Different signs give a negative answer."))
+function norm(s){
+  return String(s).trim().toLowerCase()
+    .replace("−","-")
+    .replace(/[()]/g,"")
+    .replace(/\s+/g,"");
+}
+function answerSet(inp){
+  const raw = [inp.dataset.answer || "", inp.dataset.alt || ""];
+  const set = new Set();
+  raw.forEach(a => {
+    const n = norm(a);
+    if(!n) return;
+    set.add(n);
+    if(n.startsWith("+")) set.add(n.slice(1));     // +8 or 8
+    if(/^\d+(\.\d+)?$/.test(n)) set.add("+"+n);    // 8 or +8
+    if(n === "positive" || n === "pos" || n === "+"){
+      set.add("positive"); set.add("pos"); set.add("+");
+    }
+    if(n === "negative" || n === "neg" || n === "-"){
+      set.add("negative"); set.add("neg"); set.add("-");
+    }
+  });
+  return set;
+}
+function clearRowMessage(r){const m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
+function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),80);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");launchConfetti();setTimeout(launchConfetti,900);setTimeout(launchConfetti,1800)}}
+function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];let ok=true;inputs.forEach(inp=>{const val=norm(inp.value), allowed=answerSet(inp);inp.classList.remove("ok","bad");if(allowed.has(val)){inp.classList.add("ok")}else{inp.classList.add("bad");ok=false}});const msg=document.getElementById("rowMsg_"+r);if(ok){inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=inp.dataset.answer;inp.replaceWith(s)});msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";playGood();flash("good");maybeCelebrateWorksheet()}else{msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";playBad();flash("bad")}}
+document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
+document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
+</script>
+</body>
+</html>

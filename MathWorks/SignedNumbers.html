@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Signed Numbers Interactive</title>
+<style>
+:root{--bg:#f6f7fb;--ink:#1f2937;--line:#334155;--sub:#64748b;--pink:#f9a8d4;--pinkline:#c026d3;--ok:#bbf7d0;--bad:#fecaca;--accent:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.lesson{max-width:900px;margin:0 auto;background:white;border:2px solid var(--line);border-radius:20px;padding:18px}
+h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}
+h2{font-size:26px;margin:22px 0 10px}
+p{font-size:20px;line-height:1.45}
+.row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.speakBtn{padding:6px 10px;font-size:18px;border:2px solid var(--line);border-radius:10px;background:white}
+.ruleBox{border:3px solid var(--line);border-radius:14px;padding:12px;margin:16px 0;background:#fff}
+.numberLineWrap{overflow-x:auto;margin:16px 0}
+.numberLine{position:relative;width:780px;height:128px;margin:0 auto}
+.axis{position:absolute;left:30px;right:30px;top:58px;border-top:5px solid var(--line)}
+.arrowR{position:absolute;right:19px;top:47px;font-size:32px;font-weight:900;color:var(--line)}
+.tick{position:absolute;top:45px;height:28px;border-left:4px solid var(--line)}
+.zeroTick{height:38px;top:40px;border-left:6px solid #dc2626}
+.numLabel{position:absolute;top:82px;transform:translateX(-50%);font-size:16px;font-weight:700}
+.zeroLabel{color:#dc2626;font-size:20px}
+.rightBand{position:absolute;left:390px;right:30px;top:44px;height:28px;background:#dcfce7;border:2px solid #22c55e;border-radius:8px;opacity:.55}
+.leftBand{position:absolute;left:30px;width:360px;top:44px;height:28px;background:#fee2e2;border:2px solid #ef4444;border-radius:8px;opacity:.45}
+.moveDemo{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.card{border:3px solid var(--line);border-radius:12px;padding:10px 14px;background:#f8fafc;font-size:24px;font-weight:800;text-align:center}
+.vectorRow{display:flex;gap:22px;align-items:stretch;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.vectorCard{border:3px solid var(--line);border-radius:14px;padding:14px;background:#f8fafc;min-width:280px;text-align:center}
+.vectorCard svg{width:260px;height:90px;max-width:100%}
+.vecLabel{font-size:28px;font-weight:900;margin:4px 0}
+.unitNote{font-size:16px;color:#475569;margin:0 0 6px}
+.pos{color:#15803d;font-weight:800}
+.neg{color:#dc2626;font-weight:800}
+.ex{margin:18px 0 24px;border-top:1px solid #e5e7eb;padding-top:14px}
+.exLine{font-size:24px;line-height:1.8;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.blankInput{width:76px;height:38px;padding:0 3px;border:2px solid var(--pinkline);border-radius:8px;background:var(--pink);text-align:center;font-size:22px}
+.blankInput.wide{width:95px}
+.blankInput.ok{background:var(--ok)!important;border-color:#15803d}
+.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.answerText{display:inline-block;min-width:54px;text-align:center;font-weight:700;color:#166534}
+.doneWrap{text-align:right;margin-top:8px}
+.doneBtn{padding:8px 14px;border:2px solid var(--line);border-radius:12px;background:white;font-size:18px;font-weight:700}
+.rowMsg{font-size:26px;font-weight:800;margin:6px 0;display:none;text-align:right}
+.rowMsg.bad{display:block;color:#991b1b}
+.rowMsg.good{display:block;color:var(--accent)}
+.banner{display:none;margin:14px 0 16px;padding:16px;text-align:center;font-size:36px;font-weight:800;border:3px solid #92400e;border-radius:16px;background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)}
+.donateWrap{display:none;text-align:center;margin:10px 0 18px}
+.donateText{font-size:20px;font-weight:700;margin-bottom:8px}
+.donateBtn{display:inline-block;padding:12px 18px;border:2px solid #92400e;border-radius:14px;background:#f59e0b;color:#111827;font-weight:700;text-decoration:none}
+.confetti{position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:999}
+.piece{position:absolute;width:12px;height:12px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.flash-bad{animation:flashBad .35s ease}.flash-win{animation:flashWin .7s ease 5}.flash-good{animation:flashGood .45s ease}
+@keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}
+@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
+@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
+@media(max-width:700px){h1{font-size:30px}.exLine{font-size:21px}.numberLine{width:720px}.blankInput{width:68px}}
+</style>
+</head>
+<body>
+<div class="lesson">
+<div class="banner" id="banner">YOU ARE A WINNER!</div>
+<div id="donateWrap" class="donateWrap"><div class="donateText">Please support this work:</div><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a></div>
+
+<h1>Signed Numbers</h1>
+
+<div class="row">
+<button class="speakBtn" id="speakIntro" type="button">🔊</button>
+<p style="margin:0">On the number line, moving to the right is positive <b>(+)</b>. Moving to the left is negative <b>(−)</b>.</p>
+</div>
+
+<div class="ruleBox">
+<h2>Positive and negative numbers</h2>
+<p>A number to the <b>right of 0</b> is a <span class="pos">positive number</span>. A number to the <b>left of 0</b> is a <span class="neg">negative number</span>.</p>
+
+<div class="numberLineWrap">
+<div class="numberLine" id="mainLine">
+<div class="leftBand"></div><div class="rightBand"></div><div class="axis"></div><div class="arrowR">→</div>
+</div>
+</div>
+
+<p>We use parentheses to include the sign of the number: <b>(−5)</b>, <b>(−1)</b>, <b>(+3)</b>, <b>(+6)</b>.</p>
+</div>
+
+<div class="ruleBox">
+<h2>Greater and less</h2>
+<p><b>Rule:</b> On the number line, if a number is to the right of another number it is greater <b>(&gt;)</b>; if it is to the left it is lesser <b>(&lt;)</b>.</p>
+<div class="moveDemo">
+<div class="card">(−10) &lt; (+2)</div>
+<div class="card">(−1) &gt; (−100)</div>
+</div>
+</div>
+
+<div class="ruleBox">
+<h2>Signed numbers as arrows</h2>
+<p>A signed number can be shown as an <b>arrow</b>. The sign tells the direction. The number tells the magnitude, or how long the arrow is.</p>
+
+<div class="vectorRow">
+  <div class="vectorCard">
+    <svg viewBox="0 0 260 90" aria-label="positive three vector">
+      <!-- pure vector: 3 equal unit intervals, small arrow showing right direction -->
+      <line x1="50" y1="42" x2="170" y2="42" stroke="#15803d" stroke-width="6" stroke-linecap="round"/>
+      <polyline points="158,32 170,42 158,52" fill="none" stroke="#15803d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="50" y1="25" x2="50" y2="59" stroke="#334155" stroke-width="5"/>
+      <line x1="90" y1="27" x2="90" y2="57" stroke="#15803d" stroke-width="5"/>
+      <line x1="130" y1="27" x2="130" y2="57" stroke="#15803d" stroke-width="5"/>
+      <line x1="170" y1="27" x2="170" y2="57" stroke="#15803d" stroke-width="5"/>
+      <text x="110" y="82" text-anchor="middle" font-size="15" fill="#475569">3 equal unit lengths</text>
+    </svg>
+    <div class="vecLabel pos">(+3)</div>
+    <p style="margin:6px 0 0;font-size:18px">An arrow 3 units to the right</p>
+  </div>
+
+  <div class="vectorCard">
+    <svg viewBox="0 0 260 90" aria-label="negative five vector">
+      <!-- pure vector: 5 equal unit intervals, small arrow showing left direction -->
+      <line x1="230" y1="42" x2="30" y2="42" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>
+      <polyline points="42,32 30,42 42,52" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="230" y1="25" x2="230" y2="59" stroke="#334155" stroke-width="5"/>
+      <line x1="190" y1="27" x2="190" y2="57" stroke="#dc2626" stroke-width="5"/>
+      <line x1="150" y1="27" x2="150" y2="57" stroke="#dc2626" stroke-width="5"/>
+      <line x1="110" y1="27" x2="110" y2="57" stroke="#dc2626" stroke-width="5"/>
+      <line x1="70" y1="27" x2="70" y2="57" stroke="#dc2626" stroke-width="5"/>
+      <line x1="30" y1="27" x2="30" y2="57" stroke="#dc2626" stroke-width="5"/>
+      <text x="130" y="82" text-anchor="middle" font-size="15" fill="#475569">5 equal unit lengths</text>
+    </svg>
+    <div class="vecLabel neg">(−5)</div>
+    <p style="margin:6px 0 0;font-size:18px">An arrow 5 units to the left</p>
+  </div>
+</div>
+
+<p>The dark mark shows where the vector begins. The small arrow shows direction. The last mark shows the magnitude.</p>
+</div>
+
+<h2>Exercises: Fill in the pink boxes</h2>
+
+<div class="ex"><div class="exLine">1) A number to the right of 0 is <input class="blankInput wide" data-answer="positive" data-row="1">.</div><div class="rowMsg" id="rowMsg_1"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="1">Done</button></div></div>
+
+<div class="ex"><div class="exLine">2) A number to the left of 0 is <input class="blankInput wide" data-answer="negative" data-row="2">.</div><div class="rowMsg" id="rowMsg_2"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="2">Done</button></div></div>
+
+<div class="ex"><div class="exLine">3) Which is greater? (−3) or (+2): <input class="blankInput" data-answer="+2" data-alt="(+2)" data-row="3"></div><div class="rowMsg" id="rowMsg_3"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="3">Done</button></div></div>
+
+<div class="ex"><div class="exLine">4) Fill in the sign: (−10) <input class="blankInput" data-answer="<" data-row="4"> (+2)</div><div class="rowMsg" id="rowMsg_4"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="4">Done</button></div></div>
+
+<div class="ex"><div class="exLine">5) Fill in the sign: (−1) <input class="blankInput" data-answer=">" data-row="5"> (−100)</div><div class="rowMsg" id="rowMsg_5"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="5">Done</button></div></div>
+
+<div class="ex"><div class="exLine">6) Moving left on the number line means moving in the <input class="blankInput wide" data-answer="negative" data-row="6"> direction.</div><div class="rowMsg" id="rowMsg_6"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="6">Done</button></div></div>
+
+<div class="ex"><div class="exLine">7) The signed number (+4) is an arrow 4 units to the <input class="blankInput wide" data-answer="right" data-row="7">.</div><div class="rowMsg" id="rowMsg_7"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="7">Done</button></div></div>
+
+<div class="ex"><div class="exLine">8) The signed number (−6) is an arrow 6 units to the <input class="blankInput wide" data-answer="left" data-row="8">.</div><div class="rowMsg" id="rowMsg_8"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="8">Done</button></div></div>
+
+</div>
+<div id="confetti" class="confetti"></div>
+
+<script>
+(function buildLine(){
+ const line=document.getElementById("mainLine");
+ const min=-7,max=7,start=45,end=705,w=end-start;
+ for(let n=min;n<=max;n++){
+   const x=start+(n-min)/(max-min)*w;
+   const tick=document.createElement("div");
+   tick.className="tick"+(n===0?" zeroTick":"");
+   tick.style.left=x+"px";
+   line.appendChild(tick);
+   const lab=document.createElement("div");
+   lab.className="numLabel"+(n===0?" zeroLabel":"");
+   lab.style.left=x+"px";
+   lab.textContent=n>0?("+"+n):String(n);
+   line.appendChild(lab);
+ }
+})();
+let audioCtx=null;
+function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()}if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function playTone(f,t,s,d,g){const c=getAudio(),o=c.createOscillator(),x=c.createGain();o.type=t;o.frequency.setValueAtTime(f,s);x.gain.setValueAtTime(.0001,s);x.gain.exponentialRampToValueAtTime(g,s+.02);x.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(x).connect(c.destination);o.start(s);o.stop(s+d+.03)}
+function playBad(){const t=getAudio().currentTime+.01;playTone(220,"sawtooth",t,.18,.08);playTone(180,"sawtooth",t+.12,.2,.08)}
+function playGood(){const t=getAudio().currentTime+.01;playTone(523.25,"triangle",t,.18,.1);playTone(659.25,"triangle",t+.12,.2,.1);playTone(783.99,"triangle",t+.24,.22,.12)}
+function playWin(){const t=getAudio().currentTime+.02;[523.25,659.25,783.99,1046.5,1318.51].forEach((f,i)=>playTone(f,"square",t+i*.12,.25,.12))}
+function flash(k){document.body.classList.remove("flash-bad","flash-win","flash-good");void document.body.offsetWidth;document.body.classList.add("flash-"+k)}
+function launchConfetti(){const c=document.getElementById("confetti");c.innerHTML="";const colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185","#38bdf8"];for(let i=0;i<160;i++){const p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.8+Math.random()*1.2)+"s";c.appendChild(p)}setTimeout(()=>c.innerHTML="",3200)}
+function speakText(t){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.95;window.speechSynthesis.speak(u)}
+document.getElementById("speakIntro").addEventListener("click",()=>speakText("Signed numbers. Moving right is positive. Moving left is negative. A number to the right of another number is greater. A signed number can also be shown as an arrow. The sign tells direction and the number tells length."))
+function norm(s){return String(s).trim().toLowerCase().replace("−","-").replace(/\s+/g,"")}
+function clearRowMessage(r){const m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
+function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),80);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");launchConfetti();setTimeout(launchConfetti,900);setTimeout(launchConfetti,1800)}}
+function finishRow(r){
+ const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+ let ok=true;
+ inputs.forEach(inp=>{
+   const val=norm(inp.value), ans=norm(inp.dataset.answer), alt=norm(inp.dataset.alt||"");
+   inp.classList.remove("ok","bad");
+   if(val===ans || (alt && val===alt)){inp.classList.add("ok")} else {inp.classList.add("bad");ok=false}
+ });
+ const msg=document.getElementById("rowMsg_"+r);
+ if(ok){
+   inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=inp.dataset.answer;inp.replaceWith(s)});
+   msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';
+   const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";
+   playGood();flash("good");maybeCelebrateWorksheet();
+ }else{msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";playBad();flash("bad")}
+}
+document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
+document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
+</script>
+</body>
+</html>
