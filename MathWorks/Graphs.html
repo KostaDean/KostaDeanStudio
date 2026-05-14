@@ -1,0 +1,189 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Graphs Interactive</title><style>
+:root{--bg:#f6f7fb;--ink:#1f2937;--line:#334155;--pink:#f9a8d4;--pinkline:#c026d3;--ok:#bbf7d0;--bad:#fecaca;--accent:#7c3aed}
+*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.lesson{max-width:900px;margin:0 auto;background:white;border:2px solid var(--line);border-radius:20px;padding:18px;overflow:hidden}
+h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}h2{font-size:26px;margin:22px 0 10px}p{font-size:20px;line-height:1.45}.speakBtn{padding:6px 10px;font-size:18px;border:2px solid var(--line);border-radius:10px;background:white}
+.ruleBox{border:3px solid var(--line);border-radius:14px;padding:12px;margin:16px 0;background:#fff}.blueBox{background:#ecfeff;border:2px solid #06b6d4;border-radius:12px;padding:10px;margin:10px 0}.noteBox{background:#fff7ed;border:2px solid #fb923c;border-radius:12px;padding:10px;margin:10px 0}
+.eqLine,.exLine{font-size:24px;line-height:1.8;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.var{font-style:italic;font-weight:800;color:#2563eb}.green{color:#15803d;font-weight:800}.purple{color:#7c3aed;font-weight:800}.blue{color:#2563eb;font-weight:800}
+.graph{width:100%;max-width:680px;margin:12px auto;display:block;background:#f8fafc;border:2px solid #cbd5e1;border-radius:12px}
+.blankInput{width:90px;height:38px;padding:0 3px;border:2px solid var(--pinkline);border-radius:8px;background:var(--pink);text-align:center;font-size:22px}.blankInput.wide{width:150px}.blankInput.ok{background:var(--ok)!important;border-color:#15803d}.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.answerText{display:inline-block;min-width:54px;text-align:center;font-weight:700;color:#166534}.ex{margin:18px 0 24px;border-top:1px solid #e5e7eb;padding-top:14px}.exNum{display:inline-block;width:45px}.exExpr{margin-left:40px;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.doneWrap{text-align:right;margin-top:8px;padding-right:18px}.doneBtn{padding:8px 14px;border:2px solid var(--line);border-radius:12px;background:white;font-size:18px;font-weight:700}.rowMsg{font-size:26px;font-weight:800;margin:6px 0;display:none;text-align:right}.rowMsg.bad{display:block;color:#991b1b}.rowMsg.good{display:block;color:#7c3aed}
+.banner{display:none;margin:14px 0 16px;padding:16px;text-align:center;font-size:36px;font-weight:800;border:3px solid #92400e;border-radius:16px;background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)}.donateWrap{display:none;text-align:center;margin:10px 0 18px}.donateBtn{display:inline-block;padding:12px 18px;border:2px solid #92400e;border-radius:14px;background:#f59e0b;color:#111827;font-weight:700;text-decoration:none}
+@media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:78px}.blankInput.wide{width:125px}.exExpr{margin-left:25px}}
+
+.confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+.piece{position:absolute;width:12px;height:12px;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.winFlash{animation:winFlashAnim .65s ease 5}
+@keyframes winFlashAnim{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
+
+</style></head><body><div class="lesson">
+<div class="banner" id="banner">YOU ARE A WINNER!</div><div id="donateWrap" class="donateWrap"><b>Please support this work:</b><br><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank">Donate</a></div>
+<h1>Graphs</h1>
+<div class="eqLine"><button class="speakBtn" id="speakIntro" type="button">🔊</button><span>We can express the relationship between two variable quantities, often written as <span class="var">x</span> and <span class="var">y</span>, by drawing the <b>graph</b> of <span class="var">x</span> and <span class="var">y</span> on the coordinate plane.</span></div>
+
+<div class="ruleBox"><h2>Independent and dependent variables</h2>
+<p>Typically, we call <span class="var">x</span> the <b>independent variable</b> and <span class="var">y</span> the <b>dependent variable</b>.</p>
+<p>The point <b>(x, y)</b> is on the graph of x vs. y if the values of x and y are dependent according to the relationship being shown.</p>
+<div class="blueBox"><p>Using the graph, we can find the value of <span class="var">y</span> for a given value of <span class="var">x</span> by moving from <span class="var">x</span> to the graph and then horizontally to the y-axis.</p></div></div>
+
+<div class="ruleBox"><h2>Reading a graph</h2>
+<svg class="graph" viewBox="0 0 640 520" aria-label="reading a graph">
+<rect width="640" height="520" fill="#f8fafc"/><g stroke="#dbeafe" stroke-width="1.5"><path d="M80 40V460M140 40V460M200 40V460M260 40V460M320 40V460M380 40V460M440 40V460M500 40V460M560 40V460M80 40H560M80 100H560M80 160H560M80 220H560M80 280H560M80 340H560M80 400H560M80 460H560"/></g>
+<line x1="80" y1="340" x2="575" y2="340" stroke="#334155" stroke-width="5"/><polyline points="560,327 575,340 560,353" fill="none" stroke="#334155" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="320" y1="460" x2="320" y2="25" stroke="#334155" stroke-width="5"/><polyline points="307,40 320,25 333,40" fill="none" stroke="#334155" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="588" y="348" font-size="26" font-weight="800">x</text><text x="307" y="22" font-size="26" font-weight="800">y</text>
+<g font-size="18" fill="#1f2937" text-anchor="middle"><text x="200" y="366">−2</text><text x="260" y="366">−1</text><text x="320" y="366">0</text><text x="380" y="366">1</text><text x="440" y="366">2</text><text x="500" y="366">3</text><text x="302" y="285">1</text><text x="302" y="225">2</text><text x="302" y="165">3</text><text x="302" y="105">4</text></g>
+<path d="M110 438 C170 360 245 300 320 280 C375 260 410 235 440 200 C475 160 515 115 565 70" fill="none" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+<line x1="440" y1="340" x2="440" y2="200" stroke="#2563eb" stroke-width="5" stroke-dasharray="7 7"/><line x1="320" y1="200" x2="440" y2="200" stroke="#2563eb" stroke-width="5" stroke-dasharray="7 7"/>
+<circle cx="440" cy="200" r="11" fill="#7c3aed"/><text x="455" y="190" font-size="24" fill="#7c3aed" font-weight="800">P(x,y)</text><text x="440" y="374" font-size="22" fill="#2563eb" font-weight="800" text-anchor="middle">x = 2</text><text x="300" y="205" font-size="22" fill="#2563eb" font-weight="800" text-anchor="end">y</text>
+</svg>
+<p>Start at a given <span class="var">x</span>, move to the graph, then move horizontally to the y-axis to read the corresponding value of <span class="var">y</span>.</p></div>
+
+<div class="ruleBox"><h2>Examples of graph statements</h2><div class="noteBox">
+<p>For the graph above, we can read statements such as:</p><p>If <b>x ≥ −2</b>, then <b>y ≥ 0</b>.</p><p>If <b>x ≥ 0</b>, then <b>y ≥ 1</b>.</p><p>If <b>x ≤ −2</b>, then <b>y ≤ 0</b>.</p></div></div>
+
+<h2>Exercises: Fill in the pink boxes</h2>
+<div class="ex"><div class="exLine"><span class="exNum">1)</span><span class="exExpr">Usually, x is the <input class="blankInput wide" data-answer="independent" data-alt="independent variable" data-row="1"> variable.</span></div><div id="rowMsg_1" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="1">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">2)</span><span class="exExpr">Usually, y is the <input class="blankInput wide" data-answer="dependent" data-alt="dependent variable" data-row="2"> variable.</span></div><div id="rowMsg_2" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="2">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">3)</span><span class="exExpr">The point on a graph is written as (<input class="blankInput" data-answer="x" data-row="3">, <input class="blankInput" data-answer="y" data-row="3">).</span></div><div id="rowMsg_3" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="3">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">4)</span><span class="exExpr">To find y for a given x, move from x to the graph, then to the <input class="blankInput wide" data-answer="y-axis" data-alt="y axis" data-row="4">.</span></div><div id="rowMsg_4" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="4">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">5)</span><span class="exExpr">From the graph, if x ≥ 0, then y ≥ <input class="blankInput" data-answer="1" data-row="5">. This means y is at least <input class="blankInput" data-answer="1" data-row="5">.</span></div><div id="rowMsg_5" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="5">Done</button></div></div>
+</div>
+<div id="confetti" class="confetti"></div>
+
+<script>
+function norm(s){
+  return String(s).trim().toLowerCase()
+    .replace("−","-")
+    .replace(/[()]/g,"")
+    .replace(/\s+/g," ");
+}
+function answerSet(inp){
+  const raw=[inp.dataset.answer||"", inp.dataset.alt||""];
+  const set=new Set();
+  raw.forEach(a=>{
+    const n=norm(a);
+    if(!n) return;
+    set.add(n);
+    set.add(n.replace("-"," "));
+    set.add(n.replace("y axis","y-axis"));
+    if(n.startsWith("+")) set.add(n.slice(1));
+  });
+  return set;
+}
+function clearRowMessage(r){
+  const m=document.getElementById("rowMsg_"+r);
+  if(m){m.className="rowMsg";m.textContent="";}
+}
+function tone(freq,start,dur,type="square"){
+  try{
+    const ctx=window.__audioCtx || (window.__audioCtx=new (window.AudioContext||window.webkitAudioContext)());
+    if(ctx.state==="suspended") ctx.resume();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.type=type;
+    o.frequency.setValueAtTime(freq,ctx.currentTime+start);
+    g.gain.setValueAtTime(0.001,ctx.currentTime+start);
+    g.gain.exponentialRampToValueAtTime(0.16,ctx.currentTime+start+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);
+    o.connect(g).connect(ctx.destination);
+    o.start(ctx.currentTime+start);
+    o.stop(ctx.currentTime+start+dur+0.05);
+  }catch(e){}
+}
+function playGood(){
+  tone(523,0,.15,"triangle"); tone(659,.12,.18,"triangle"); tone(784,.25,.20,"triangle");
+}
+function playBad(){
+  tone(220,0,.18,"sawtooth"); tone(180,.13,.20,"sawtooth");
+}
+function playTrumpets(){
+  [523,659,784,1046,1318].forEach((f,i)=>tone(f,i*.13,.28,"square"));
+  setTimeout(()=>[784,1046,1318].forEach((f,i)=>tone(f,i*.15,.34,"square")),650);
+}
+function launchConfetti(){
+  const c=document.getElementById("confetti");
+  if(!c) return;
+  c.innerHTML="";
+  const colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185","#38bdf8"];
+  for(let i=0;i<170;i++){
+    const p=document.createElement("div");
+    p.className="piece";
+    p.style.left=(Math.random()*100)+"%";
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration=(1.7+Math.random()*1.4)+"s";
+    p.style.animationDelay=(Math.random()*0.3)+"s";
+    c.appendChild(p);
+  }
+  setTimeout(()=>{c.innerHTML=""},3500);
+}
+function celebrateWorksheet(){
+  const banner=document.getElementById("banner");
+  const donate=document.getElementById("donateWrap");
+  if(banner) banner.style.display="block";
+  if(donate) donate.style.display="block";
+  document.body.classList.remove("winFlash");
+  void document.body.offsetWidth;
+  document.body.classList.add("winFlash");
+  playTrumpets();
+  launchConfetti();
+  setTimeout(launchConfetti,900);
+  setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),100);
+}
+function maybeCelebrateWorksheet(){
+  if(document.querySelectorAll(".blankInput").length===0){
+    celebrateWorksheet();
+  }
+}
+function finishRow(r){
+  const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+  let ok=true;
+  inputs.forEach(inp=>{
+    const val=norm(inp.value);
+    const allowed=answerSet(inp);
+    inp.classList.remove("ok","bad");
+    if(allowed.has(val)){inp.classList.add("ok");}
+    else{inp.classList.add("bad");ok=false;}
+  });
+  const msg=document.getElementById("rowMsg_"+r);
+  if(ok){
+    inputs.forEach(inp=>{
+      const s=document.createElement("span");
+      s.className="answerText";
+      s.textContent=inp.dataset.answer;
+      inp.replaceWith(s);
+    });
+    if(msg){msg.className="rowMsg good";msg.innerHTML="✨ <span style='color:#7c3aed'>You are so correct!</span> ✨";}
+    const done=document.querySelector('.doneBtn[data-row="'+r+'"]');
+    if(done) done.parentElement.style.display="none";
+    playGood();
+    maybeCelebrateWorksheet();
+  }else{
+    if(msg){msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";}
+    playBad();
+  }
+}
+function speakText(t){
+  if(!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.rate=.95;
+  window.speechSynthesis.speak(u);
+}
+const speakButton=document.getElementById("speakIntro");
+if(speakButton){
+  speakButton.addEventListener("click",()=>speakText("Graphs. We can express the relationship between two variable quantities, x and y, by drawing the graph of x and y on the coordinate plane. Usually x is the independent variable, and y is the dependent variable. To find y for a given x, start at x, move to the graph, then move horizontally to the y axis."));
+}
+document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
+document.querySelectorAll(".blankInput").forEach(inp=>{
+  inp.addEventListener("focus",()=>{
+    if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad");}
+    clearRowMessage(inp.dataset.row);
+  });
+  inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter") e.preventDefault();});
+});
+</script>
+</body></html>
