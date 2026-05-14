@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathWorks Interactive Lessons</title>
+  <style>
+    :root{
+      --bg1:#f7fbff;
+      --bg2:#eef7ff;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#5d6b82;
+      --accent:#2563eb;
+      --accent2:#f59e0b;
+      --good:#16a34a;
+      --shadow:0 12px 32px rgba(20,40,80,.14);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #fff7d6, transparent 32%),
+                  linear-gradient(135deg,var(--bg1),var(--bg2));
+      color:var(--ink);
+      min-height:100vh;
+    }
+
+    header{
+      padding:28px 18px 16px;
+      text-align:center;
+    }
+
+    .brand{
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:999px;
+      background:#fff;
+      color:var(--accent);
+      font-weight:800;
+      box-shadow:0 4px 14px rgba(0,0,0,.08);
+      margin-bottom:12px;
+    }
+
+    h1{
+      font-size:clamp(2rem,7vw,4rem);
+      margin:8px 0 8px;
+      line-height:1.05;
+    }
+
+    .subtitle{
+      max-width:760px;
+      margin:0 auto;
+      font-size:clamp(1rem,3.8vw,1.3rem);
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .notice{
+      max-width:820px;
+      margin:18px auto 0;
+      background:#fff8db;
+      border:2px solid #facc15;
+      border-radius:18px;
+      padding:13px 16px;
+      font-weight:650;
+      color:#6b4e00;
+    }
+
+    main{
+      width:min(1100px,94vw);
+      margin:18px auto 48px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin:18px 0;
+      background:rgba(255,255,255,.76);
+      backdrop-filter:blur(10px);
+      padding:14px;
+      border-radius:20px;
+      box-shadow:0 8px 24px rgba(0,0,0,.08);
+    }
+
+    .search{
+      flex:1 1 260px;
+      border:2px solid #dbeafe;
+      border-radius:16px;
+      padding:14px 16px;
+      font-size:1.05rem;
+      outline:none;
+    }
+
+    .search:focus{
+      border-color:var(--accent);
+    }
+
+    .editHint{
+      flex:1 1 260px;
+      font-size:.95rem;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .sectionTitle{
+      margin:28px 4px 12px;
+      font-size:1.5rem;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:16px;
+    }
+
+    .lesson{
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:20px;
+      min-height:150px;
+      box-shadow:var(--shadow);
+      border:3px solid transparent;
+      transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .lesson:hover,
+    .lesson:focus{
+      transform:translateY(-3px);
+      border-color:var(--accent);
+      box-shadow:0 16px 38px rgba(37,99,235,.22);
+      outline:none;
+    }
+
+    .emoji{
+      font-size:2.1rem;
+      margin-bottom:8px;
+    }
+
+    .lesson h3{
+      margin:0 0 8px;
+      font-size:1.28rem;
+    }
+
+    .lesson p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .tag{
+      display:inline-block;
+      margin-top:12px;
+      padding:5px 9px;
+      border-radius:999px;
+      background:#eef2ff;
+      color:#1d4ed8;
+      font-size:.82rem;
+      font-weight:750;
+    }
+
+    .newBadge{
+      position:absolute;
+      top:13px;
+      right:13px;
+      background:var(--good);
+      color:white;
+      font-size:.75rem;
+      padding:5px 8px;
+      border-radius:999px;
+      font-weight:800;
+    }
+
+    footer{
+      text-align:center;
+      padding:28px 18px 48px;
+      color:var(--muted);
+    }
+
+    .helpBox{
+      margin-top:32px;
+      background:#ffffff;
+      border-radius:22px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      line-height:1.5;
+    }
+
+    details{
+      margin-top:12px;
+      background:#f8fafc;
+      border-radius:16px;
+      padding:12px 14px;
+    }
+
+    summary{
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    code{
+      background:#eef2ff;
+      padding:2px 5px;
+      border-radius:5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Kosta Dean Studio</div>
+    <h1>MathWorks Interactive Lessons</h1>
+    <p class="subtitle">
+      Free, self-paced, interactive math lessons for homeschoolers, visual learners,
+      and kids who learn best by trying things themselves.
+    </p>
+    <div class="notice">No login. No ads. Just tap a lesson and begin.</div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <input id="searchBox" class="search" type="search" placeholder="Search lessons: fractions, graphs, percents..." />
+      <div class="editHint">
+        To add lessons, edit the <b>LESSONS</b> list inside this file. Copy one lesson block, change the title and file name, then upload again to GitHub.
+      </div>
+    </div>
+
+    <h2 class="sectionTitle">Lessons</h2>
+    <div id="lessonGrid" class="grid"></div>
+
+    <div class="helpBox">
+      <h2>How to add or edit lesson buttons</h2>
+      <p>
+        Open this file in GitHub, tap the pencil/edit button, and find:
+        <code>const LESSONS = [</code>
+      </p>
+
+      <details>
+        <summary>Example lesson button</summary>
+        <pre><code>{
+  title: "Fractions",
+  file: "FractionAddition.html",
+  description: "Practice adding fractions with visual help.",
+  category: "Fractions",
+  emoji: "🍕",
+  badge: ""
+},</code></pre>
+      </details>
+
+      <p>
+        Put lesson files in the same GitHub folder as this homepage, unless you use a folder path like
+        <code>lessons/FractionAddition.html</code>.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    © Kosta Dean Studio · Free interactive math learning
+  </footer>
+
+  <script>
+    /*
+      ============================================================
+      EASY EDIT AREA
+
+      To add a new lesson:
+      1. Copy one block below.
+      2. Paste it before the closing ];
+      3. Change title, file, description, category, emoji.
+      4. Save / Commit changes in GitHub.
+
+      IMPORTANT:
+      The "file" name must match the uploaded lesson file EXACTLY.
+      Capital letters matter on GitHub Pages.
+      ============================================================
+    */
+
+    const LESSONS = [
+      {
+        title: "Number Sequences",
+        file: "NumberSequences.html",
+        description: "Find patterns, continue sequences, and understand rules.",
+        category: "Numbers",
+        emoji: "🔢",
+        badge: ""
+      },
+      {
+        title: "Number Sequences 1",
+        file: "NumberSequences1.html",
+        description: "More practice with sequence patterns and rules.",
+        category: "Numbers",
+        emoji: "🔢",
+        badge: "New"
+      },
+      {
+        title: "Numbers Interactive",
+        file: "NumbersInteractive_regenerated.html",
+        description: "Interactive number sense and calculation practice.",
+        category: "Numbers",
+        emoji: "🧮",
+        badge: ""
+      },
+      {
+        title: "Equal Fractions",
+        file: "EqualFractions.html",
+        description: "Explore equivalent fractions visually and interactively.",
+        category: "Fractions",
+        emoji: "🍕",
+        badge: ""
+      },
+      {
+        title: "Fraction Addition",
+        file: "FractionAddition.html",
+        description: "Practice adding fractions step by step.",
+        category: "Fractions",
+        emoji: "➕",
+        badge: ""
+      },
+      {
+        title: "Fraction Multiplication",
+        file: "FractionMultiplication.html",
+        description: "Understand multiplying fractions with examples.",
+        category: "Fractions",
+        emoji: "✖️",
+        badge: ""
+      },
+      {
+        title: "Percents",
+        file: "PercentsInteractive_full.html",
+        description: "Learn percents through interactive examples.",
+        category: "Percents",
+        emoji: "💯",
+        badge: ""
+      },
+      {
+        title: "Decimal Addition & Multiplication",
+        file: "DecimalAdditionMultiplication.html",
+        description: "Practice decimal operations clearly and visually.",
+        category: "Decimals",
+        emoji: "🔟",
+        badge: ""
+      },
+      {
+        title: "Graphs",
+        file: "Graphs.html",
+        description: "Learn how graphs show relationships.",
+        category: "Graphs",
+        emoji: "📈",
+        badge: ""
+      },
+      {
+        title: "Graphs of Equations",
+        file: "GraphsOfEquations.html",
+        description: "Connect equations with their graphs.",
+        category: "Graphs",
+        emoji: "📊",
+        badge: ""
+      },
+      {
+        title: "Coordinates and Graphs",
+        file: "CoordinatesAndGraphs.html",
+        description: "Plot points and understand coordinate planes.",
+        category: "Graphs",
+        emoji: "📍",
+        badge: ""
+      },
+      {
+        title: "Linear Equations",
+        file: "LinearEquations.html",
+        description: "Explore straight lines, slope, and equations.",
+        category: "Algebra",
+        emoji: "📐",
+        badge: ""
+      }
+    ];
+
+    const grid = document.getElementById("lessonGrid");
+    const searchBox = document.getElementById("searchBox");
+
+    function makeLessonCard(lesson){
+      const a = document.createElement("a");
+      a.className = "lesson";
+      a.href = lesson.file;
+      a.setAttribute("data-search", `${lesson.title} ${lesson.description} ${lesson.category}`.toLowerCase());
+      a.innerHTML = `
+        ${lesson.badge ? `<div class="newBadge">${lesson.badge}</div>` : ""}
+        <div class="emoji">${lesson.emoji || "📘"}</div>
+        <h3>${lesson.title}</h3>
+        <p>${lesson.description}</p>
+        <span class="tag">${lesson.category}</span>
+      `;
+      return a;
+    }
+
+    function renderLessons(filter=""){
+      grid.innerHTML = "";
+      const q = filter.trim().toLowerCase();
+
+      LESSONS
+        .filter(lesson => (`${lesson.title} ${lesson.description} ${lesson.category}`.toLowerCase()).includes(q))
+        .forEach(lesson => grid.appendChild(makeLessonCard(lesson)));
+
+      if(!grid.children.length){
+        grid.innerHTML = `<p>No lessons found. Try another search word.</p>`;
+      }
+    }
+
+    searchBox.addEventListener("input", e => renderLessons(e.target.value));
+    renderLessons();
+  </script>
+</body>
+</html>
