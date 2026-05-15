@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>From Words to Math Interactive</title>
+<style>
+:root{--bg:#f6f7fb;--ink:#1f2937;--line:#334155;--pink:#f9a8d4;--pinkline:#c026d3;--ok:#bbf7d0;--bad:#fecaca}
+*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.lesson{max-width:900px;margin:0 auto;background:#fff;border:2px solid var(--line);border-radius:20px;padding:18px;overflow:hidden}
+h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}h2{font-size:26px;margin:22px 0 10px}p{font-size:20px;line-height:1.45}
+.speakBtn{padding:6px 10px;font-size:18px;border:2px solid var(--line);border-radius:10px;background:white}
+.ruleBox{border:3px solid var(--line);border-radius:14px;padding:12px;margin:16px 0;background:#fff}.blueBox{background:#ecfeff;border:2px solid #06b6d4;border-radius:12px;padding:10px;margin:10px 0}.noteBox{background:#fff7ed;border:2px solid #fb923c;border-radius:12px;padding:10px;margin:10px 0}
+.eqLine,.exLine{font-size:24px;line-height:1.8;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.var{font-style:italic;font-weight:800;color:#2563eb}.green{color:#15803d;font-weight:800}
+.frac{display:inline-grid;grid-template-rows:auto auto;justify-items:center;min-width:42px;margin:0 4px;vertical-align:middle}.frac .top{border-bottom:2px solid var(--ink);padding:0 6px;font-size:26px;line-height:1.05}.frac .bottom{padding:0 6px;font-size:26px;line-height:1.05}
+.wordGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.wordCard{background:#f8fafc;border:2px solid #cbd5e1;border-radius:12px;padding:12px}.wordCard b{color:#2563eb}.mathToken{display:inline-block;background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;padding:4px 8px;margin:2px;font-weight:800}
+.blankInput{width:120px;height:40px;border:2px solid var(--pinkline);border-radius:8px;background:var(--pink);text-align:center;font-size:22px}.blankInput.wide{width:190px}.blankInput.ok{background:var(--ok)!important;border-color:#15803d}.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.answerText{display:inline-block;min-width:54px;text-align:center;font-weight:700;color:#166534}.ex{margin:18px 0 24px;border-top:1px solid #e5e7eb;padding-top:14px}.exNum{display:inline-block;width:45px}.exExpr{margin-left:40px;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.doneWrap{text-align:right;margin-top:8px;padding-right:18px}.doneBtn{padding:8px 14px;border:2px solid var(--line);border-radius:12px;background:white;font-size:18px;font-weight:700}.rowMsg{font-size:26px;font-weight:800;margin:6px 0;display:none;text-align:right}.rowMsg.bad{display:block;color:#991b1b}.rowMsg.good{display:block;color:#7c3aed}
+.banner{display:none;margin:14px 0 16px;padding:16px;text-align:center;font-size:36px;font-weight:800;border:3px solid #92400e;border-radius:16px;background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)}
+.donateWrap{display:none;text-align:center;margin:10px 0 18px}.donateBtn{display:inline-block;padding:12px 18px;border:2px solid #92400e;border-radius:14px;background:#f59e0b;color:#111827;font-weight:700;text-decoration:none}
+.confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}.piece{position:absolute;width:12px;height:12px;animation:fall linear forwards}.winFlash{animation:winFlashAnim .65s ease 5}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}@keyframes winFlashAnim{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
+@media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:92px}.blankInput.wide{width:145px}.exExpr{margin-left:25px}}
+</style></head>
+<body><div class="lesson">
+<div class="banner" id="banner">YOU ARE A WINNER!</div><div id="donateWrap" class="donateWrap"><b>Please support this work:</b><br><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank">Donate</a></div>
+<h1>From Words to Math</h1>
+<div class="eqLine"><button class="speakBtn" id="speakIntro" type="button">🔊</button><span>Certain words and phrases express math operations. These are the keys to solving word problems.</span></div>
+<div class="ruleBox"><h2>Words that become math</h2><p>In word problems, words tell us which operation to use.</p><div class="wordGrid">
+<div class="wordCard"><b>of</b> often means <span class="mathToken">multiplication</span><br>Example: 1/2 of 10 means (1/2) × 10.</div>
+<div class="wordCard"><b>is</b> often means <span class="mathToken">equals</span><br>Example: 1/2 of 10 is 5 means (1/2)×10 = 5.</div>
+<div class="wordCard"><b>what</b> often means the <span class="mathToken">unknown x</span><br>Example: What is 25% of 20?</div>
+<div class="wordCard"><b>per</b> often means <span class="mathToken">division</span><br>Example: $15 per dozen means 15/12 dollars each.</div>
+<div class="wordCard"><b>times</b> means <span class="mathToken">multiplication</span><br>Example: 3 times the price means 3p.</div>
+<div class="wordCard"><b>percent</b> means <span class="mathToken">per hundred</span><br>Example: 25% means 25/100.</div>
+</div></div>
+<div class="ruleBox"><h2>Example 1: of and is</h2><p>The sentence <b>“1/2 of 10 is 5”</b> becomes:</p><div class="eqLine"><span class="frac"><span class="top">1</span><span class="bottom">2</span></span> × 10 = 5</div><div class="blueBox"><p><b>of</b> became multiplication. <b>is</b> became equals.</p></div></div>
+<div class="ruleBox"><h2>Example 2: what means unknown</h2><p>The sentence <b>“What is 25% of 20?”</b> becomes:</p><div class="eqLine"><span class="var">x</span> = <span class="frac"><span class="top">25</span><span class="bottom">100</span></span> × 20</div><div class="eqLine"><span class="var">x</span> = 5</div></div>
+<div class="ruleBox"><h2>Example 3: per means division</h2><p>If a dozen items cost $15, then the price <b>per item</b> is:</p><div class="eqLine"><span class="frac"><span class="top">$15</span><span class="bottom">12</span></span></div></div>
+<div class="ruleBox"><h2>Important habit</h2><p>Translate the words slowly. Replace each key word with its math operation.</p><div class="noteBox"><p><b>Words → Math → Solve</b></p></div></div>
+<h2>Exercises: Fill in the pink boxes</h2>
+<div class="ex"><div class="exLine"><span class="exNum">1)</span><span class="exExpr">“of” often means <input class="blankInput wide" data-answer="multiplication" data-alt="multiply" data-row="1">.</span></div><div id="rowMsg_1" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="1">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">2)</span><span class="exExpr">“is” often means <input class="blankInput wide" data-answer="equals" data-alt="equal" data-row="2">.</span></div><div id="rowMsg_2" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="2">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">3)</span><span class="exExpr">“1/2 of 10” means (1/2) <input class="blankInput" data-answer="*" data-alt="x" data-row="3"> 10.</span></div><div id="rowMsg_3" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="3">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">4)</span><span class="exExpr">“What” often means the unknown <input class="blankInput" data-answer="x" data-row="4">.</span></div><div id="rowMsg_4" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="4">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">5)</span><span class="exExpr">25% means <input class="blankInput wide" data-answer="25/100" data-alt="0.25" data-row="5">.</span></div><div id="rowMsg_5" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="5">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">6)</span><span class="exExpr">“What is 25% of 20?” gives x = <input class="blankInput" data-answer="5" data-row="6">.</span></div><div id="rowMsg_6" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="6">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum">7)</span><span class="exExpr">“Per” often means <input class="blankInput wide" data-answer="division" data-alt="divide" data-row="7">.</span></div><div id="rowMsg_7" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="7">Done</button></div></div>
+</div><div id="confetti" class="confetti"></div>
+<script>
+let audioCtx=null;function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()}if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function tone(f,s,d,type="square"){try{const c=getAudio(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,c.currentTime+s);g.gain.setValueAtTime(.001,c.currentTime+s);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+s+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+s+d);o.connect(g).connect(c.destination);o.start(c.currentTime+s);o.stop(c.currentTime+s+d+.05)}catch(e){}}
+function good(){tone(523,0,.15,"triangle");tone(659,.12,.18,"triangle");tone(784,.25,.2,"triangle")}function bad(){tone(220,0,.18,"sawtooth");tone(180,.13,.2,"sawtooth")}function trumpets(){[523,659,784,1046,1318].forEach((f,i)=>tone(f,i*.13,.28,"square"))}
+function confetti(){let c=document.getElementById("confetti");c.innerHTML="";let colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185"];for(let i=0;i<160;i++){let p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.7+Math.random()*1.4)+"s";c.appendChild(p)}setTimeout(()=>c.innerHTML="",3500)}
+function win(){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";document.body.classList.add("winFlash");trumpets();confetti();setTimeout(confetti,900);setTimeout(()=>scrollTo({top:0,behavior:"smooth"}),100)}
+function norm(s){return String(s).trim().toLowerCase().replace("×","*").replace("✕","*").replace(/\s+/g,"").replace(/[()]/g,"")}
+function ans(inp){let set=new Set();[inp.dataset.answer||"",inp.dataset.alt||""].forEach(a=>{let n=norm(a);if(n)set.add(n)});return set}
+function clear(r){let m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
+function finish(r){let inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')],ok=true;inputs.forEach(i=>{i.classList.remove("ok","bad");if(ans(i).has(norm(i.value))){i.classList.add("ok")}else{i.classList.add("bad");ok=false}});let m=document.getElementById("rowMsg_"+r);if(ok){inputs.forEach(i=>{let s=document.createElement("span");s.className="answerText";s.textContent=i.dataset.answer;i.replaceWith(s)});m.className="rowMsg good";m.innerHTML="✨ You are so correct! ✨";let b=document.querySelector('.doneBtn[data-row="'+r+'"]');if(b)b.parentElement.style.display="none";good();if(!document.querySelector(".blankInput"))win()}else{m.className="rowMsg bad";m.textContent="Some answers need fixing.";bad()}}
+function speak(t){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.rate=.95;speechSynthesis.speak(u)}
+document.getElementById("speakIntro").onclick=()=>speak("From words to math. Certain words and phrases express math operations. Of often means multiplication. Is often means equals. What often means the unknown quantity x. Per often means division. These words are keys to solving word problems.");
+document.querySelectorAll(".doneBtn").forEach(b=>b.onclick=()=>finish(b.dataset.row));document.querySelectorAll(".blankInput").forEach(i=>{i.onfocus=()=>{i.classList.remove("bad");clear(i.dataset.row)}})
+</script></body></html>
