@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Exponents Interactive</title>
+<style>
+:root{
+  --bg:#f5f7fb;
+  --ink:#1f2937;
+  --line:#334155;
+  --pink:#f9a8d4;
+  --pinkline:#db2777;
+  --ok:#bbf7d0;
+  --bad:#fecaca;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:18px;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+.lesson{
+  max-width:950px;
+  margin:auto;
+  background:white;
+  border:3px solid var(--line);
+  border-radius:24px;
+  padding:22px;
+  overflow:hidden;
+}
+h1{
+  text-align:center;
+  font-size:38px;
+  margin-top:0;
+  text-transform:uppercase;
+}
+h2{font-size:30px;margin-top:28px}
+p,li{font-size:22px;line-height:1.5}
+.box{
+  border:3px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  margin:18px 0;
+}
+.ruleBox{background:#eff6ff}
+.exampleBox{background:#f0fdf4}
+.exerciseBox{background:#fdf2f8}
+.math{
+  font-size:32px;
+  margin:14px 0;
+  text-align:center;
+}
+.blue{color:#2563eb;font-weight:700}
+.purple{color:#7c3aed;font-weight:700}
+.note{
+  background:#fff7ed;
+  border:2px solid #fb923c;
+  border-radius:14px;
+  padding:12px;
+  font-weight:700;
+}
+.blank{
+  width:120px;
+  height:42px;
+  border:2px solid var(--pinkline);
+  background:var(--pink);
+  border-radius:10px;
+  font-size:24px;
+  text-align:center;
+}
+.blank.wide{width:210px}
+.blank.ok{background:var(--ok)!important;border-color:#15803d}
+.blank.bad{background:var(--bad)!important;border-color:#b91c1c}
+.doneBtn{
+  padding:8px 14px;
+  border-radius:12px;
+  border:2px solid var(--line);
+  background:white;
+  font-size:18px;
+  font-weight:700;
+}
+.row{
+  margin:18px 0;
+  font-size:24px;
+  border-top:1px solid #e5e7eb;
+  padding-top:14px;
+}
+.msg{
+  font-size:26px;
+  font-weight:800;
+  margin-top:6px;
+}
+.banner{
+  display:none;
+  text-align:center;
+  font-size:40px;
+  font-weight:800;
+  padding:18px;
+  border-radius:18px;
+  margin-bottom:20px;
+  border:3px solid #92400e;
+  background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a);
+}
+.donateWrap{
+  display:none;
+  text-align:center;
+  margin:10px 0 18px;
+}
+.donateBtn{
+  display:inline-block;
+  padding:12px 18px;
+  border:2px solid #92400e;
+  border-radius:14px;
+  background:#f59e0b;
+  color:#111827;
+  font-weight:700;
+  text-decoration:none;
+}
+.speakBtn{
+  padding:8px 14px;
+  border-radius:12px;
+  border:2px solid var(--line);
+  background:white;
+  font-size:18px;
+  font-weight:700;
+}
+.confetti{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:9999;
+}
+.piece{
+  position:absolute;
+  width:12px;
+  height:12px;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  from{transform:translateY(-20px) rotate(0deg);opacity:1}
+  to{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+@media(max-width:700px){
+  h1{font-size:32px}
+  .math{font-size:27px}
+  p,li,.row{font-size:21px}
+  .blank{width:100px}
+  .blank.wide{width:170px}
+}
+</style>
+</head>
+<body>
+<div class="lesson">
+
+<div id="banner" class="banner">🎺 YOU ARE A WINNER! 🎺</div>
+<div id="donateWrap" class="donateWrap">
+  <b>Please support this work:</b><br>
+  <a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank">Donate</a>
+</div>
+
+<h1>Exponents</h1>
+
+<button class="speakBtn" onclick="speakLesson()">🔊 Read Lesson</button>
+
+<div class="box ruleBox">
+<h2>Repeated multiplication</h2>
+
+<p>For repeated multiplication by the same quantity <span class="blue">x</span>, we use <span class="purple">exponents</span>.</p>
+
+<div class="math">x · x = x²</div>
+<div class="math">x · x · x = x³</div>
+<div class="math">x · x · x · ... · x = xⁿ</div>
+
+<p>The small raised number is called the <b>exponent</b>. It tells how many times the base is used as a factor.</p>
+</div>
+
+<div class="box ruleBox">
+<h2>Rules for exponents</h2>
+
+<div class="math">xⁿ · xᵐ = xⁿ⁺ᵐ</div>
+<p>When multiplying powers with the same base, add the exponents.</p>
+
+<div class="math">xⁿ / xᵐ = xⁿ⁻ᵐ</div>
+<p>When dividing powers with the same base, subtract the exponents.</p>
+
+<div class="math">x⁰ = 1</div>
+<p>Any nonzero number to the zero power is 1.</p>
+
+<div class="math">(xⁿ)ᵐ = xⁿᵐ</div>
+<p>When raising a power to a power, multiply the exponents.</p>
+</div>
+
+<div class="box ruleBox">
+<h2>Useful powers</h2>
+
+<p>
+2² = 4 &nbsp;&nbsp;
+2³ = 8 &nbsp;&nbsp;
+2⁴ = 16 &nbsp;&nbsp;
+2⁵ = 32 &nbsp;&nbsp;
+2⁶ = 64
+</p>
+
+<p>
+3² = 9 &nbsp;&nbsp;
+3³ = 27 &nbsp;&nbsp;
+3⁴ = 81
+</p>
+
+<p>
+5² = 25 &nbsp;&nbsp;
+5³ = 125
+</p>
+
+<p>
+10⁰ = 1 &nbsp;&nbsp;
+10¹ = 10 &nbsp;&nbsp;
+10² = 100 &nbsp;&nbsp;
+10³ = 1000
+</p>
+</div>
+
+<div class="box exampleBox">
+<h2>Example: expanding a square</h2>
+
+<div class="math">(x + y)² = (x+y)(x+y)</div>
+
+<div class="math">= (x+y)x + (x+y)y</div>
+
+<div class="math">= x² + xy + xy + y²</div>
+
+<div class="math">= x² + 2xy + y²</div>
+
+<p>This shows why <b>(x+y)²</b> is not just <b>x²+y²</b>.</p>
+</div>
+
+<div class="box exerciseBox">
+<h2>Exercises</h2>
+
+<div class="note">
+Use the symbol <b>^</b> for exponents in the answer boxes.<br>
+Examples: type <b>x^3</b> for x³, and type <b>x^5</b> for x⁵.
+</div>
+
+<div class="row">
+1) x · x · x =
+<input class="blank" data-answer="x^3" data-alt="x³">
+<button class="doneBtn">Done</button>
+<div class="msg"></div>
+</div>
+
+<div class="row">
+2) x² · x³ =
+<input class="blank" data-answer="x^5" data-alt="x⁵">
+<button class="doneBtn">Done</button>
+<div class="msg"></div>
+</div>
+
+<div class="row">
+3) x⁵ / x² =
+<input class="blank" data-answer="x^3" data-alt="x³">
+<button class="doneBtn">Done</button>
+<div class="msg"></div>
+</div>
+
+<div class="row">
+4) 2⁵ =
+<input class="blank" data-answer="32">
+<button class="doneBtn">Done</button>
+<div class="msg"></div>
+</div>
+
+<div class="row">
+5) (x²)³ =
+<input class="blank" data-answer="x^6" data-alt="x⁶">
+<button class="doneBtn">Done</button>
+<div class="msg"></div>
+</div>
+
+<div class="row">
+6) x⁷ / x⁴ =
+<input class="blank" data-answer="x^3" data-alt="x³">
+<button class="doneBtn">Done</button>
+<div class="msg"></div>
+</div>
+
+<div class="row">
+7) 10³ =
+<input class="blank" data-answer="1000">
+<button class="doneBtn">Done</button>
+<div class="msg"></div>
+</div>
+
+<div class="row">
+8) Expand: (x+y)² =
+<input class="blank wide" data-answer="x^2+2xy+y^2" data-alt="x²+2xy+y²">
+<button class="doneBtn">Done</button>
+<div class="msg"></div>
+</div>
+
+</div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+function normalize(s){
+ return String(s).toLowerCase()
+ .replace(/\s+/g,'')
+ .replaceAll('²','^2')
+ .replaceAll('³','^3')
+ .replaceAll('⁴','^4')
+ .replaceAll('⁵','^5')
+ .replaceAll('⁶','^6')
+ .replaceAll('⁷','^7')
+ .replaceAll('⁸','^8')
+ .replaceAll('⁹','^9')
+ .replaceAll('−','-');
+}
+
+let audioCtx=null;
+function getAudio(){
+ if(!audioCtx){
+   audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+ }
+ if(audioCtx.state==="suspended") audioCtx.resume();
+ return audioCtx;
+}
+
+function tone(freq,start,dur,type="triangle",volume=.14){
+ try{
+   const ctx=getAudio();
+   let o=ctx.createOscillator();
+   let g=ctx.createGain();
+   o.type=type;
+   o.frequency.setValueAtTime(freq,ctx.currentTime+start);
+   g.gain.setValueAtTime(0.001,ctx.currentTime+start);
+   g.gain.exponentialRampToValueAtTime(volume,ctx.currentTime+start+0.02);
+   g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);
+   o.connect(g);
+   g.connect(ctx.destination);
+   o.start(ctx.currentTime+start);
+   o.stop(ctx.currentTime+start+dur+0.05);
+ }catch(e){}
+}
+
+function goodTone(){
+ tone(523,0,.15,"triangle");
+ tone(659,.12,.18,"triangle");
+ tone(784,.25,.20,"triangle");
+}
+
+function badTone(){
+ tone(220,0,.18,"sawtooth",.10);
+ tone(180,.13,.20,"sawtooth",.10);
+}
+
+function trumpet(){
+ [523,659,784,1046,1318].forEach((f,i)=>{
+   tone(f,i*.13,.35,"square",.18);
+ });
+ setTimeout(()=>{
+   [784,1046,1318].forEach((f,i)=>tone(f,i*.15,.35,"square",.18));
+ },700);
+}
+
+function confetti(){
+ const c=document.getElementById("confetti");
+ c.innerHTML="";
+ const colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185","#38bdf8"];
+ for(let i=0;i<180;i++){
+   let d=document.createElement("div");
+   d.className="piece";
+   d.style.left=Math.random()*100+"%";
+   d.style.background=colors[Math.floor(Math.random()*colors.length)];
+   d.style.animationDuration=(1.8+Math.random()*1.8)+"s";
+   d.style.animationDelay=(Math.random()*0.25)+"s";
+   c.appendChild(d);
+ }
+ setTimeout(()=>c.innerHTML="",4500);
+}
+
+function flashScreen(){
+ const colors=["#fde68a","#86efac","#93c5fd","#f9a8d4","#ffffff"];
+ let i=0;
+ const interval=setInterval(()=>{
+   document.body.style.background=colors[i%colors.length];
+   i++;
+   if(i>14){
+     clearInterval(interval);
+     document.body.style.background="#f5f7fb";
+   }
+ },180);
+}
+
+function celebrate(){
+ document.getElementById("banner").style.display="block";
+ document.getElementById("donateWrap").style.display="block";
+ trumpet();
+ confetti();
+ setTimeout(confetti,900);
+ flashScreen();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function checkAllDone(){
+ const total=document.querySelectorAll(".blank").length;
+ const correct=document.querySelectorAll(".blank.ok").length;
+ if(correct===total){
+   celebrate();
+ }
+}
+
+document.querySelectorAll(".doneBtn").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+   const row=btn.parentElement;
+   const input=row.querySelector(".blank");
+   const msg=row.querySelector(".msg");
+
+   const answers=[
+     normalize(input.dataset.answer),
+     normalize(input.dataset.alt||"")
+   ];
+
+   if(answers.includes(normalize(input.value))){
+      input.classList.remove("bad");
+      input.classList.add("ok");
+      msg.textContent="✨ You are so correct! ✨";
+      msg.style.color="#15803d";
+      goodTone();
+      btn.style.display="none";
+      input.disabled=true;
+      checkAllDone();
+   }else{
+      input.classList.remove("ok");
+      input.classList.add("bad");
+      msg.textContent="Try again.";
+      msg.style.color="#b91c1c";
+      badTone();
+   }
+ });
+});
+
+function speakLesson(){
+ let text = `
+ Exponents lesson.
+ Repeated multiplication by the same quantity can be written using exponents.
+ x times x equals x squared.
+ x times x times x equals x cubed.
+ When multiplying powers with the same base, add the exponents.
+ When dividing powers with the same base, subtract the exponents.
+ Any nonzero number to the zero power is one.
+ When raising a power to a power, multiply the exponents.
+ In the exercises, use the caret symbol for exponents. For example, type x caret 3 for x cubed.
+ `;
+ let u=new SpeechSynthesisUtterance(text);
+ u.rate=.95;
+ speechSynthesis.cancel();
+ speechSynthesis.speak(u);
+}
+</script>
+
+</body>
+</html>
