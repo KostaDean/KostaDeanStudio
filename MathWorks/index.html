@@ -70,6 +70,7 @@
       padding:13px 16px;
       font-weight:650;
       color:#6b4e00;
+      line-height:1.45;
     }
 
     main{
@@ -100,9 +101,7 @@
       outline:none;
     }
 
-    .search:focus{
-      border-color:var(--accent);
-    }
+    .search:focus{ border-color:var(--accent); }
 
     .editHint{
       flex:1 1 260px;
@@ -148,6 +147,15 @@
     .emoji{
       font-size:2.1rem;
       margin-bottom:8px;
+      height:58px;
+      display:flex;
+      align-items:center;
+    }
+
+    .emoji img{
+      width:58px;
+      height:58px;
+      object-fit:contain;
     }
 
     .lesson h3{
@@ -206,10 +214,7 @@
       padding:12px 14px;
     }
 
-    summary{
-      font-weight:800;
-      cursor:pointer;
-    }
+    summary{ font-weight:800; cursor:pointer; }
 
     code{
       background:#eef2ff;
@@ -226,28 +231,35 @@
       Free, self-paced, interactive math lessons for homeschoolers, visual learners,
       and kids who learn best by trying things themselves.
     </p>
-    <div class="notice">No login. No ads. Just tap a lesson and begin.</div> 
+    <div class="notice">No login. No ads. Just tap a lesson and begin.</div>
 
-<div class="notice"> All these lessons were written by a retired math teacher with advanced degrees in Mathematics and more than thirty years experience teaching and tutoring all levels of Math at an exclusive boarding school in New Jersey.
-
-These lessons were originally written for his two granddaughters. But decided to make them available for free to any student
- from pre-K to college that needs help better understanding math. </div>
-
+    <div class="notice">
+      All these lessons were written by a retired math teacher with advanced degrees in Mathematics
+      and more than thirty years experience teaching and tutoring all levels of Math at an exclusive
+      boarding school in New Jersey.
+      <br><br>
+      These lessons were originally written for his two granddaughters, but are now available for free
+      to any student from pre-K to college who needs help better understanding math.
+    </div>
   </header>
 
   <main>
     <div class="toolbar">
       <input id="searchBox" class="search" type="search" placeholder="Search lessons: fractions, graphs, percents..." />
 
-      <!-- <div class="editHint">
-        To add lessons, edit the <b>LESSONS</b> list inside this file. Copy one lesson block, change the title and file name, then upload again to GitHub.
-      </div> -->
-
+      <!--
+      <div class="editHint">
+        To add lessons, edit the <b>LESSONS</b> list inside this file.
+        Copy one lesson block, change the title and file name,
+        then upload again to GitHub.
+      </div>
+      -->
     </div>
 
     <h2 class="sectionTitle">Lessons</h2>
     <div id="lessonGrid" class="grid"></div>
 
+    <!--
     <div class="helpBox">
       <h2>How to add or edit lesson buttons</h2>
       <p>
@@ -272,6 +284,7 @@ These lessons were originally written for his two granddaughters. But decided to
         <code>lessons/FractionAddition.html</code>.
       </p>
     </div>
+    -->
   </main>
 
   <footer>
@@ -286,12 +299,18 @@ These lessons were originally written for his two granddaughters. But decided to
       To add a new lesson:
       1. Copy one block below.
       2. Paste it before the closing ];
-      3. Change title, file, description, category, emoji.
+      3. Change title, file, description, category, emoji or icon.
       4. Save / Commit changes in GitHub.
 
       IMPORTANT:
       The "file" name must match the uploaded lesson file EXACTLY.
       Capital letters matter on GitHub Pages.
+
+      For normal emoji:
+      emoji: "📘",
+
+      For custom PNG icon in the same MathWorks folder:
+      icon: "my_icon.png",
       ============================================================
     */
 
@@ -304,22 +323,22 @@ These lessons were originally written for his two granddaughters. But decided to
         emoji: "🔢",
         badge: "New"
       },
-            {
-  title: "Exponents",
-  file: "ExponentsInteractive_FIXED.html",
-  description: "Learn repeated multiplication, exponent rules, and powers interactively.",
-  category: "Algebra",
-  emoji: "xⁿ",
-  badge: "New"
-},
-           {
-  title: "Percent Problems",
-  file: "PercentProblemsInteractive.html",
-  description: "Solve the three basic types of percent problems step by step.",
-  category: "Percents",
-  emoji: "💯❓",
-  badge: "New"
-}, 
+      {
+        title: "Exponents",
+        file: "ExponentsInteractive_FIXED.html",
+        description: "Learn repeated multiplication, exponent rules, and powers interactively.",
+        category: "Algebra",
+        emoji: "xⁿ",
+        badge: "New"
+      },
+      {
+        title: "Percent Problems",
+        file: "PercentProblemsInteractive.html",
+        description: "Solve the three basic types of percent problems step by step.",
+        category: "Percents",
+        emoji: "💯❓",
+        badge: "New"
+      },
       {
         title: "Numbers Interactive",
         file: "NumbersInteractive_regenerated.html",
@@ -400,15 +419,15 @@ These lessons were originally written for his two granddaughters. But decided to
         emoji: "📐",
         badge: ""
       },
-   {
+      {
         title: "Quantities of an Expression",
         file: "QuantitiesInExpressions.html",
-        description: "All algebra expressions are made up of quantities. Recognizing these is very important",
+        description: "All algebra expressions are made up of quantities. Recognizing these is very important.",
         category: "Algebra",
-        emoji: "🔢",
+        emoji: "🧮🧩",
         badge: ""
       },
-   {
+      {
         title: "Common Algebra Mistakes",
         file: "CommonMistakes.html",
         description: "Avoid making these very common Algebra mistakes.",
@@ -416,15 +435,14 @@ These lessons were originally written for his two granddaughters. But decided to
         emoji: "⚠️",
         badge: ""
       },
-            {
-  title: "From Words to Math",
-  file: "FromWordsToMathInteractive.html",
-  description: "Learn how words like of, is, what, per, and percent become math operations.",
-  category: "Algebra",
-  emoji: "🗣️➗",
-  badge: "New"
-},
-            
+      {
+        title: "From Words to Math",
+        file: "FromWordsToMathInteractive.html",
+        description: "Learn how words like of, is, what, per, and percent become math operations.",
+        category: "Algebra",
+        emoji: "🗣️➗",
+        badge: "New"
+      }
     ];
 
     const grid = document.getElementById("lessonGrid");
@@ -437,7 +455,11 @@ These lessons were originally written for his two granddaughters. But decided to
       a.setAttribute("data-search", `${lesson.title} ${lesson.description} ${lesson.category}`.toLowerCase());
       a.innerHTML = `
         ${lesson.badge ? `<div class="newBadge">${lesson.badge}</div>` : ""}
-        <div class="emoji">${lesson.emoji || "📘"}</div>
+        <div class="emoji">
+          ${lesson.icon
+            ? `<img src="${lesson.icon}" alt="${lesson.title} icon">`
+            : (lesson.emoji || "📘")}
+        </div>
         <h3>${lesson.title}</h3>
         <p>${lesson.description}</p>
         <span class="tag">${lesson.category}</span>
