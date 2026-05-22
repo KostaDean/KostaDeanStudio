@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mental Add/Subtract with Easy Numbers</title>
+<style>
+:root{--bg:#eef7ff;--ink:#172033;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--pink:#f9a8d4;--pinkline:#c026d3}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#f7fbff,var(--bg));color:var(--ink)}
+header{background:#2563eb;color:white;text-align:center;padding:26px 18px}
+h1{margin:0;font-size:clamp(2rem,8vw,4rem)}
+header p{max-width:760px;margin:12px auto 0;font-size:1.15rem;line-height:1.5}
+main{width:min(950px,94vw);margin:24px auto 50px}
+.card{background:white;border-radius:22px;padding:22px;margin:20px 0;border:3px solid #bfdbfe;box-shadow:0 10px 28px rgba(20,40,80,.12)}
+h2{margin-top:0;color:#1d4ed8;font-size:1.7rem}
+p{font-size:1.16rem;line-height:1.6}
+.speakRow{display:flex;gap:12px;align-items:flex-start;margin:14px 0}
+.speakBtn{font-size:1.15rem;padding:10px 12px;border-radius:12px;border:2px solid #475569;background:white}
+.mathBox{background:#f8fbff;border:3px solid #bfdbfe;border-radius:18px;padding:18px;margin:18px 0;font-size:1.35rem;line-height:1.7;text-align:center}
+.ruleBox{background:#ecfccb;border:3px solid #84cc16;border-radius:18px;padding:18px;font-size:1.15rem;line-height:1.6;margin-top:20px}
+.exercise{background:#fffbea;border:3px solid #fde047;border-radius:18px;padding:18px;margin:18px 0}
+.prompt{font-size:1.25rem;font-weight:800;line-height:1.5}
+.answerBox{min-width:100px;width:100px;height:62px;font-size:32px;text-align:center;border-radius:16px;border:3px solid var(--pinkline);background:var(--pink);margin:12px 6px;padding:6px 10px}
+.doneBtn{font-size:1.1rem;font-weight:800;padding:12px 18px;border-radius:14px;border:3px solid #475569;background:white;color:#2563eb}
+.feedback{font-size:1.1rem;font-weight:800;margin-top:12px;min-height:28px}
+#celebrate{display:none;position:fixed;inset:0;background:rgba(15,23,42,.88);z-index:999;color:white;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:20px}
+#celebrate .big{font-size:4.5rem;animation:pulse .9s infinite}@keyframes pulse{50%{transform:scale(1.15)}}
+</style>
+</head>
+<body>
+<header><h1>Mental Add/Subtract with Easy Numbers</h1><p>Use easy numbers like 10, 20, 30, 100, and 200 to add and subtract quickly.</p></header>
+<main>
+<section class="card"><h2>Easy numbers</h2><div class="speakRow"><button class="speakBtn" onclick="speak('Easy numbers are numbers like ten, twenty, thirty, two hundred, and so on.')">🔊</button><p>Easy numbers are numbers like <b>10, 20, 30, 200</b>, and so on.</p></div><div class="speakRow"><button class="speakBtn" onclick="speak('Mental addition and subtraction is especially easy with these numbers.')">🔊</button><p>Mental add/subtract is especially easy with such numbers.</p></div><div class="mathBox">46 + 20 = <b>66</b><br>27 + 30 = <b>57</b><br>218 + 10 = <b>228</b><br>218 + 200 = <b>418</b></div></section>
+<section class="card"><h2>The rule</h2><div class="ruleBox"><button class="speakBtn" onclick="speak('Special number add or subtract is any addition or subtraction on the same column of a place value. We keep the same digits in the other columns and change only the matching place value.')">🔊</button><br><br><b>Rule:</b> Special number add/subtract is adding or subtracting on the same column of place value. We keep the same digits in the other columns and change only the matching place.</div></section>
+<section class="card"><h2>Examples</h2><div class="speakRow"><button class="speakBtn" onclick="speak('Forty six plus twenty equals sixty six. Only the tens digit changes.')">🔊</button><div><p><b>Example 1:</b> 46 + 20</p><div class="mathBox">46 + 20 = <b>66</b></div></div></div><div class="speakRow"><button class="speakBtn" onclick="speak('Two hundred eighteen plus ten equals two hundred twenty eight. Only the tens place changes.')">🔊</button><div><p><b>Example 2:</b> 218 + 10</p><div class="mathBox">218 + 10 = <b>228</b></div></div></div><div class="speakRow"><button class="speakBtn" onclick="speak('Two hundred eighteen plus two hundred equals four hundred eighteen. Only the hundreds place changes.')">🔊</button><div><p><b>Example 3:</b> 218 + 200</p><div class="mathBox">218 + 200 = <b>418</b></div></div></div></section>
+<section class="card"><h2>Exercises</h2>
+<div class="exercise"><div class="prompt">1) 34 + 20 = ?</div><button class="speakBtn" onclick="speak('Thirty four plus twenty equals what?')">🔊</button><br><input class="answerBox" id="q1"><button class="doneBtn" onclick="checkAnswer('q1','54','f1')">Done</button><div id="f1" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">2) 57 + 30 = ?</div><button class="speakBtn" onclick="speak('Fifty seven plus thirty equals what?')">🔊</button><br><input class="answerBox" id="q2"><button class="doneBtn" onclick="checkAnswer('q2','87','f2')">Done</button><div id="f2" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">3) 83 − 20 = ?</div><button class="speakBtn" onclick="speak('Eighty three minus twenty equals what?')">🔊</button><br><input class="answerBox" id="q3"><button class="doneBtn" onclick="checkAnswer('q3','63','f3')">Done</button><div id="f3" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">4) 218 + 10 = ?</div><button class="speakBtn" onclick="speak('Two hundred eighteen plus ten equals what?')">🔊</button><br><input class="answerBox" id="q4"><button class="doneBtn" onclick="checkAnswer('q4','228','f4')">Done</button><div id="f4" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">5) 218 + 200 = ?</div><button class="speakBtn" onclick="speak('Two hundred eighteen plus two hundred equals what?')">🔊</button><br><input class="answerBox" id="q5"><button class="doneBtn" onclick="checkAnswer('q5','418','f5')">Done</button><div id="f5" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">6) 640 − 300 = ?</div><button class="speakBtn" onclick="speak('Six hundred forty minus three hundred equals what?')">🔊</button><br><input class="answerBox" id="q6"><button class="doneBtn" onclick="checkAnswer('q6','340','f6')">Done</button><div id="f6" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">7) 1250 + 400 = ?</div><button class="speakBtn" onclick="speak('One thousand two hundred fifty plus four hundred equals what?')">🔊</button><br><input class="answerBox" id="q7"><button class="doneBtn" onclick="checkAnswer('q7','1650','f7')">Done</button><div id="f7" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">8) 970 − 50 = ?</div><button class="speakBtn" onclick="speak('Nine hundred seventy minus fifty equals what?')">🔊</button><br><input class="answerBox" id="q8"><button class="doneBtn" onclick="checkAnswer('q8','920','f8')">Done</button><div id="f8" class="feedback"></div></div>
+</section></main>
+<div id="celebrate"><div class="big">🎉🧠🎺</div><h2>You are a Mental Math Master!</h2><p>Excellent work!</p></div>
+<script>
+function speak(text){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=.92;window.speechSynthesis.speak(u)}
+let correct=0;function autoResize(input){const len=Math.max(input.value.length,1);input.style.width=Math.max(100,(len+1)*26)+'px'}document.querySelectorAll('.answerBox').forEach(box=>box.addEventListener('input',()=>autoResize(box)));
+function checkAnswer(id,answer,feedbackId){const box=document.getElementById(id),feedback=document.getElementById(feedbackId);if(box.value.trim()===answer){feedback.innerHTML='✅ Correct!';feedback.style.color='#16a34a';box.style.background='#bbf7d0';if(!box.dataset.done){box.dataset.done='1';correct++}}else{feedback.innerHTML='❌ Try again.';feedback.style.color='#dc2626';box.style.background='#fecaca'}if(correct===8){document.getElementById('celebrate').style.display='flex';setTimeout(()=>document.getElementById('celebrate').style.display='none',4000)}}
+</script></body></html>
