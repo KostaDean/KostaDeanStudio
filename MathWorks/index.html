@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MathWorks Homepage v1.3.2-parent-assignments-home-button: multiple parent assignments, ENTER opens next unfinished assignment, completed assignments show check marks. -->
+<!-- MathWorks Homepage v1.3.4-assignment-mode-cleanup: Parent Assignments has Browse Mode and Star Mode; instructions are text-only. -->
 <!-- MathWorks Homepage
 Stage 1 fullscreen playground revision: full-page scene, parent instructions after ENTER, new handwritten math banner. v1.1-auto-next: personal categories open in a lesson player and auto-advance after winner celebration when detectable. -->
 <html lang="en">
@@ -258,6 +258,14 @@ footer{text-align:center;padding:28px 18px 48px;color:var(--muted)}
   font-weight:700;
 }
 .lessonChecks input{width:auto;margin-right:10px;transform:scale(1.25)}
+.assignmentList{display:grid;gap:10px;margin-top:12px}
+.assignmentRow{width:100%;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-align:left;background:#f8fafc;color:#172033;border:2px solid #dbeafe;border-radius:18px;padding:14px 12px;box-shadow:0 8px 22px rgba(20,40,80,.08);cursor:pointer}
+.assignmentRow:hover,.assignmentRow:focus{border-color:#2563eb;outline:none}
+.assignmentMark{font-size:1.45rem;line-height:1}
+.assignmentName{font-weight:900;font-size:1.08rem;line-height:1.2}
+.assignmentNote{color:#64748b;font-weight:750;line-height:1.35}.assignmentModeBar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:12px 0}.assignmentModePill{font-weight:900;color:#334155;background:#f8fafc;border:2px solid #dbeafe;border-radius:999px;padding:10px 13px}
+.selectDivider{font-weight:900;text-align:center;color:#475569}
+
 
 .lessonPlayer{
   position:fixed;
@@ -649,7 +657,7 @@ let PLAYLISTS = [
 ];
 const grid=document.getElementById('lessonGrid'), searchBox=document.getElementById('searchBox'), categoryMenu=document.getElementById('categoryMenu'), statusEl=document.getElementById('status'), listTitle=document.getElementById('listTitle');
 const createBtn=document.getElementById('createBtn'), nameSaveBtn=document.getElementById('nameSaveBtn'), clearBtn=document.getElementById('clearBtn'), modal=document.getElementById('modal'), modalContent=document.getElementById('modalContent');
-let mode='categories', pickSet=new Set(), admin=false;
+let mode='categories', pickSet=new Set(), admin=false, parentAssignMode=false;
 function savedCustom(){try{return JSON.parse(localStorage.getItem('mw_custom_playlists')||'[]')}catch(e){return[]}}
 function saveCustom(arr){localStorage.setItem('mw_custom_playlists',JSON.stringify(arr))}
 function allPlaylists(){return PLAYLISTS.map(p=>({...p,built:true})).concat(savedCustom().map(p=>({...p,built:false})))}
@@ -660,6 +668,39 @@ function isAssigned(p){return savedAssignments().assigned.includes(playlistKey(p
 function isCompleted(p){return !!savedAssignments().completed[playlistKey(p)]}
 function assignPlaylistByIndex(i){const p=allPlaylists()[i]; if(!p) return; const key=playlistKey(p); const a=savedAssignments(); if(!a.assigned.includes(key)) a.assigned.push(key); delete a.completed[key]; saveAssignments(a); populatePlaylists(categoryMenu.value); updateEnterHint(); openAssignmentEditor();}
 function unassignPlaylistByIndex(i){const p=allPlaylists()[i]; if(!p) return; const key=playlistKey(p); const a=savedAssignments(); a.assigned=a.assigned.filter(k=>k!==key); delete a.completed[key]; saveAssignments(a); populatePlaylists(categoryMenu.value); updateEnterHint(); openAssignmentEditor();}
+function viewAssignmentCategory(i){
+  const p=allPlaylists()[i];
+  if(!p) return;
+  closeModal();
+  revealLessonLibrary();
+  categoryMenu.value='playlist:'+i;
+  mode='categories';
+  createBtn.classList.add('hidden');
+  nameSaveBtn.classList.add('hidden');
+  clearBtn.classList.add('hidden');
+  updateStatus();
+  renderLessons(searchBox.value);
+}
+function toggleAssignmentMode(){parentAssignMode=!parentAssignMode; openAssignmentEditor();}
+function toggleAssignmentByIndex(i){
+  const p=allPlaylists()[i];
+  if(!p) return;
+  if(!parentAssignMode){viewAssignmentCategory(i); return;}
+  const key=playlistKey(p);
+  const a=savedAssignments();
+  if(a.completed[key]){
+    if(!a.assigned.includes(key)) a.assigned.push(key);
+    delete a.completed[key];
+  }else if(a.assigned.includes(key)){
+    a.assigned=a.assigned.filter(k=>k!==key);
+  }else{
+    a.assigned.push(key);
+  }
+  saveAssignments(a);
+  populatePlaylists(categoryMenu.value);
+  updateEnterHint();
+  openAssignmentEditor();
+}
 function markPlaylistCompleteByKey(key){if(!key) return; const a=savedAssignments(); if(!a.assigned.includes(key)) a.assigned.push(key); a.completed[key]=new Date().toISOString(); saveAssignments(a); populatePlaylists(categoryMenu.value); updateEnterHint();}
 function firstUnfinishedAssignment(){const a=savedAssignments(); return allPlaylists().find(p=>a.assigned.includes(playlistKey(p)) && !a.completed[playlistKey(p)]) || null;}
 function assignmentSummary(){const a=savedAssignments(); const all=allPlaylists(); const waiting=all.filter(p=>a.assigned.includes(playlistKey(p)) && !a.completed[playlistKey(p)]).length; const done=all.filter(p=>a.assigned.includes(playlistKey(p)) && a.completed[playlistKey(p)]).length; return {waiting,done};}
@@ -675,7 +716,8 @@ function populatePlaylists(selected='all'){
   });
   const divider=document.createElement('option');
   divider.disabled=true;
-  divider.textContent='━━━━';
+  divider.textContent='━━━';
+  divider.className='selectDivider';
   categoryMenu.appendChild(divider);
   [['action:create','New Category'],['action:assign','Parent Assignments'],['action:personal','Edit My Categories'],['action:admin','Admin Edit']].forEach(([value,label])=>{
     let o=document.createElement('option');
@@ -861,20 +903,24 @@ function handleCategoryMenu(){
 }
 searchBox.addEventListener('input',e=>renderLessons(e.target.value)); categoryMenu.addEventListener('change',handleCategoryMenu); clearBtn.onclick=()=>{pickSet.clear(); renderLessons(searchBox.value); updateStatus();}; createBtn.onclick=()=>{if(!pickSet.size) return alert('Please check at least one lesson first.'); createBtn.classList.add('hidden'); nameSaveBtn.classList.remove('hidden'); statusEl.textContent='Now tap Name/Save to give this custom category a name.'}; nameSaveBtn.onclick=()=>openNameSave();
 function openModal(html){modalContent.innerHTML=html; modal.classList.remove('hidden'); document.body.style.overflow='hidden'; modal.scrollTop=0;} function closeModal(){modal.classList.add('hidden'); modalContent.innerHTML=''; document.body.style.overflow=''; if(categoryMenu.value.startsWith('action:')){categoryMenu.value='all'; mode='categories'; createBtn.classList.add('hidden'); nameSaveBtn.classList.add('hidden'); clearBtn.classList.add('hidden'); updateStatus(); renderLessons(searchBox.value);}}
-function openInstructions(){let txt=localStorage.getItem('mw_parent_instructions')||DEFAULT_INSTRUCTIONS; openModal('<h2>Instructions to Parents</h2><p style="color:#64748b;font-weight:750">Edit this text anytime. It is saved on this device.</p><textarea id="instructionsText"></textarea><div class="modalBtns"><button onclick="openParentSetup()">Open Categories / Parent Setup</button><button class="good" onclick="saveInstructions()">Save Instructions</button><button class="secondary" onclick="closeModal()">Close</button></div>'); document.getElementById('instructionsText').value=txt;}
+function openInstructions(){let txt=localStorage.getItem('mw_parent_instructions')||DEFAULT_INSTRUCTIONS; openModal('<h2>Instructions to Parents</h2><div class="assignmentNote" style="white-space:pre-wrap;font-size:1.05rem">'+escapeHtml(txt)+'</div><div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>');}
 function saveInstructions(){localStorage.setItem('mw_parent_instructions',document.getElementById('instructionsText').value); alert('Instructions saved on this device.');}
 function openNameSave(){openModal('<h2>Name/Save Category</h2><input id="pname" class="playName" placeholder="Example: Maria Week 1"><div class="modalBtns"><button class="secondary" onclick="closeModal()">Cancel</button><button class="good" onclick="saveNamedPlaylist()">Save</button></div>')}
 function saveNamedPlaylist(){let name=document.getElementById('pname').value.trim(); if(!name) return alert('Please enter a category name.'); let arr=savedCustom(); arr.push({name,files:[...pickSet]}); saveCustom(arr); pickSet.clear(); closeModal(); populatePlaylists('playlist:'+(allPlaylists().length-1)); setMode('categories');}
 function checksHTML(files=[]){return '<div class="lessonChecks">'+LESSONS.map(l=>'<label><input type="checkbox" value="'+l.file+'" '+(files.includes(l.file)?'checked':'')+'> '+l.title+'</label>').join('')+'</div>'}
-function openPersonalEditor(){let arr=savedCustom(); let html='<h2>Edit My Categories</h2><p style="color:#64748b;font-weight:750">These categories are saved on this device. Open a category, rename it, check/uncheck lessons, then save. Use Parent Assignments to assign built-in or personal categories.</p>'; if(!arr.length) html+='<p><b>No personal categories saved on this device yet.</b></p>'; arr.forEach((p,i)=>{let globalIndex=PLAYLISTS.length+i; let pp={...p,built:false}; let mark=isCompleted(pp)?'✅ ': (isAssigned(pp)?'⭐ ':'☆ '); html+='<details class="categoryEditCard"><summary>'+mark+escapeHtml(p.name)+'</summary><input id="cname_'+i+'" value="'+escapeHtml(p.name)+'">'+checksHTML(p.files)+'<div class="modalBtns"><button class="good" onclick="savePersonalCategory('+i+')">Save Category</button><button onclick="assignPlaylistByIndex('+globalIndex+')">⭐ Assign</button><button class="secondary" onclick="unassignPlaylistByIndex('+globalIndex+')">Unassign</button><button class="warn" onclick="deletePersonalCategory('+i+')">Delete</button></div></details>'}); html+='<div class="modalBtns"><button onclick="openAssignmentEditor()">Parent Assignments</button><button class="secondary" onclick="closeModal()">Close</button></div>'; openModal(html);}
+function openPersonalEditor(){let arr=savedCustom(); let html='<h2>Edit My Categories</h2><p style="color:#64748b;font-weight:750">These categories are saved on this device. Open a category, rename it, check/uncheck lessons, then save. Use Parent Assignments to star assignments separately.</p>'; if(!arr.length) html+='<p><b>No personal categories saved on this device yet.</b></p>'; arr.forEach((p,i)=>{let pp={...p,built:false}; let mark=isCompleted(pp)?'✅ ': (isAssigned(pp)?'⭐ ':'☆ '); html+='<details class="categoryEditCard"><summary>'+mark+escapeHtml(p.name)+'</summary><input id="cname_'+i+'" value="'+escapeHtml(p.name)+'">'+checksHTML(p.files)+'<div class="modalBtns"><button class="good" onclick="savePersonalCategory('+i+')">Save Category</button><button class="warn" onclick="deletePersonalCategory('+i+')">Delete</button></div></details>'}); html+='<div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>'; openModal(html);}
 function savePersonalCategory(i){let arr=savedCustom(); let name=document.getElementById('cname_'+i).value.trim(); if(!name) return alert('Please enter a name.'); let card=document.getElementById('cname_'+i).closest('details'); let files=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value); arr[i]={name,files}; saveCustom(arr); populatePlaylists(categoryMenu.value); updateEnterHint(); alert('Category saved on this device.'); openPersonalEditor();}
 function deletePersonalCategory(i){let arr=savedCustom(); if(confirm('Delete this personal category?')){arr.splice(i,1); saveCustom(arr); populatePlaylists(categoryMenu.value); updateEnterHint(); openPersonalEditor();}}
 function openAssignmentEditor(){
   const all=allPlaylists();
-  let html='<h2>Parent Assignments</h2><p style="color:#64748b;font-weight:750">Tap ⭐ Assign for any category you want the student to complete. ENTER opens the first unfinished ⭐ assignment. When all lessons in that assignment are completed, it becomes ✅.</p>';
+  let html='<h2>Parent Assignments</h2><p class="assignmentNote">Browse Mode lets you tap a category to see its lessons. Tap <b>⭐ Star Categories</b> to turn Star Mode on. In Star Mode, tapping a category adds or removes its ⭐ assignment. Completed assignments show ✅.</p>';
+  html+='<div class="assignmentModeBar"><span class="assignmentModePill">Mode: '+(parentAssignMode?'⭐ Star Mode':'Browse')+'</span><button class="'+(parentAssignMode?'warn':'good')+'" onclick="toggleAssignmentMode()">'+(parentAssignMode?'Done Starring':'⭐ Star Categories')+'</button></div>';
   if(!all.length) html+='<p><b>No categories are available yet.</b></p>';
-  html+='<div class="adminList">';
-  all.forEach((p,i)=>{const mark=isCompleted(p)?'✅':(isAssigned(p)?'⭐':'☆'); const kind=p.built?'Built-in':'Personal'; html+='<div class="adminItem"><b>'+mark+' '+escapeHtml(p.name)+'</b><span style="color:#64748b;font-weight:750">'+kind+'</span><button class="mini good" onclick="assignPlaylistByIndex('+i+')">⭐ Assign</button><button class="mini secondary" onclick="unassignPlaylistByIndex('+i+')">Unassign</button></div>';});
+  html+='<div class="assignmentList">';
+  all.forEach((p,i)=>{
+    const mark=isCompleted(p)?'✅':(isAssigned(p)?'⭐':'');
+    html+='<button class="assignmentRow" onclick="toggleAssignmentByIndex('+i+')"><span class="assignmentMark">'+mark+'</span><span class="assignmentName">'+escapeHtml(p.name)+'</span></button>';
+  });
   html+='</div><div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>';
   openModal(html);
 }
@@ -887,7 +933,7 @@ function deleteBuiltCategory(i){if(confirm('Delete this built-in category?')){PL
 function commitChanges(){const replacement='let PLAYLISTS = '+JSON.stringify(PLAYLISTS,null,2)+';'; let html='<!DOCTYPE html>\n'+document.documentElement.outerHTML; html=html.replace(/let PLAYLISTS = [\s\S]*?;\nconst grid=/, replacement+'\nconst grid='); openModal('<h2>Updated index.html Code Ready</h2><p>Tap copy, then paste over your GitHub index.html.</p><div class="modalBtns"><button onclick="copyExportCode()">COPY ENTIRE INDEX CODE</button><button class="secondary" onclick="closeModal()">Close</button></div><textarea id="exportCodeBox" readonly style="height:42vh"></textarea>'); setTimeout(()=>{document.getElementById('exportCodeBox').value=html;},50);}
 async function copyExportCode(){let box=document.getElementById('exportCodeBox'); box.focus(); box.select(); let ok=false; try{await navigator.clipboard.writeText(box.value); ok=true;}catch(e){try{ok=document.execCommand('copy')}catch(e2){}} alert(ok?'Copied.':'If copy was blocked, tap in the selected box and use Copy.');}
 function escapeHtml(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')}
-window.enterMathPlayground=enterMathPlayground; window.returnHome=returnHome; window.assignPlaylistByIndex=assignPlaylistByIndex; window.unassignPlaylistByIndex=unassignPlaylistByIndex; window.openAssignmentEditor=openAssignmentEditor; window.openParentSetup=openParentSetup; window.revealLessonLibrary=revealLessonLibrary; window.openCurrentLessonDirect=openCurrentLessonDirect; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
+window.enterMathPlayground=enterMathPlayground; window.returnHome=returnHome; window.assignPlaylistByIndex=assignPlaylistByIndex; window.unassignPlaylistByIndex=unassignPlaylistByIndex; window.toggleAssignmentByIndex=toggleAssignmentByIndex; window.toggleAssignmentMode=toggleAssignmentMode; window.viewAssignmentCategory=viewAssignmentCategory; window.openAssignmentEditor=openAssignmentEditor; window.openParentSetup=openParentSetup; window.revealLessonLibrary=revealLessonLibrary; window.openCurrentLessonDirect=openCurrentLessonDirect; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
 populatePlaylists(); renderLessons(); updateStatus(); updateEnterHint(); document.body.classList.add('homeMode'); document.body.style.overflow='hidden';
 </script>
 </body>
