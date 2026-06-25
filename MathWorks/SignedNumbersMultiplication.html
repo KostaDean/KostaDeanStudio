@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Signed Numbers Multiplication Interactive</title>
@@ -46,8 +45,397 @@ p{font-size:20px;line-height:1.45}
 @keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
 @media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:68px}.signTable{font-size:18px}.signTable td,.signTable th{padding:7px}}
 </style>
-</head>
-<body>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style><script id="mw-mathjax-config">window.MathJax={tex:{inlineMath:[[\"\\\\(\",\"\\\\)\"],[\"$\",\"$\"]],displayMath:[[\"\\\\[\",\"\\\\]\"]]},options:{skipHtmlTags:[\"script\",\"noscript\",\"style\",\"textarea\",\"pre\"]}};</script><script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style></head>
+<body data-mw-object-manager-ready="1" data-mw-math-select-ready="1">
 <div class="lesson">
 <div class="banner" id="banner">YOU ARE A WINNER!</div>
 <div id="donateWrap" class="donateWrap"><div class="donateText">Please support this work:</div><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a></div>
@@ -56,27 +444,27 @@ p{font-size:20px;line-height:1.45}
 
 <div class="row">
 <button class="speakBtn" id="speakIntro" type="button">🔊</button>
-<p style="margin:0"><b>Important:</b> The negative of a number is that number in the <b>opposite direction</b>.</p>
+<p style="margin: 0px;"><b>Important:</b> The negative of a number on the number line is that number in the <b>opposite direction</b>.</p>
 </div>
 
 <div class="ruleBox">
-<h2>The negative means “opposite”</h2>
+<h2>negative means “opposite”</h2>
 <p>The negative of <span class="pos">(+4)</span> is <span class="neg">(−4)</span>. The negative of <span class="neg">(−5)</span> is <span class="pos">(+5)</span>.</p>
 
 <div class="vectorPair">
 <div class="vectorCard">
 <svg viewBox="0 0 260 88">
-<line x1="40" y1="34" x2="200" y2="34" stroke="#15803d" stroke-width="6" stroke-linecap="round"/><polyline points="188,24 200,34 188,44" fill="none" stroke="#15803d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-<line x1="40" y1="18" x2="40" y2="50" stroke="#334155" stroke-width="5"/>
-<line x1="80" y1="21" x2="80" y2="47" stroke="#15803d" stroke-width="4"/><line x1="120" y1="21" x2="120" y2="47" stroke="#15803d" stroke-width="4"/><line x1="160" y1="21" x2="160" y2="47" stroke="#15803d" stroke-width="4"/><line x1="200" y1="21" x2="200" y2="47" stroke="#15803d" stroke-width="4"/>
+<line x1="40" y1="34" x2="200" y2="34" stroke="#15803d" stroke-width="6" stroke-linecap="round"></line><polyline points="188,24 200,34 188,44" fill="none" stroke="#15803d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<line x1="40" y1="18" x2="40" y2="50" stroke="#334155" stroke-width="5"></line>
+<line x1="80" y1="21" x2="80" y2="47" stroke="#15803d" stroke-width="4"></line><line x1="120" y1="21" x2="120" y2="47" stroke="#15803d" stroke-width="4"></line><line x1="160" y1="21" x2="160" y2="47" stroke="#15803d" stroke-width="4"></line><line x1="200" y1="21" x2="200" y2="47" stroke="#15803d" stroke-width="4"></line>
 <text x="120" y="78" text-anchor="middle" font-size="18" fill="#15803d" font-weight="800">(+4)</text>
 </svg>
 </div>
 <div class="vectorCard">
 <svg viewBox="0 0 260 88">
-<line x1="200" y1="34" x2="40" y2="34" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/><polyline points="52,24 40,34 52,44" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-<line x1="200" y1="18" x2="200" y2="50" stroke="#334155" stroke-width="5"/>
-<line x1="160" y1="21" x2="160" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="120" y1="21" x2="120" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="80" y1="21" x2="80" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="40" y1="21" x2="40" y2="47" stroke="#dc2626" stroke-width="4"/>
+<line x1="200" y1="34" x2="40" y2="34" stroke="#dc2626" stroke-width="6" stroke-linecap="round"></line><polyline points="52,24 40,34 52,44" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<line x1="200" y1="18" x2="200" y2="50" stroke="#334155" stroke-width="5"></line>
+<line x1="160" y1="21" x2="160" y2="47" stroke="#dc2626" stroke-width="4"></line><line x1="120" y1="21" x2="120" y2="47" stroke="#dc2626" stroke-width="4"></line><line x1="80" y1="21" x2="80" y2="47" stroke="#dc2626" stroke-width="4"></line><line x1="40" y1="21" x2="40" y2="47" stroke="#dc2626" stroke-width="4"></line>
 <text x="120" y="78" text-anchor="middle" font-size="18" fill="#dc2626" font-weight="800">−(+4) = (−4)</text>
 </svg>
 </div>
@@ -85,17 +473,17 @@ p{font-size:20px;line-height:1.45}
 <div class="vectorPair">
 <div class="vectorCard">
 <svg viewBox="0 0 260 88">
-<line x1="210" y1="34" x2="30" y2="34" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/><polyline points="42,24 30,34 42,44" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-<line x1="210" y1="18" x2="210" y2="50" stroke="#334155" stroke-width="5"/>
-<line x1="174" y1="21" x2="174" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="138" y1="21" x2="138" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="102" y1="21" x2="102" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="66" y1="21" x2="66" y2="47" stroke="#dc2626" stroke-width="4"/><line x1="30" y1="21" x2="30" y2="47" stroke="#dc2626" stroke-width="4"/>
+<line x1="210" y1="34" x2="30" y2="34" stroke="#dc2626" stroke-width="6" stroke-linecap="round"></line><polyline points="42,24 30,34 42,44" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<line x1="210" y1="18" x2="210" y2="50" stroke="#334155" stroke-width="5"></line>
+<line x1="174" y1="21" x2="174" y2="47" stroke="#dc2626" stroke-width="4"></line><line x1="138" y1="21" x2="138" y2="47" stroke="#dc2626" stroke-width="4"></line><line x1="102" y1="21" x2="102" y2="47" stroke="#dc2626" stroke-width="4"></line><line x1="66" y1="21" x2="66" y2="47" stroke="#dc2626" stroke-width="4"></line><line x1="30" y1="21" x2="30" y2="47" stroke="#dc2626" stroke-width="4"></line>
 <text x="120" y="78" text-anchor="middle" font-size="18" fill="#dc2626" font-weight="800">(−5)</text>
 </svg>
 </div>
 <div class="vectorCard">
 <svg viewBox="0 0 260 88">
-<line x1="30" y1="34" x2="210" y2="34" stroke="#15803d" stroke-width="6" stroke-linecap="round"/><polyline points="198,24 210,34 198,44" fill="none" stroke="#15803d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-<line x1="30" y1="18" x2="30" y2="50" stroke="#334155" stroke-width="5"/>
-<line x1="66" y1="21" x2="66" y2="47" stroke="#15803d" stroke-width="4"/><line x1="102" y1="21" x2="102" y2="47" stroke="#15803d" stroke-width="4"/><line x1="138" y1="21" x2="138" y2="47" stroke="#15803d" stroke-width="4"/><line x1="174" y1="21" x2="174" y2="47" stroke="#15803d" stroke-width="4"/><line x1="210" y1="21" x2="210" y2="47" stroke="#15803d" stroke-width="4"/>
+<line x1="30" y1="34" x2="210" y2="34" stroke="#15803d" stroke-width="6" stroke-linecap="round"></line><polyline points="198,24 210,34 198,44" fill="none" stroke="#15803d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<line x1="30" y1="18" x2="30" y2="50" stroke="#334155" stroke-width="5"></line>
+<line x1="66" y1="21" x2="66" y2="47" stroke="#15803d" stroke-width="4"></line><line x1="102" y1="21" x2="102" y2="47" stroke="#15803d" stroke-width="4"></line><line x1="138" y1="21" x2="138" y2="47" stroke="#15803d" stroke-width="4"></line><line x1="174" y1="21" x2="174" y2="47" stroke="#15803d" stroke-width="4"></line><line x1="210" y1="21" x2="210" y2="47" stroke="#15803d" stroke-width="4"></line>
 <text x="120" y="78" text-anchor="middle" font-size="18" fill="#15803d" font-weight="800">−(−5) = (+5)</text>
 </svg>
 </div>
@@ -115,22 +503,22 @@ p{font-size:20px;line-height:1.45}
 <h2>Multiplying two signed numbers</h2>
 <p><b>Rule:</b> Multiplying two numbers with the <b>same sign</b> is positive. Multiplying two numbers with <b>different signs</b> is negative.</p>
 <table class="signTable">
-<tr><th>Signs</th><th>Result sign</th><th>Example</th></tr>
+<tbody><tr><th>Signs</th><th>Result sign</th><th>Example</th></tr>
 <tr><td>(+)(+)</td><td class="pos">positive</td><td>(+2)(+4) = (+8)</td></tr>
 <tr><td>(−)(−)</td><td class="pos">positive</td><td>(−2)(−4) = (+8)</td></tr>
 <tr><td>(−)(+)</td><td class="neg">negative</td><td>(−2)(+4) = (−8)</td></tr>
 <tr><td>(+)(−)</td><td class="neg">negative</td><td>(+2)(−4) = (−8)</td></tr>
-</table>
+</tbody></table>
 </div>
 
 <h2>Exercises: Fill in the pink boxes</h2>
-<div class="ex"><div class="exLine"><span class="exNum">1)</span><span class="exExpr">−(+6) = <input class="blankInput" data-answer="-6" data-alt="(−6)" data-row="1"></span></div><div class="rowMsg" id="rowMsg_1"></div><div class="doneWrap"><button class="doneBtn" data-row="1">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">2)</span><span class="exExpr">−(−7) = <input class="blankInput" data-answer="+7" data-alt="(+7)" data-row="2"></span></div><div class="rowMsg" id="rowMsg_2"></div><div class="doneWrap"><button class="doneBtn" data-row="2">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">3)</span><span class="exExpr">(−1)(+9) = <input class="blankInput" data-answer="-9" data-alt="(−9)" data-row="3"></span></div><div class="rowMsg" id="rowMsg_3"></div><div class="doneWrap"><button class="doneBtn" data-row="3">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">4)</span><span class="exExpr">(−1)(−8) = <input class="blankInput" data-answer="+8" data-alt="(+8)" data-row="4"></span></div><div class="rowMsg" id="rowMsg_4"></div><div class="doneWrap"><button class="doneBtn" data-row="4">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">5)</span><span class="exExpr">(−3)(+4) = <input class="blankInput" data-answer="-12" data-alt="(−12)" data-row="5"></span></div><div class="rowMsg" id="rowMsg_5"></div><div class="doneWrap"><button class="doneBtn" data-row="5">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">6)</span><span class="exExpr">(−3)(−4) = <input class="blankInput" data-answer="+12" data-alt="(+12)" data-row="6"></span></div><div class="rowMsg" id="rowMsg_6"></div><div class="doneWrap"><button class="doneBtn" data-row="6">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">7)</span><span class="exExpr">(+5)(−6) = <input class="blankInput" data-answer="-30" data-alt="(−30)" data-row="7"></span></div><div class="rowMsg" id="rowMsg_7"></div><div class="doneWrap"><button class="doneBtn" data-row="7">Done</button></div></div>
+<div class="ex"><div class="exLine exercise"><span class="exNum">1)</span><span class="exExpr">−(+6) = <input class="blankInput" data-answer="-6" data-alt="(−6)" data-row="1" id="q1"></span></div><div class="rowMsg" id="rowMsg_1"></div><div class="doneWrap"><button class="doneBtn" data-row="1">Done</button></div></div>
+<div class="ex"><div class="exLine exercise"><span class="exNum">2)</span><span class="exExpr">−(−7) = <input class="blankInput" data-answer="+7" data-alt="(+7)" data-row="2" data-answers="+7|7" id="q2"></span></div><div class="rowMsg" id="rowMsg_2"></div><div class="doneWrap"><button class="doneBtn" data-row="2">Done</button></div></div>
+<div class="ex"><div class="exLine exercise"><span class="exNum">3)</span><span class="exExpr">(−1)(+9) = <input class="blankInput" data-answer="-9" data-alt="(−9)" data-row="3" id="q3"></span></div><div class="rowMsg" id="rowMsg_3"></div><div class="doneWrap"><button class="doneBtn" data-row="3">Done</button></div></div>
+<div class="ex"><div class="exLine exercise"><span class="exNum">4)</span><span class="exExpr">(−1)(−8) = <input class="blankInput" data-answer="+8" data-alt="(+8)" data-row="4" data-answers="+8|8" id="q4"></span></div><div class="rowMsg" id="rowMsg_4"></div><div class="doneWrap"><button class="doneBtn" data-row="4">Done</button></div></div>
+<div class="ex"><div class="exLine exercise"><span class="exNum">5)</span><span class="exExpr">(−3)(+4) = <input class="blankInput" data-answer="-12" data-alt="(−12)" data-row="5" id="q5"></span></div><div class="rowMsg" id="rowMsg_5"></div><div class="doneWrap"><button class="doneBtn" data-row="5">Done</button></div></div>
+<div class="ex"><div class="exLine exercise"><span class="exNum">6)</span><span class="exExpr">(−3)(−4) = <input class="blankInput" data-answer="+12" data-alt="(+12)" data-row="6" data-answers="+12|12" id="q6"></span></div><div class="rowMsg" id="rowMsg_6"></div><div class="doneWrap"><button class="doneBtn" data-row="6">Done</button></div></div>
+<div class="ex"><div class="exLine exercise"><span class="exNum">7)</span><span class="exExpr">(+5)(−6) = <input class="blankInput" data-answer="-30" data-alt="(−30)" data-row="7" id="q7"></span></div><div class="rowMsg" id="rowMsg_7"></div><div class="doneWrap"><button class="doneBtn" data-row="7">Done</button></div></div>
 
 </div>
 <div id="confetti" class="confetti"></div>
@@ -175,5 +563,25 @@ function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[da
 document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
 document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
 </script>
-</body>
-</html>
+
+
+<script id="mw-multi-answer-patch">
+function mwAccepted(inp){const many=inp.getAttribute("data-answers");if(many)return many.split("|").map(x=>x.trim()).filter(Boolean);const one=inp.getAttribute("data-answer")||"";return one?[one]:[]}
+function mwNorm(v){return String(v).trim()}
+if(typeof finishRow==="function"){
+  finishRow=function(r){
+    const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+    let ok=true;
+    inputs.forEach(inp=>{const val=mwNorm(inp.value);const answers=mwAccepted(inp);inp.classList.remove("ok","bad");if(answers.includes(val))inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});
+    const msg=document.getElementById("rowMsg_"+r);
+    if(ok){
+      inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=mwAccepted(inp)[0]||inp.value;inp.replaceWith(s)});
+      if(msg){msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';}
+      const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";
+      if(typeof playGood==="function")playGood();if(typeof flash==="function")flash("good");if(typeof maybeCelebrateWorksheet==="function")maybeCelebrateWorksheet();
+    }else{
+      if(msg){msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";}
+      if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
+    }
+  }
+}</script><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: The best way to think and work and make sense of signed numbers is to imagine them on the number line. Have your young learner use the number line to visualize signed numbers. Especially visualizing the \&quot;opposite\&quot; (negative) of the number. And knowing multiplication by -1 is just taking the \&quot;opposite\&quot; of the number. Then the rules for multiplying signed numbers will make more sense to them.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>The best way to think and work and make sense of signed numbers is to imagine them on the number line. Have your young learner use the number line to visualize signed numbers. Especially visualizing the "opposite" (negative) of the number. And knowing multiplication by -1 is just taking the "opposite" of the number. Then the rules for multiplying signed numbers will make more sense to them.</div></section></body></html>
