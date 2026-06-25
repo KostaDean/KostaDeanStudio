@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Common Mistakes Interactive</title>
 <style>
@@ -20,14 +19,14 @@ h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}h2{
 .confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}.piece{position:absolute;width:12px;height:12px;animation:fall linear forwards}.winFlash{animation:winFlashAnim .65s ease 5}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}@keyframes winFlashAnim{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
 @media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:84px}.blankInput.wide{width:135px}.exExpr{margin-left:25px}}
-</style></head>
+</style><style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style></head>
 <body><div class="lesson">
 <div class="banner" id="banner">YOU ARE A WINNER!</div><div id="donateWrap" class="donateWrap"><b>Please support this work:</b><br><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank">Donate</a></div>
 <h1>Common Mistakes</h1>
-<div class="eqLine"><button class="speakBtn" id="speakIntro" type="button">🔊</button><span>The form of a quantity can look like another form, but the values are not always equal.</span></div>
+<div class="eqLine"><button class="speakBtn" id="speakIntro" type="button">🔊</button><span>The <b>forms</b> of two quantities can look alike, but their <b>values</b> may not always equal.<br>Note: Two quantities are the same if they are <b>always</b> equal.</span></div>
 
 <div class="ruleBox"><h2>Changing form safely</h2>
-<p>A simple way to check whether two forms are equal is by substituting easy numbers and calculating the values.</p>
+<p>A simple way to check whether two forms are the same is by substituting easy numbers and calculating the values.</p>
 <p>If the values are different, then the forms cannot be the same quantity.</p>
 <div class="blueBox"><p><b>Important:</b> Similar-looking forms are not necessarily equal.</p><p>Do not split sums, products, powers, roots, or denominators unless a valid rule allows it.</p></div></div>
 
@@ -47,15 +46,15 @@ h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}h2{
 <div class="mistakeBox"><div class="eqLine">5) <span class="frac"><span class="top"><span class="var">a</span> + <span class="var">b</span></span><span class="bottom"><span class="var">c</span><span class="var">d</span></span></span> <span class="red">≠</span> <span class="frac"><span class="top"><span class="var">a</span></span><span class="bottom"><span class="var">c</span></span></span> + <span class="frac"><span class="top"><span class="var">b</span></span><span class="bottom"><span class="var">d</span></span></span></div><p>Do not pair pieces of the numerator and denominator unless a valid rule says so.</p></div>
 </div>
 
-<div class="ruleBox"><h2>Good habit</h2><p>When unsure, test with easy numbers. One counterexample is enough to show two forms are not always equal.</p></div>
+<div class="ruleBox"><h2>Good habit</h2><p>When unsure, test with easy numbers. One counterexample is enough to show two forms are not the same.</p></div>
 
 <h2>Exercises: Fill in the pink boxes</h2>
-<div class="ex"><div class="exLine"><span class="exNum">1)</span><span class="exExpr">If one test gives different values, the forms are <input class="blankInput wide" data-answer="not equal" data-alt="different" data-row="1">.</span></div><div id="rowMsg_1" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="1">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">2)</span><span class="exExpr">For a=2, b=1, c=1, a/(b+c) = <input class="blankInput" data-answer="1" data-row="2">.</span></div><div id="rowMsg_2" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="2">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">3)</span><span class="exExpr">For a=2, b=1, c=1, a/b + a/c = <input class="blankInput" data-answer="4" data-row="3">.</span></div><div id="rowMsg_3" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="3">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">4)</span><span class="exExpr">Since 1 ≠ 4, a/(b+c) and a/b + a/c are <input class="blankInput wide" data-answer="not equal" data-alt="different" data-row="4">.</span></div><div id="rowMsg_4" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="4">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">5)</span><span class="exExpr">(x+y)² = x² + <input class="blankInput wide" data-answer="2xy" data-alt="2 xy" data-row="5"> + y².</span></div><div id="rowMsg_5" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="5">Done</button></div></div>
-<div class="ex"><div class="exLine"><span class="exNum">6)</span><span class="exExpr">√(a+b) is <input class="blankInput wide" data-answer="not equal" data-alt="different" data-row="6"> to √a + √b.</span></div><div id="rowMsg_6" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="6">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum"><br></span><span class="exExpr exercise"><div class="prompt">1) If one test gives different values, the forms are</div><input class="blankInput wide" data-answer="not equal" data-alt="different" data-row="1" id="q1">.</span></div><div id="rowMsg_1" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="1">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum"><br></span><span class="exExpr exercise"><div class="prompt">2) For a=2, b=1, c=1, a/(b+c) =</div><input class="blankInput" data-answer="1" data-row="2" id="q2">.</span></div><div id="rowMsg_2" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="2">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum"><br></span><span class="exExpr exercise"><div class="prompt">3) For a=2, b=1, c=1, a/b + a/c =</div><input class="blankInput" data-answer="4" data-row="3" id="q3">.</span></div><div id="rowMsg_3" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="3">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum"><br></span><span class="exExpr exercise"><div class="prompt">4) Since 1 ≠ 4, a/(b+c) and a/b + a/c are</div><input class="blankInput wide" data-answer="not equal" data-alt="different" data-row="4" id="q4">.</span></div><div id="rowMsg_4" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="4">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum"><br></span><span class="exExpr exercise">5) (x+y)² = x² + <input class="blankInput wide" data-answer="2xy" data-alt="2 xy" data-row="5" id="q5"> + y².</span></div><div id="rowMsg_5" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="5">Done</button></div></div>
+<div class="ex"><div class="exLine"><span class="exNum"><br></span><span class="exExpr exercise"><div class="prompt">6) </div>√(a+b) is <input class="blankInput wide" data-answer="not equal" data-alt="different" data-row="6" id="q6"> to √a + √b.</span></div><div id="rowMsg_6" class="rowMsg"></div><div class="doneWrap"><button class="doneBtn" data-row="6">Done</button></div></div>
 </div><div id="confetti" class="confetti"></div>
 <script>
 let audioCtx=null;function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()}if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
@@ -70,4 +69,4 @@ function finish(r){let inputs=[...document.querySelectorAll('.blankInput[data-ro
 function speak(t){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.rate=.95;speechSynthesis.speak(u)}
 document.getElementById("speakIntro").onclick=()=>speak("Common mistakes. The form of a quantity can look like another form, but the values are not always equal. A safe way to check is to substitute easy numbers. If the values are different, the forms cannot be the same quantity.");
 document.querySelectorAll(".doneBtn").forEach(b=>b.onclick=()=>finish(b.dataset.row));document.querySelectorAll(".blankInput").forEach(i=>{i.onfocus=()=>{i.classList.remove("bad");clear(i.dataset.row)}})
-</script></body></html>
+</script><section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: A quantity is what can have numerical value. This is different from a quality, which often has human value and is very subjective. Quantities are objective. Mathematics concerns objective truths. These are what are true for all people at all times. While subjective believes can divide us, objective truths can unite us.&quot;)">🔊</button><br><br><b>About Math:</b><br>A <b>quantity</b> is what can have numerical value. This is different from a <b>quality</b>, which often has human value and is very subjective. Quantities are objective. Mathematics concerns objective truths. These are what are true for all people at all times. While subjective believes can divide us, objective truths can unite us.</div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Often students have asked me \&quot;why I need to know Math? When I can always use calculators to get the answer?\&quot; My response has always been, \&quot;.. its not what you do with Math! Its what Math does with you!\&quot; As Math disciplines the Mind to seek Logic and Objective Truth. What unites us.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Often students have asked me "why I need to know Math? When I can always use calculators to get the answer?" My response has always been, ".. its not what you do with Math! Its what Math does with you!" As Math disciplines the Mind to seek Logic and Objective Truth. What unites us.</div></section></body></html>

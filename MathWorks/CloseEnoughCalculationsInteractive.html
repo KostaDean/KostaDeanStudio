@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Close Enough Calculations Interactive</title>
@@ -34,7 +33,7 @@ p{font-size:1.16rem;line-height:1.6}
 .flashOn{animation:flashAnim .22s linear 8}
 @keyframes flashAnim{0%{opacity:0}50%{opacity:.95}100%{opacity:0}}
 </style>
-</head>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style></head>
 <body>
 <div id="flashOverlay"></div>
 <header>
@@ -54,23 +53,23 @@ p{font-size:1.16rem;line-height:1.6}
 </section>
 <section class="card">
 <h2>Examples</h2>
-<div class="speakRow"><button class="speakBtn" onclick="speak('Four hundred thirteen plus one hundred seventy eight is less than four hundred thirteen plus two hundred. That equals six hundred thirteen.')">🔊</button><div><p><b>Example 1:</b> Use a nearby easy number to get an upper estimate.</p><div class="mathBox">413 + 178 &lt; 413 + 200 = <b>613</b></div></div></div>
-<div class="speakRow"><button class="speakBtn" onclick="speak('Four hundred thirteen plus one hundred seventy eight is greater than four hundred plus one hundred seventy eight. That equals five hundred seventy eight.')">🔊</button><div><p><b>Example 2:</b> Use a nearby easy number to get a lower estimate.</p><div class="mathBox">413 + 178 &gt; 400 + 178 = <b>578</b></div></div></div>
+<div class="speakRow"><button class="speakBtn" onclick="speak(&quot;Example 1: Use a close enough easy number to get an upper estimate. 413 + 178 &lt; 413 + 200 = 613&quot;)">🔊</button><div><p><b>Example 1:</b> Use a close enough easy number to get an upper estimate.</p><div class="mathBox">413 + 178 &lt; 413 + 200 = <b>613</b></div></div></div>
+<div class="speakRow"><button class="speakBtn" onclick="speak(&quot;Example 2: Use a close enough easy number to get a lower estimate. 413 + 178 &gt; 400 + 178 = 578&quot;)">🔊</button><div><p><b>Example 2:</b> Use a close enough easy number to get a lower estimate.</p><div class="mathBox">413 + 178 &gt; 400 + 178 = <b>578</b></div></div></div>
 <div class="speakRow"><button class="speakBtn" onclick="speak('So the actual answer is between five hundred seventy eight and six hundred thirteen.')">🔊</button><p>So the actual answer is between <b>578</b> and <b>613</b>.</p></div>
 <div class="speakRow"><button class="speakBtn" onclick="speak('A very quick estimate is four hundred plus two hundred, which equals six hundred.')">🔊</button><div><p>A very quick close estimate is:</p><div class="mathBox">413 + 178 ≈ 400 + 200 = <b>600</b></div></div></div>
 </section>
 <section class="card">
 <h2>The rule</h2>
-<div class="ruleBox"><button class="speakBtn" onclick="speak('Rule. To make a close enough calculation, replace hard numbers with nearby easy numbers. Then calculate with those easy numbers. The answer may not be exact, but it should be close.')">🔊</button><br><br><b>Rule:</b> To make a close enough calculation, replace hard numbers with nearby easy numbers. Then calculate with those easy numbers. The answer may not be exact, but it should be close.</div>
+<div class="ruleBox"><button class="speakBtn" onclick="speak(&quot;Rule: To make a close enough calculation, replace hard numbers with close enough easy numbers. Then calculate with those easy numbers. The answer may not be exact, but it should be close.&quot;)">🔊</button><br><br><b>Rule:</b> To make a close enough calculation, replace hard numbers with close enough easy numbers. Then calculate with those easy numbers. The answer may not be exact, but it should be close.</div>
 </section>
 <section class="card">
 <h2>Exercises</h2>
-<div class="exercise"><div class="prompt">1) Estimate: 392 + 207 ≈ ?</div><button class="speakBtn" onclick="speak('Estimate three hundred ninety two plus two hundred seven.')">🔊</button><br><input class="answerBox" id="q1"><button class="doneBtn" onclick="checkAny('q1',['600'],'f1')">Done</button><div id="f1" class="feedback"></div></div>
-<div class="exercise"><div class="prompt">2) Estimate: 413 + 178 ≈ ?</div><button class="speakBtn" onclick="speak('Estimate four hundred thirteen plus one hundred seventy eight.')">🔊</button><br><input class="answerBox" id="q2"><button class="doneBtn" onclick="checkAny('q2',['600'],'f2')">Done</button><div id="f2" class="feedback"></div></div>
-<div class="exercise"><div class="prompt">3) Estimate: 689 + 312 ≈ ?</div><button class="speakBtn" onclick="speak('Estimate six hundred eighty nine plus three hundred twelve.')">🔊</button><br><input class="answerBox" id="q3"><button class="doneBtn" onclick="checkAny('q3',['1000'],'f3')">Done</button><div id="f3" class="feedback"></div></div>
-<div class="exercise"><div class="prompt">4) Estimate: 941 − 398 ≈ ?</div><button class="speakBtn" onclick="speak('Estimate nine hundred forty one minus three hundred ninety eight.')">🔊</button><br><input class="answerBox" id="q4"><button class="doneBtn" onclick="checkAny('q4',['500'],'f4')">Done</button><div id="f4" class="feedback"></div></div>
-<div class="exercise"><div class="prompt">5) Estimate: 1205 + 789 ≈ ?</div><button class="speakBtn" onclick="speak('Estimate one thousand two hundred five plus seven hundred eighty nine.')">🔊</button><br><input class="answerBox" id="q5"><button class="doneBtn" onclick="checkAny('q5',['2000'],'f5')">Done</button><div id="f5" class="feedback"></div></div>
-<div class="exercise"><div class="prompt">6) Estimate: 598 + 401 ≈ ?</div><button class="speakBtn" onclick="speak('Estimate five hundred ninety eight plus four hundred one.')">🔊</button><br><input class="answerBox" id="q6"><button class="doneBtn" onclick="checkAny('q6',['1000'],'f6')">Done</button><div id="f6" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">1) Estimate: 392 + 207 ≈ ?</div><button class="speakBtn" onclick="speak(&quot;Estimate three hundred ninety two plus two hundred seven.&quot;)">🔊</button><br><input class="answerBox" id="q1"><button class="doneBtn" onclick="checkAny('q1',[&quot;600&quot;,&quot;592&quot;],'f1')">Done</button><div id="f1" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">2) Estimate: 413 + 178 ≈ ?</div><button class="speakBtn" onclick="speak(&quot;Estimate four hundred thirteen plus one hundred seventy eight.&quot;)">🔊</button><br><input class="answerBox" id="q2"><button class="doneBtn" onclick="checkAny('q2',[&quot;600&quot;,&quot;578&quot;],'f2')">Done</button><div id="f2" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">3) Estimate: 689 + 312 ≈ ?</div><button class="speakBtn" onclick="speak(&quot;Estimate six hundred eighty nine plus three hundred twelve.&quot;)">🔊</button><br><input class="answerBox" id="q3"><button class="doneBtn" onclick="checkAny('q3',[&quot;1000&quot;,&quot;1012&quot;],'f3')">Done</button><div id="f3" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">4) Estimate: 941 − 398 ≈ ?</div><button class="speakBtn" onclick="speak(&quot;Estimate nine hundred forty one minus three hundred ninety eight.&quot;)">🔊</button><br><input class="answerBox" id="q4"><button class="doneBtn" onclick="checkAny('q4',[&quot;500&quot;,&quot;541&quot;],'f4')">Done</button><div id="f4" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">5) Estimate: 1205 + 789 ≈ ?</div><button class="speakBtn" onclick="speak(&quot;Estimate one thousand two hundred five plus seven hundred eighty nine.&quot;)">🔊</button><br><input class="answerBox" id="q5"><button class="doneBtn" onclick="checkAny('q5',[&quot;2000&quot;,&quot;2005&quot;,&quot;1989&quot;],'f5')">Done</button><div id="f5" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">6) Estimate: 598 + 401 ≈ ?</div><button class="speakBtn" onclick="speak(&quot;Estimate five hundred ninety eight plus four hundred one.&quot;)">🔊</button><br><input class="answerBox" id="q6"><button class="doneBtn" onclick="checkAny('q6',[&quot;1000&quot;,&quot;998&quot;],'f6')">Done</button><div id="f6" class="feedback"></div></div>
 </section>
 </main>
 <div id="celebrate">
@@ -173,5 +172,6 @@ function playTrumpets(){
  }
 }
 </script>
-</body>
-</html>
+
+
+</body></html>
