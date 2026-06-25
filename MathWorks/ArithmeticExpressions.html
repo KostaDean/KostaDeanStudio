@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Arithmetic Expressions Interactive</title>
@@ -26,7 +25,7 @@ h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}h2{
 @keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
 @media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:76px}.exExpr{margin-left:25px}}
 </style>
-</head>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style></head>
 <body>
 <div class="lesson">
 <div class="banner" id="banner">YOU ARE A WINNER!</div>
@@ -44,10 +43,10 @@ h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}h2{
 <p>The innermost parts are calculated first: 5(−3) and (10−8).</p></div>
 
 <div class="ruleBox"><h2>Examples</h2>
-<div class="eqLine">(−2) × (7 + 3) = (−2)(7 + 3) = (−2)(10) = <span class="green">−20</span></div>
-<div class="eqLine">(−2)7 + 3 = (−14) + 3 = <span class="green">−11</span></div>
-<div class="eqLine"><span class="frac"><span class="top">−8</span><span class="bottom">2</span></span> + 4 = −4 + 4 = <span class="green">0</span></div>
-<div class="eqLine"><span class="frac"><span class="top">(−8) + 4</span><span class="bottom">2</span></span> = <span class="frac"><span class="top">−4</span><span class="bottom">2</span></span> = <span class="green">−2</span></div>
+<div class="eqLine">(−2) × (7 + 3) =</div><div class="eqLine">&nbsp;(−2)(7 + 3) =</div><div class="eqLine">&nbsp;(−2)(10) =</div><div class="eqLine">&nbsp; <span class="green">−20</span></div>
+<div class="eqLine">(−2)7 + 3 = (−14) + 3 =&nbsp;</div><div class="eqLine">-11<br></div><div class="eqLine"><br></div>
+<div class="eqLine"><span class="frac"><span class="top">−8</span><span class="bottom">2</span></span> + 4 =</div><div class="eqLine">&nbsp;−4 + 4 =</div><div class="eqLine">0<br></div><div class="eqLine"><br></div>
+<div class="eqLine"><span class="frac"><span class="top">(−8) + 4</span><span class="bottom">2</span></span> =</div><div class="eqLine">&nbsp; <span class="frac"><span class="top">−4</span><span class="bottom">2</span></span> =</div><div class="eqLine">&nbsp; <span class="green">−2</span></div>
 <p>Notice how changing the grouping changes the value.</p></div>
 
 <h2>Exercises: Fill in the pink boxes</h2>
@@ -79,5 +78,5 @@ function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[da
 document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
 document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
 </script>
-</body>
-</html>
+
+<section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: Arithmetic expressions are quantities. They have form and value. They may contain other quantities to be calculated first. These may be contained within ( ), [ ], { } in a complex expression. Working from the innermost () outwards can avoid making mistakes in the \&quot;order of operations\&quot; calculating the value.&quot;)">🔊</button><br><br><b>About Math:</b><br>Arithmetic expressions are quantities. They have <b>form</b> and <b>value</b>. They may contain other quantities to be calculated first. These may be contained within<div>&nbsp;( ), [ ], { } in a complex expression. Working from the innermost () outwards can avoid making mistakes in the "order of operations" calculating the value.</div></div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Learning to calculate arithmetic expressions is the equivalent in Math to learning to read! A student that can with ease and confidence calculate arithmetic expressions can more quickly progress with more advanced mathematical ideas. The use of calculators for this should be encouraged.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Learning to calculate arithmetic expressions is the equivalent in Math to learning to read! A student that can with ease and confidence calculate arithmetic expressions can more quickly progress with more advanced mathematical ideas. The use of calculators for this should be encouraged.</div></section></body></html>

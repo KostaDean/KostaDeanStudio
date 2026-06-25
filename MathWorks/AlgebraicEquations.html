@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Algebraic Equations Interactive</title>
@@ -24,7 +23,7 @@ h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}h2{
 @keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
 @media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:86px}.blankInput.wide{width:130px}.exExpr{margin-left:25px}}
 </style>
-</head>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style></head>
 <body>
 <div class="lesson">
 <div class="banner" id="banner">YOU ARE A WINNER!</div><div id="donateWrap" class="donateWrap"><div class="donateText">Please support this work:</div><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a></div>
@@ -77,4 +76,5 @@ function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").l
 function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];let ok=true;inputs.forEach(inp=>{const val=norm(inp.value),allowed=answerSet(inp);inp.classList.remove("ok","bad");if(allowed.has(val)){inp.classList.add("ok")}else{inp.classList.add("bad");ok=false}});const msg=document.getElementById("rowMsg_"+r);if(ok){inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=inp.dataset.answer;inp.replaceWith(s)});msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";playGood();flash("good");maybeCelebrateWorksheet()}else{msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";playBad();flash("bad")}}
 document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
 document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
-</script></body></html>
+</script>
+<section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: Mathematics is a Language. It uses numbers, words and symbols to accurately describe ideas and relationships. Mathematics is The Language of Objective Reasoning.&quot;)">🔊</button><br><br><b>About Math:</b><br>Mathematics is a Language. It uses numbers, words and symbols to accurately describe ideas and relationships. Mathematics is The Language of Objective Reasoning.</div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Each side of an equation is a quantity. Its very important to enclose each side in parenthesis when operating on both sides of the equation in solving the equation. This is a source of many common mistakes students make.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br><span style="-webkit-text-size-adjust: auto; font-size: 18.4px; background-color: rgb(255, 247, 237);">Each side of an equation is a quantity. Its very important to enclose each side in parenthesis when operating on both sides of the equation in solving the equation. This is a source of many common mistakes students make.</span><br></div></section></body></html>

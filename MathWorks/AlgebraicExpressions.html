@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Algebraic Expressions Interactive</title>
@@ -37,14 +36,14 @@ p{font-size:20px;line-height:1.45}
 @keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
 @media(max-width:700px){h1{font-size:30px}.eqLine,.exLine{font-size:21px}.blankInput{width:76px}.exExpr{margin-left:25px}}
 </style>
-</head>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style></head>
 <body>
 <div class="lesson">
 <div class="banner" id="banner">YOU ARE A WINNER!</div>
 <div id="donateWrap" class="donateWrap"><div class="donateText">Please support this work:</div><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a></div>
 
 <h1>Algebraic Expressions</h1>
-<div class="eqLine"><button class="speakBtn" id="speakIntro" type="button">🔊</button><span>We can use letters to stand for numbers. These letters are called <b>variables</b>.</span></div>
+<div class="eqLine"><button class="speakBtn" id="speakIntro" type="button">🔊</button><span>We can use letters to name quantities. When the quantity can vary and can have many values we call the letter that names it a <b>variable</b>. When the quantity has specific value we call the letter that names such quantity a <b>constant</b>.&nbsp;</span></div>
 
 <div class="ruleBox">
 <h2>Letters can stand for numbers</h2>
@@ -68,9 +67,9 @@ p{font-size:20px;line-height:1.45}
 </div>
 
 <div class="ruleBox">
-<h2>Substitution</h2>
-<p>When we replace letters by numbers, we <b>substitute</b> those numbers into the expression.</p>
-<p><b>Important:</b> Use grouping symbols such as ( ), [ ], or { } to specify the order of operations (calculations).</p>
+<h2>Princeple of Substitution:</h2><div><br></div>
+<p>A quantity can be replaced (<b>substituted</b>) by another quantity it is equal to in value.</p>
+<p><b>Important:</b>&nbsp;When substituting, place the quantity being substituted in ( ), [ ], { } to avoid altering the form and order of operations (calculations) in the expression.</p>
 <p>Use <b>( )</b> around each quantity (number) being substituted so the form of the algebraic expression does not change.</p>
 <p>The innermost <b>( )</b> are calculated first.</p>
 <p>If there are no specified grouping symbols, multiplication and division are done first before addition and subtraction.</p>
@@ -112,5 +111,6 @@ function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[da
 document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
 document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
 </script>
-</body>
-</html>
+
+
+<section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: The form of a mathematical idea is best and more accurately expressed using symbols and letters. Learning to read such symbols is the key to understanding Math. Algebra can be thought as doing Arithmetic without doing the actual calculations.&quot;)">🔊</button><br><br><b>About Math:</b><br>The form of a mathematical idea is best and more accurately expressed using symbols and letters. Learning to read such symbols is the key to understanding Math. Algebra can be thought as doing Arithmetic without doing the actual calculations.</div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Learning to do long division and multiplication and the times table is the most difficult part of learning Math. Such negative first experiences keep many young students from being good in Math. Forming the impression Math is about Numbers and Calculations. And not seeing the Beauty of Math. Allow your child to use calculators for such computational tasks and emphasize reasoning and ideas. Use pictures to express these.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Learning to do long division and multiplication and the times table is the most difficult part of learning Math. Such negative first experiences keep many young students from being good in Math. Forming the impression Math is about Numbers and Calculations. And not seeing the Beauty of Math. Allow your child to use calculators for such computational tasks and emphasize reasoning and ideas. Use pictures to express these.</div></section></body></html>
