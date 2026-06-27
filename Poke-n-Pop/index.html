@@ -130,7 +130,7 @@ function ensureAudio(){
   if(!ac){
     ac = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = ac.createGain();
-    masterGain.gain.value = 0.42;
+    masterGain.gain.value = 0.28;
     const comp = ac.createDynamicsCompressor();
     comp.threshold.value = -24;
     comp.knee.value = 18;
@@ -144,40 +144,27 @@ function ensureAudio(){
 }
 
 function collisionTick(strength=1){
+  // Gentle soft-pop sound for circle bumps. No squeals or sharp square-wave tones.
   if(!ac || !masterGain) return;
   const now = ac.currentTime;
-  const amt = Math.min(2.2, Math.max(0.7, strength));
-
-  const osc1 = ac.createOscillator();
-  const osc2 = ac.createOscillator();
+  const amt = Math.min(1.2, Math.max(0.45, strength));
+  const osc = ac.createOscillator();
   const gain = ac.createGain();
   const filter = ac.createBiquadFilter();
-
-  osc1.type = 'square';
-  osc2.type = 'triangle';
-  osc1.frequency.setValueAtTime(920 + 260 * amt, now);
-  osc1.frequency.exponentialRampToValueAtTime(340, now + 0.09);
-  osc2.frequency.setValueAtTime(520 + 120 * amt, now);
-  osc2.frequency.exponentialRampToValueAtTime(180, now + 0.11);
-
-  filter.type = 'bandpass';
-  filter.frequency.setValueAtTime(1650, now);
-  filter.Q.value = 0.8;
-
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(260 + 40*amt, now);
+  osc.frequency.exponentialRampToValueAtTime(150, now + 0.075);
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(850, now);
+  filter.Q.value = 0.45;
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.11 * amt, now + 0.004);
-  gain.gain.exponentialRampToValueAtTime(0.02 * amt, now + 0.045);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
-
-  osc1.connect(filter);
-  osc2.connect(filter);
+  gain.gain.exponentialRampToValueAtTime(0.030 * amt, now + 0.006);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.10);
+  osc.connect(filter);
   filter.connect(gain);
   gain.connect(masterGain);
-
-  osc1.start(now);
-  osc2.start(now);
-  osc1.stop(now + 0.14);
-  osc2.stop(now + 0.14);
+  osc.start(now);
+  osc.stop(now + 0.12);
 }
 
 function resize(){ W = window.innerWidth; H = window.innerHeight; canvas.width = W; canvas.height = H; }
@@ -227,28 +214,30 @@ function normalizeCircleSpeeds(forceSet=false){
 }
 
 function playGiggle(short=true){
+  // Soft, rounded baby-like giggle made with WebAudio.
+  // Kept low-volume and low-pass filtered to avoid harsh squeals.
   if(!ac || !masterGain) return;
   const now = ac.currentTime;
-  const syllables = short ? 3 : 7;
+  const syllables = short ? 2 : 5;
   for(let i=0;i<syllables;i++){
-    const t = now + i * (short ? 0.105 : 0.095);
-    const dur = short ? 0.085 : 0.075;
+    const t = now + i * (short ? 0.14 : 0.12);
+    const dur = short ? 0.11 : 0.095;
     const osc = ac.createOscillator();
     const gain = ac.createGain();
     const filter = ac.createBiquadFilter();
-    osc.type = 'sine';
-    const base = 520 + Math.random()*170 + (i%2)*85;
+    osc.type = 'triangle';
+    const base = 360 + Math.random()*55 + (i%2)*35;
     osc.frequency.setValueAtTime(base, t);
-    osc.frequency.exponentialRampToValueAtTime(base*1.35, t + dur*0.45);
-    osc.frequency.exponentialRampToValueAtTime(base*0.92, t + dur);
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(950 + Math.random()*450, t);
-    filter.Q.value = 1.4;
+    osc.frequency.linearRampToValueAtTime(base*1.16, t + dur*0.38);
+    osc.frequency.linearRampToValueAtTime(base*0.96, t + dur);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1050, t);
+    filter.Q.value = 0.35;
     gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.exponentialRampToValueAtTime(short ? 0.080 : 0.070, t + 0.012);
+    gain.gain.exponentialRampToValueAtTime(short ? 0.045 : 0.040, t + 0.018);
     gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     osc.connect(filter); filter.connect(gain); gain.connect(masterGain);
-    osc.start(t); osc.stop(t + dur + 0.02);
+    osc.start(t); osc.stop(t + dur + 0.025);
   }
 }
 
@@ -441,7 +430,7 @@ function onTap(e){
 
   // Escape is intentionally very rare: only taps on the tiny outside rim
   // of a circle trigger the piglet escape. All other circle taps pop it.
-  if(d >= hit.r*0.95){ startEscape(hit,x,y,false); return; }
+  if(d >= hit.r*0.98){ startEscape(hit,x,y,false); return; }
 
   if(firstCaptureAt == null) firstCaptureAt = performance.now();
   hit.state = 'pop'; hit.t = 0.20;
