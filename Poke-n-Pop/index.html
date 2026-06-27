@@ -111,8 +111,11 @@ function buildConfetti(){
 
 const escapeSprite = new Image(); escapeSprite.src = 'escape.png';
 const lookSprite = new Image(); lookSprite.src = 'look_back.png';
-// Pig squeals removed. Escape and winner sounds now use gentle synthesized baby-like giggles.
-// No extra sound files are needed.
+// Pig squeals removed. Escape and winner sounds use this real baby-laugh track.
+// Keep baby_laugh.mp3 in the same folder as index.html.
+const babyLaugh = new Audio('baby_laugh.mp3');
+babyLaugh.preload = 'auto';
+babyLaugh.volume = 0.72;
 
 const FRAME_W = 512, FRAME_H = 512;
 const BG = '#143d63', PINK = '#e79cab';
@@ -214,31 +217,17 @@ function normalizeCircleSpeeds(forceSet=false){
 }
 
 function playGiggle(short=true){
-  // Soft, rounded baby-like giggle made with WebAudio.
-  // Kept low-volume and low-pass filtered to avoid harsh squeals.
-  if(!ac || !masterGain) return;
-  const now = ac.currentTime;
-  const syllables = short ? 2 : 5;
-  for(let i=0;i<syllables;i++){
-    const t = now + i * (short ? 0.14 : 0.12);
-    const dur = short ? 0.11 : 0.095;
-    const osc = ac.createOscillator();
-    const gain = ac.createGain();
-    const filter = ac.createBiquadFilter();
-    osc.type = 'triangle';
-    const base = 360 + Math.random()*55 + (i%2)*35;
-    osc.frequency.setValueAtTime(base, t);
-    osc.frequency.linearRampToValueAtTime(base*1.16, t + dur*0.38);
-    osc.frequency.linearRampToValueAtTime(base*0.96, t + dur);
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(1050, t);
-    filter.Q.value = 0.35;
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.exponentialRampToValueAtTime(short ? 0.045 : 0.040, t + 0.018);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    osc.connect(filter); filter.connect(gain); gain.connect(masterGain);
-    osc.start(t); osc.stop(t + dur + 0.025);
-  }
+  // Real baby-laugh sound. Escape gets a short cheerful snippet;
+  // winner gets a longer laugh. Clone keeps repeated plays reliable.
+  try{
+    const a = babyLaugh.cloneNode(true);
+    a.volume = short ? 0.55 : 0.78;
+    a.currentTime = 0;
+    a.play().catch(()=>{});
+    if(short){
+      setTimeout(()=>{ try{ a.pause(); a.currentTime = 0; }catch(e){} }, 850);
+    }
+  }catch(e){}
 }
 
 function makePig(){
@@ -430,7 +419,7 @@ function onTap(e){
 
   // Escape is intentionally very rare: only taps on the tiny outside rim
   // of a circle trigger the piglet escape. All other circle taps pop it.
-  if(d >= hit.r*0.98){ startEscape(hit,x,y,false); return; }
+  if(d >= hit.r*0.99){ startEscape(hit,x,y,false); return; }
 
   if(firstCaptureAt == null) firstCaptureAt = performance.now();
   hit.state = 'pop'; hit.t = 0.20;
