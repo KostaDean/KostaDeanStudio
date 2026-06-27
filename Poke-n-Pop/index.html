@@ -66,7 +66,7 @@ input[type=range]{width:100%;}
   </div>
   <div class="hint">
     Double-tap empty background to hide/show this panel.<br>
-    Most taps pop a circle. Only the very outside rim can trigger the piglet escape.<br>
+    Most taps pop a circle. Only a tiny outer rim can trigger a rare giggling piglet escape.<br>
     While one piglet is escaping, further circle taps are disabled.<br>
     Each pop makes the remaining circles faster, but not chaotic.
   </div>
@@ -111,7 +111,8 @@ function buildConfetti(){
 
 const escapeSprite = new Image(); escapeSprite.src = 'escape.png';
 const lookSprite = new Image(); lookSprite.src = 'look_back.png';
-const sounds = [new Audio('pig_oink.mp3'), new Audio('pig_oink1.mp3')];
+// Pig squeals removed. Escape and winner sounds now use gentle synthesized baby-like giggles.
+// No extra sound files are needed.
 
 const FRAME_W = 512, FRAME_H = 512;
 const BG = '#143d63', PINK = '#e79cab';
@@ -225,11 +226,30 @@ function normalizeCircleSpeeds(forceSet=false){
   }
 }
 
-function playOink(){
-  const base = sounds[(Math.random()*sounds.length)|0];
-  const a = base.cloneNode();
-  a.volume = 0.95;
-  a.play().catch(()=>{});
+function playGiggle(short=true){
+  if(!ac || !masterGain) return;
+  const now = ac.currentTime;
+  const syllables = short ? 3 : 7;
+  for(let i=0;i<syllables;i++){
+    const t = now + i * (short ? 0.105 : 0.095);
+    const dur = short ? 0.085 : 0.075;
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    const filter = ac.createBiquadFilter();
+    osc.type = 'sine';
+    const base = 520 + Math.random()*170 + (i%2)*85;
+    osc.frequency.setValueAtTime(base, t);
+    osc.frequency.exponentialRampToValueAtTime(base*1.35, t + dur*0.45);
+    osc.frequency.exponentialRampToValueAtTime(base*0.92, t + dur);
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(950 + Math.random()*450, t);
+    filter.Q.value = 1.4;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(short ? 0.080 : 0.070, t + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(filter); filter.connect(gain); gain.connect(masterGain);
+    osc.start(t); osc.stop(t + dur + 0.02);
+  }
 }
 
 function makePig(){
@@ -269,7 +289,7 @@ function resetGame(){
 resetGame(); playBtn.onclick = resetGame;
 
 function countCircles(){ return pigs.filter(p => p.state === 'circle').length; }
-function showScore(){ gameEnded = true; buildConfetti(); scoreTime.textContent = (finalScoreMs/1000).toFixed(2) + ' s'; score.style.display = 'flex'; }
+function showScore(){ gameEnded = true; buildConfetti(); scoreTime.textContent = (finalScoreMs/1000).toFixed(2) + ' s'; score.style.display = 'flex'; playGiggle(false); }
 
 function bounceWalls(p){
   if(p.x < p.r){ p.x = p.r; p.vx = Math.abs(p.vx); }
@@ -308,7 +328,7 @@ function poof(p){
 
 function startEscape(p,tapX,tapY,isFinal){
   inputLocked = true;
-  playOink(); // sound first
+  playGiggle(true); // cheerful escape sound first
   p.state = 'preReact';
   p.t = 0.12;
   p.frame = 0; p.frameTime = 0; p.dust = [];
@@ -419,9 +439,9 @@ function onTap(e){
 
   const d = dist(x,y,hit.x,hit.y);
 
-  // Escape is intentionally rare: only taps on the very outside rim
+  // Escape is intentionally very rare: only taps on the tiny outside rim
   // of a circle trigger the piglet escape. All other circle taps pop it.
-  if(d >= hit.r*0.85){ startEscape(hit,x,y,false); return; }
+  if(d >= hit.r*0.95){ startEscape(hit,x,y,false); return; }
 
   if(firstCaptureAt == null) firstCaptureAt = performance.now();
   hit.state = 'pop'; hit.t = 0.20;
