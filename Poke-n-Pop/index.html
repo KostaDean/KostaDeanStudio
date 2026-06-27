@@ -33,7 +33,7 @@ input[type=range]{width:100%;}
 }
 #winnerStage{display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
 #winnerPig{
-  width:min(88vw,480px);height:auto;border-radius:18px;display:block;
+  width:min(88vw,480px);max-height:52vh;object-fit:contain;height:auto;border-radius:18px;display:block;
   filter:drop-shadow(0 18px 28px rgba(0,0,0,.38));transform-origin:50% 74%;
   animation:pigSway 2.8s ease-in-out infinite;
 }
@@ -66,7 +66,7 @@ input[type=range]{width:100%;}
   </div>
   <div class="hint">
     Double-tap empty background to hide/show this panel.<br>
-    Inner half of a circle pops it. Outer half triggers the piglet escape.<br>
+    Most taps pop a circle. Only the very outside rim can trigger the piglet escape.<br>
     While one piglet is escaping, further circle taps are disabled.<br>
     Each pop makes the remaining circles faster, but not chaotic.
   </div>
@@ -418,25 +418,26 @@ function onTap(e){
   if(circlesBefore === 1){ startEscape(hit,x,y,true); return; }
 
   const d = dist(x,y,hit.x,hit.y);
-  if(d < hit.r*0.5){
-    if(firstCaptureAt == null) firstCaptureAt = performance.now();
-    hit.state = 'pop'; hit.t = 0.20;
-    currentSpeedCap = Math.min(currentSpeedCap + popSpeedBoost(), baseCircleSpeed() + 120);
-    updateLabels();
-    for(const p of pigs){
-      if(p !== hit && p.state === 'circle'){
-        const a = Math.atan2(p.vy,p.vx) || rand(0,Math.PI*2);
-        const current = Math.hypot(p.vx,p.vy);
-        const boosted = Math.min(current + popSpeedBoost(), currentSpeedCap);
-        const raised = Math.max(boosted, currentSpeedCap*0.84);
-        p.vx = Math.cos(a)*raised; p.vy = Math.sin(a)*raised;
-      }
-    }
-    return;
-  }
 
-  startEscape(hit,x,y,false);
+  // Escape is intentionally rare: only taps on the very outside rim
+  // of a circle trigger the piglet escape. All other circle taps pop it.
+  if(d >= hit.r*0.85){ startEscape(hit,x,y,false); return; }
+
+  if(firstCaptureAt == null) firstCaptureAt = performance.now();
+  hit.state = 'pop'; hit.t = 0.20;
+  currentSpeedCap = Math.min(currentSpeedCap + popSpeedBoost(), baseCircleSpeed() + 120);
+  updateLabels();
+  for(const p of pigs){
+    if(p !== hit && p.state === 'circle'){
+      const a = Math.atan2(p.vy,p.vx) || rand(0,Math.PI*2);
+      const current = Math.hypot(p.vx,p.vy);
+      const boosted = Math.min(current + popSpeedBoost(), currentSpeedCap);
+      const raised = Math.max(boosted, currentSpeedCap*0.84);
+      p.vx = Math.cos(a)*raised; p.vy = Math.sin(a)*raised;
+    }
+  }
 }
+
 
 canvas.addEventListener('pointerup', onTap, {passive:false});
 
