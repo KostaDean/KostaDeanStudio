@@ -148,7 +148,7 @@ function ensureAudio(){
   if(!ac){
     ac = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = ac.createGain();
-    masterGain.gain.value = 0.36;
+    masterGain.gain.value = 0.58;
     const comp = ac.createDynamicsCompressor();
     comp.threshold.value = -24;
     comp.knee.value = 18;
@@ -162,29 +162,61 @@ function ensureAudio(){
 }
 
 function collisionTick(strength=1){
-  // Gentle soft-pop sound for circle bumps. No squeals or sharp square-wave tones.
+  // Audible, child-friendly bounce sound for circle-to-circle bumps.
+  // Uses a rounded sine tone, not the old pig squeal.
   if(!ac || !masterGain) return;
   const now = ac.currentTime;
-  const amt = Math.min(1.2, Math.max(0.45, strength));
+  const amt = Math.min(1.5, Math.max(0.6, strength));
   const osc = ac.createOscillator();
   const gain = ac.createGain();
   const filter = ac.createBiquadFilter();
   osc.type = 'sine';
-  osc.frequency.setValueAtTime(260 + 40*amt, now);
-  osc.frequency.exponentialRampToValueAtTime(150, now + 0.075);
+  osc.frequency.setValueAtTime(330 + 70*amt, now);
+  osc.frequency.exponentialRampToValueAtTime(170, now + 0.11);
   filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(850, now);
-  filter.Q.value = 0.45;
+  filter.frequency.setValueAtTime(1400, now);
+  filter.Q.value = 0.55;
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.050 * amt, now + 0.006);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.10);
+  gain.gain.exponentialRampToValueAtTime(0.135 * amt, now + 0.006);
+  gain.gain.exponentialRampToValueAtTime(0.028 * amt, now + 0.055);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
   osc.connect(filter);
   filter.connect(gain);
   gain.connect(masterGain);
   osc.start(now);
-  osc.stop(now + 0.12);
+  osc.stop(now + 0.18);
 }
 
+function playSoftPop(){
+  // Short, clearly audible pop for successful inner-circle taps.
+  if(!ac || !masterGain) return;
+  const now = ac.currentTime;
+  const osc1 = ac.createOscillator();
+  const osc2 = ac.createOscillator();
+  const gain = ac.createGain();
+  const filter = ac.createBiquadFilter();
+  osc1.type = 'sine';
+  osc2.type = 'triangle';
+  osc1.frequency.setValueAtTime(620, now);
+  osc1.frequency.exponentialRampToValueAtTime(210, now + 0.085);
+  osc2.frequency.setValueAtTime(360, now);
+  osc2.frequency.exponentialRampToValueAtTime(145, now + 0.10);
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(1800, now);
+  filter.Q.value = 0.5;
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.22, now + 0.004);
+  gain.gain.exponentialRampToValueAtTime(0.035, now + 0.055);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+  osc1.connect(filter);
+  osc2.connect(filter);
+  filter.connect(gain);
+  gain.connect(masterGain);
+  osc1.start(now);
+  osc2.start(now);
+  osc1.stop(now + 0.15);
+  osc2.stop(now + 0.15);
+}
 function resize(){ W = window.innerWidth; H = window.innerHeight; canvas.width = W; canvas.height = H; }
 resize(); addEventListener('resize', resize, {passive:true});
 
@@ -251,11 +283,6 @@ function playGiggle(short=true){
   }catch(e){}
 }
 
-function playSoftPop(){
-  // Short, friendly pop for successful inner-circle taps.
-  collisionTick(0.75);
-}
-
 
 function makePig(){
   const r = BASE_R, margin = Math.max(r+10, 28);
@@ -315,7 +342,7 @@ function collide(a,b){
       const impulse = -vn;
       a.vx -= impulse*nx; a.vy -= impulse*ny; b.vx += impulse*nx; b.vy += impulse*ny;
       const now = performance.now();
-      if(now - lastCollisionSoundAt > 28){
+      if(now - lastCollisionSoundAt > 75){
         lastCollisionSoundAt = now;
         collisionTick(0.9 + Math.min(1.4, Math.abs(vn)/28));
       }
