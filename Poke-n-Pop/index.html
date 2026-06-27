@@ -66,7 +66,7 @@ input[type=range]{width:100%;}
   </div>
   <div class="hint">
     Double-tap empty background to hide/show this panel.<br>
-    Most taps pop a circle. Only a tiny outer rim can trigger a rare giggling piglet escape.<br>
+    Most taps pop a circle. The outside rim can trigger a giggling piglet escape surprise.<br>
     While one piglet is escaping, further circle taps are disabled.<br>
     Each pop makes the remaining circles faster, but not chaotic.
   </div>
@@ -113,15 +113,23 @@ const escapeSprite = new Image(); escapeSprite.src = 'escape.png';
 const lookSprite = new Image(); lookSprite.src = 'look_back.png';
 // Pig squeals removed. Escape and winner sounds use this real baby-laugh track.
 // Keep baby_laugh.mp3 in the same folder as index.html.
-const babyLaugh = new Audio('./baby_laugh.mp3');
+const BABY_LAUGH_SRC = './baby_laugh.mp3';
+const babyLaugh = new Audio(BABY_LAUGH_SRC);
 babyLaugh.preload = 'auto';
-babyLaugh.volume = 0.85;
+babyLaugh.volume = 0.90;
 babyLaugh.playsInline = true;
 let audioUnlocked = false;
 function unlockBabyLaugh(){
   if(audioUnlocked) return;
   audioUnlocked = true;
   try{ babyLaugh.load(); }catch(e){}
+}
+function makeLaughAudio(volume){
+  const a = new Audio(BABY_LAUGH_SRC);
+  a.preload = 'auto';
+  a.playsInline = true;
+  a.volume = volume;
+  return a;
 }
 
 const FRAME_W = 512, FRAME_H = 512;
@@ -224,18 +232,26 @@ function normalizeCircleSpeeds(forceSet=false){
 }
 
 function playGiggle(short=true){
-  // Real baby-laugh sound. Escape gets a short cheerful snippet; winner gets longer laugh.
+  // Use a fresh audio object for escape so it does not interrupt or get
+  // interrupted by the winner-window laugh. This avoids silent failures
+  // on some mobile browsers.
   try{
+    if(short){
+      const a = makeLaughAudio(0.78);
+      a.currentTime = 0;
+      const pr = a.play();
+      if(pr && pr.catch) pr.catch(()=>{});
+      setTimeout(()=>{ try{ a.pause(); a.currentTime = 0; }catch(e){} }, 2200);
+      return;
+    }
     babyLaugh.pause();
-    babyLaugh.currentTime = short ? 0.15 : 0;
-    babyLaugh.volume = short ? 0.82 : 0.92;
+    babyLaugh.currentTime = 0;
+    babyLaugh.volume = 0.92;
     const pr = babyLaugh.play();
     if(pr && pr.catch) pr.catch(()=>{});
-    if(short){
-      setTimeout(()=>{ try{ babyLaugh.pause(); babyLaugh.currentTime = 0; }catch(e){} }, 1250);
-    }
   }catch(e){}
 }
+
 
 function makePig(){
   const r = BASE_R, margin = Math.max(r+10, 28);
@@ -425,9 +441,9 @@ function onTap(e){
 
   const d = dist(x,y,hit.x,hit.y);
 
-  // Escape is intentionally uncommon: only taps on the outside rim
-  // of a circle trigger the piglet escape. All other circle taps pop it.
-  if(d >= hit.r*0.94){ startEscape(hit,x,y,false); return; }
+  // Escape is a surprise, but not too rare: taps near the outside rim
+  // of a circle trigger the piglet escape. Inner taps pop it.
+  if(d >= hit.r*0.82){ startEscape(hit,x,y,false); return; }
 
   if(firstCaptureAt == null) firstCaptureAt = performance.now();
   hit.state = 'pop'; hit.t = 0.20;
