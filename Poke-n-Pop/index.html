@@ -113,9 +113,16 @@ const escapeSprite = new Image(); escapeSprite.src = 'escape.png';
 const lookSprite = new Image(); lookSprite.src = 'look_back.png';
 // Pig squeals removed. Escape and winner sounds use this real baby-laugh track.
 // Keep baby_laugh.mp3 in the same folder as index.html.
-const babyLaugh = new Audio('baby_laugh.mp3');
+const babyLaugh = new Audio('./baby_laugh.mp3');
 babyLaugh.preload = 'auto';
-babyLaugh.volume = 0.72;
+babyLaugh.volume = 0.85;
+babyLaugh.playsInline = true;
+let audioUnlocked = false;
+function unlockBabyLaugh(){
+  if(audioUnlocked) return;
+  audioUnlocked = true;
+  try{ babyLaugh.load(); }catch(e){}
+}
 
 const FRAME_W = 512, FRAME_H = 512;
 const BG = '#143d63', PINK = '#e79cab';
@@ -217,15 +224,15 @@ function normalizeCircleSpeeds(forceSet=false){
 }
 
 function playGiggle(short=true){
-  // Real baby-laugh sound. Escape gets a short cheerful snippet;
-  // winner gets a longer laugh. Clone keeps repeated plays reliable.
+  // Real baby-laugh sound. Escape gets a short cheerful snippet; winner gets longer laugh.
   try{
-    const a = babyLaugh.cloneNode(true);
-    a.volume = short ? 0.55 : 0.78;
-    a.currentTime = 0;
-    a.play().catch(()=>{});
+    babyLaugh.pause();
+    babyLaugh.currentTime = short ? 0.15 : 0;
+    babyLaugh.volume = short ? 0.82 : 0.92;
+    const pr = babyLaugh.play();
+    if(pr && pr.catch) pr.catch(()=>{});
     if(short){
-      setTimeout(()=>{ try{ a.pause(); a.currentTime = 0; }catch(e){} }, 850);
+      setTimeout(()=>{ try{ babyLaugh.pause(); babyLaugh.currentTime = 0; }catch(e){} }, 1250);
     }
   }catch(e){}
 }
@@ -394,6 +401,7 @@ function canvasPoint(e){
 function onTap(e){
   e.preventDefault();
   ensureAudio();
+  unlockBabyLaugh();
   if(gameEnded) return;
   const {x,y} = canvasPoint(e);
 
@@ -417,9 +425,9 @@ function onTap(e){
 
   const d = dist(x,y,hit.x,hit.y);
 
-  // Escape is intentionally very rare: only taps on the tiny outside rim
+  // Escape is intentionally uncommon: only taps on the outside rim
   // of a circle trigger the piglet escape. All other circle taps pop it.
-  if(d >= hit.r*0.99){ startEscape(hit,x,y,false); return; }
+  if(d >= hit.r*0.94){ startEscape(hit,x,y,false); return; }
 
   if(firstCaptureAt == null) firstCaptureAt = performance.now();
   hit.state = 'pop'; hit.t = 0.20;
