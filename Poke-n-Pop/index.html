@@ -148,7 +148,7 @@ function ensureAudio(){
   if(!ac){
     ac = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = ac.createGain();
-    masterGain.gain.value = 0.28;
+    masterGain.gain.value = 0.36;
     const comp = ac.createDynamicsCompressor();
     comp.threshold.value = -24;
     comp.knee.value = 18;
@@ -176,7 +176,7 @@ function collisionTick(strength=1){
   filter.frequency.setValueAtTime(850, now);
   filter.Q.value = 0.45;
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.030 * amt, now + 0.006);
+  gain.gain.exponentialRampToValueAtTime(0.050 * amt, now + 0.006);
   gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.10);
   osc.connect(filter);
   filter.connect(gain);
@@ -232,24 +232,28 @@ function normalizeCircleSpeeds(forceSet=false){
 }
 
 function playGiggle(short=true){
-  // Use a fresh audio object for escape so it does not interrupt or get
-  // interrupted by the winner-window laugh. This avoids silent failures
-  // on some mobile browsers.
+  // Real baby laugh track. Escape gets a clear 1.15-second giggle;
+  // the WinnerWindow gets the full laugh. Separate audio objects prevent
+  // one sound from cutting off the other on mobile browsers.
   try{
     if(short){
-      const a = makeLaughAudio(0.78);
+      const a = makeLaughAudio(0.90);
       a.currentTime = 0;
       const pr = a.play();
       if(pr && pr.catch) pr.catch(()=>{});
-      setTimeout(()=>{ try{ a.pause(); a.currentTime = 0; }catch(e){} }, 2200);
+      setTimeout(()=>{ try{ a.pause(); a.currentTime = 0; }catch(e){} }, 1150);
       return;
     }
-    babyLaugh.pause();
-    babyLaugh.currentTime = 0;
-    babyLaugh.volume = 0.92;
-    const pr = babyLaugh.play();
+    const w = makeLaughAudio(0.92);
+    w.currentTime = 0;
+    const pr = w.play();
     if(pr && pr.catch) pr.catch(()=>{});
   }catch(e){}
+}
+
+function playSoftPop(){
+  // Short, friendly pop for successful inner-circle taps.
+  collisionTick(0.75);
 }
 
 
@@ -441,12 +445,13 @@ function onTap(e){
 
   const d = dist(x,y,hit.x,hit.y);
 
-  // Escape is a surprise, but not too rare: taps near the outside rim
-  // of a circle trigger the piglet escape. Inner taps pop it.
-  if(d >= hit.r*0.82){ startEscape(hit,x,y,false); return; }
+  // Escape is now a playful surprise: the outside rim triggers escape;
+  // inner taps still pop the circle.
+  if(d >= hit.r*0.72){ startEscape(hit,x,y,false); return; }
 
   if(firstCaptureAt == null) firstCaptureAt = performance.now();
   hit.state = 'pop'; hit.t = 0.20;
+  playSoftPop();
   currentSpeedCap = Math.min(currentSpeedCap + popSpeedBoost(), baseCircleSpeed() + 120);
   updateLabels();
   for(const p of pigs){
