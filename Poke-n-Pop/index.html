@@ -114,22 +114,31 @@ const lookSprite = new Image(); lookSprite.src = 'look_back.png';
 // Pig squeals removed. Escape and winner sounds use this real baby-laugh track.
 // Keep baby_laugh.mp3 in the same folder as index.html.
 const BABY_LAUGH_SRC = './baby_laugh.mp3';
-const babyLaugh = new Audio(BABY_LAUGH_SRC);
-babyLaugh.preload = 'auto';
-babyLaugh.volume = 0.90;
-babyLaugh.playsInline = true;
+const laughPool = Array.from({length:4}, () => {
+  const a = new Audio(BABY_LAUGH_SRC);
+  a.preload = 'auto';
+  a.playsInline = true;
+  a.volume = 1.0;
+  return a;
+});
+let laughIndex = 0;
 let audioUnlocked = false;
 function unlockBabyLaugh(){
   if(audioUnlocked) return;
   audioUnlocked = true;
-  try{ babyLaugh.load(); }catch(e){}
+  for(const a of laughPool){ try{ a.load(); }catch(e){} }
 }
-function makeLaughAudio(volume){
-  const a = new Audio(BABY_LAUGH_SRC);
-  a.preload = 'auto';
-  a.playsInline = true;
-  a.volume = volume;
-  return a;
+function playBabyLaugh(ms){
+  // Uses pre-created audio elements so iPhone/Safari allows the sound reliably.
+  try{
+    const a = laughPool[laughIndex++ % laughPool.length];
+    a.pause();
+    a.currentTime = 0;
+    a.volume = 1.0;
+    const pr = a.play();
+    if(pr && pr.catch) pr.catch(()=>{});
+    if(ms){ setTimeout(()=>{ try{ a.pause(); a.currentTime = 0; }catch(e){} }, ms); }
+  }catch(e){}
 }
 
 const FRAME_W = 512, FRAME_H = 512;
@@ -148,7 +157,7 @@ function ensureAudio(){
   if(!ac){
     ac = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = ac.createGain();
-    masterGain.gain.value = 0.58;
+    masterGain.gain.value = 0.88;
     const comp = ac.createDynamicsCompressor();
     comp.threshold.value = -24;
     comp.knee.value = 18;
@@ -162,61 +171,74 @@ function ensureAudio(){
 }
 
 function collisionTick(strength=1){
-  // Audible, child-friendly bounce sound for circle-to-circle bumps.
-  // Uses a rounded sine tone, not the old pig squeal.
+  // Clear, rounded bounce sound for moving balls bumping into each other.
   if(!ac || !masterGain) return;
-  const now = ac.currentTime;
-  const amt = Math.min(1.5, Math.max(0.6, strength));
+  if(ac.state === 'suspended') ac.resume().catch(()=>{});
+  const now = ac.currentTime + 0.005;
+  const amt = Math.min(2.0, Math.max(0.8, strength));
   const osc = ac.createOscillator();
   const gain = ac.createGain();
   const filter = ac.createBiquadFilter();
   osc.type = 'sine';
-  osc.frequency.setValueAtTime(330 + 70*amt, now);
-  osc.frequency.exponentialRampToValueAtTime(170, now + 0.11);
+  osc.frequency.setValueAtTime(520 + 90*amt, now);
+  osc.frequency.exponentialRampToValueAtTime(210, now + 0.12);
   filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(1400, now);
-  filter.Q.value = 0.55;
+  filter.frequency.setValueAtTime(2600, now);
+  filter.Q.value = 0.45;
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.135 * amt, now + 0.006);
-  gain.gain.exponentialRampToValueAtTime(0.028 * amt, now + 0.055);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+  gain.gain.exponentialRampToValueAtTime(0.34 * amt, now + 0.006);
+  gain.gain.exponentialRampToValueAtTime(0.055 * amt, now + 0.075);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
   osc.connect(filter);
   filter.connect(gain);
   gain.connect(masterGain);
   osc.start(now);
-  osc.stop(now + 0.18);
+  osc.stop(now + 0.20);
 }
 
 function playSoftPop(){
-  // Short, clearly audible pop for successful inner-circle taps.
+  // More audible but still friendly pop for successful inner-circle taps.
   if(!ac || !masterGain) return;
-  const now = ac.currentTime;
-  const osc1 = ac.createOscillator();
-  const osc2 = ac.createOscillator();
+  if(ac.state === 'suspended') ac.resume().catch(()=>{});
+  const now = ac.currentTime + 0.005;
+
+  const osc = ac.createOscillator();
   const gain = ac.createGain();
   const filter = ac.createBiquadFilter();
-  osc1.type = 'sine';
-  osc2.type = 'triangle';
-  osc1.frequency.setValueAtTime(620, now);
-  osc1.frequency.exponentialRampToValueAtTime(210, now + 0.085);
-  osc2.frequency.setValueAtTime(360, now);
-  osc2.frequency.exponentialRampToValueAtTime(145, now + 0.10);
-  filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(1800, now);
-  filter.Q.value = 0.5;
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(780, now);
+  osc.frequency.exponentialRampToValueAtTime(180, now + 0.10);
+  filter.type = 'bandpass';
+  filter.frequency.setValueAtTime(950, now);
+  filter.Q.value = 0.9;
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.22, now + 0.004);
-  gain.gain.exponentialRampToValueAtTime(0.035, now + 0.055);
+  gain.gain.exponentialRampToValueAtTime(0.48, now + 0.004);
+  gain.gain.exponentialRampToValueAtTime(0.07, now + 0.05);
   gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
-  osc1.connect(filter);
-  osc2.connect(filter);
+  osc.connect(filter);
   filter.connect(gain);
   gain.connect(masterGain);
-  osc1.start(now);
-  osc2.start(now);
-  osc1.stop(now + 0.15);
-  osc2.stop(now + 0.15);
+  osc.start(now);
+  osc.stop(now + 0.15);
+
+  // Tiny noise burst gives it a real pop/click edge.
+  const buffer = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.045), ac.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * (1 - i/data.length);
+  const src = ac.createBufferSource();
+  const ng = ac.createGain();
+  const nf = ac.createBiquadFilter();
+  nf.type = 'highpass';
+  nf.frequency.value = 550;
+  ng.gain.setValueAtTime(0.24, now);
+  ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
+  src.buffer = buffer;
+  src.connect(nf);
+  nf.connect(ng);
+  ng.connect(masterGain);
+  src.start(now);
 }
+
 function resize(){ W = window.innerWidth; H = window.innerHeight; canvas.width = W; canvas.height = H; }
 resize(); addEventListener('resize', resize, {passive:true});
 
@@ -264,23 +286,8 @@ function normalizeCircleSpeeds(forceSet=false){
 }
 
 function playGiggle(short=true){
-  // Real baby laugh track. Escape gets a clear 1.15-second giggle;
-  // the WinnerWindow gets the full laugh. Separate audio objects prevent
-  // one sound from cutting off the other on mobile browsers.
-  try{
-    if(short){
-      const a = makeLaughAudio(0.90);
-      a.currentTime = 0;
-      const pr = a.play();
-      if(pr && pr.catch) pr.catch(()=>{});
-      setTimeout(()=>{ try{ a.pause(); a.currentTime = 0; }catch(e){} }, 1150);
-      return;
-    }
-    const w = makeLaughAudio(0.92);
-    w.currentTime = 0;
-    const pr = w.play();
-    if(pr && pr.catch) pr.catch(()=>{});
-  }catch(e){}
+  // Escape gets a clear 1.4-second baby laugh; WinnerWindow gets the full track.
+  playBabyLaugh(short ? 1400 : 0);
 }
 
 
@@ -474,7 +481,7 @@ function onTap(e){
 
   // Escape is now a playful surprise: the outside rim triggers escape;
   // inner taps still pop the circle.
-  if(d >= hit.r*0.72){ startEscape(hit,x,y,false); return; }
+  if(d >= hit.r*0.68){ startEscape(hit,x,y,false); return; }
 
   if(firstCaptureAt == null) firstCaptureAt = performance.now();
   hit.state = 'pop'; hit.t = 0.20;
@@ -493,6 +500,7 @@ function onTap(e){
 }
 
 
+canvas.addEventListener('pointerdown', () => { ensureAudio(); unlockBabyLaugh(); }, {passive:true});
 canvas.addEventListener('pointerup', onTap, {passive:false});
 
 let prev = performance.now();
