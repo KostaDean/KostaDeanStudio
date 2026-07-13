@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<!-- MathWorks Homepage v1.3.4-assignment-mode-cleanup: Parent Assignments has Browse Mode and Star Mode; instructions are text-only. -->
-<!-- MathWorks Homepage
-Stage 1 fullscreen playground revision: full-page scene, parent instructions after ENTER, new handwritten math banner. v1.1-auto-next: personal categories open in a lesson player and auto-advance after winner celebration when detectable. -->
+<!-- MathWorks Homepage v1.5-fullscreen-parent-winner-selection: personal categories open in a lesson player and auto-advance after winner celebration when detectable. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Math Playground</title>
+<title>(math) Playground!</title>
 <style>
 *{box-sizing:border-box}
 :root{
@@ -31,16 +29,6 @@ body{
 header{
   padding:14px 10px 8px;
   text-align:center;
-}
-header.playgroundHome{
-  min-height:100svh;
-  width:100vw;
-  padding:0;
-  display:flex;
-  align-items:stretch;
-  justify-content:center;
-  overflow:hidden;
-  position:relative;
 }
 .heroBanner{
   width:min(1386px,96vw);
@@ -258,14 +246,6 @@ footer{text-align:center;padding:28px 18px 48px;color:var(--muted)}
   font-weight:700;
 }
 .lessonChecks input{width:auto;margin-right:10px;transform:scale(1.25)}
-.assignmentList{display:grid;gap:10px;margin-top:12px}
-.assignmentRow{width:100%;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-align:left;background:#f8fafc;color:#172033;border:2px solid #dbeafe;border-radius:18px;padding:14px 12px;box-shadow:0 8px 22px rgba(20,40,80,.08);cursor:pointer}
-.assignmentRow:hover,.assignmentRow:focus{border-color:#2563eb;outline:none}
-.assignmentMark{font-size:1.45rem;line-height:1}
-.assignmentName{font-weight:900;font-size:1.08rem;line-height:1.2}
-.assignmentNote{color:#64748b;font-weight:750;line-height:1.35}.assignmentModeBar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:12px 0}.assignmentModePill{font-weight:900;color:#334155;background:#f8fafc;border:2px solid #dbeafe;border-radius:999px;padding:10px 13px}
-.selectDivider{font-weight:900;text-align:center;color:#475569}
-
 
 .lessonPlayer{
   position:fixed;
@@ -307,90 +287,6 @@ footer{text-align:center;padding:28px 18px 48px;color:var(--muted)}
   font-size:.92rem;
 }
 
-/* Stage 1 Math Playground entrance */
-.playgroundHome{
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:18px 10px 14px;
-  position:relative;
-}
-.playgroundHome .heroBanner{
-  width:min(1386px,98vw);
-  margin:0 auto;
-}
-.playgroundHome .notice{display:none}
-.hiddenUntilEnter{display:none!important}
-.enterHint{
-  margin-top:14px;
-  color:#334155;
-  font-weight:850;
-  font-size:clamp(.95rem,3vw,1.2rem);
-  text-align:center;
-}
-.learningPathBadge{
-  display:inline-block;
-  margin-top:8px;
-  padding:8px 12px;
-  border-radius:999px;
-  background:#fff8db;
-  border:2px solid #facc15;
-  color:#6b4e00;
-  font-weight:900;
-}
-.pathCelebrate{
-  position:absolute;
-  inset:0;
-  z-index:5;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(15,23,42,.72);
-  padding:18px;
-}
-.pathCelebrateBox{
-  width:min(640px,92vw);
-  background:white;
-  border-radius:28px;
-  padding:26px 20px;
-  text-align:center;
-  box-shadow:0 24px 70px rgba(0,0,0,.38);
-  border:4px solid #facc15;
-}
-.pathCelebrateTitle{
-  font-size:clamp(2rem,8vw,4rem);
-  font-weight:1000;
-  color:#16a34a;
-  margin:0 0 8px;
-}
-.pathCelebrateMsg{
-  font-size:clamp(1rem,4vw,1.35rem);
-  color:#334155;
-  font-weight:850;
-  line-height:1.35;
-}
-.pathCountdown{
-  margin-top:14px;
-  font-size:clamp(2.2rem,10vw,5rem);
-  color:#2563eb;
-  font-weight:1000;
-}
-.pathProgressBar{
-  height:14px;
-  border-radius:999px;
-  background:#e2e8f0;
-  overflow:hidden;
-  margin:18px auto 8px;
-  width:min(420px,80vw);
-}
-.pathProgressFill{
-  height:100%;
-  background:#16a34a;
-  width:0%;
-}
-
 @media(max-width:700px){
   header{padding-top:8px}
   .heroBanner{width:100vw;border-radius:0;margin-top:0}
@@ -400,71 +296,22 @@ footer{text-align:center;padding:28px 18px 48px;color:var(--muted)}
   .parentLinkRow{width:100vw;margin:-5px 0 10px;padding:0 12px;text-align:right}
 }
 
-/* Stage 1: full-screen Math Playground entrance */
-.playgroundHome{
-  min-height:100svh;
-  width:100vw;
-  padding:0;
-  margin:0;
-  display:flex;
-  align-items:stretch;
-  justify-content:center;
-  overflow:hidden;
-  position:relative;
+/* Parent learning-path workflow */
+.parentPathPanel{
+  margin:18px 0;
+  background:rgba(255,255,255,.9);
+  padding:16px;
+  border-radius:20px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
 }
-.playgroundHome .heroBanner{
-  width:100vw;
-  height:100svh;
-  margin:0;
-  border-radius:0;
-  box-shadow:none;
-  background:#8ee6ff;
-}
-.playgroundHome .heroBanner img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center top;
-  display:block;
-}
-.playgroundHome .heroBanner::before{display:none!important}
-.playgroundHome .parentLinkRow,
-.playgroundHome .notice,
-.playgroundHome .enterHint{display:none!important}
-.playgroundHome .enterOverlay{
-  left:50%;
-  bottom:27%;
-  width:min(520px,58vw);
-  height:min(132px,12vh);
-  transform:translateX(-50%);
-  pointer-events:none;
-}
-.playgroundHome .enterBtn{
-  width:100%;
-  height:100%;
-  font-size:0;
-  color:transparent;
-  background:transparent;
-  border-radius:999px;
-  box-shadow:none;
-  text-shadow:none;
-  pointer-events:auto;
-  animation:none;
-}
-.lessonPageTop{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  margin:0 0 12px;
-}
-.lessonPageTop .parentBtn{
-  color:#2563eb;
-  background:transparent;
-  box-shadow:none;
-  padding:6px 0;
-  text-decoration:underline;
-}
-
+.parentPathTop{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.parentPathStatus{font-weight:850;color:#334155;line-height:1.4;flex:1 1 260px}
+.selectedLessonBadge{position:absolute;left:13px;top:13px;background:#16a34a;color:#fff;font-size:.78rem;padding:5px 9px;border-radius:999px;font-weight:900}
+.lesson.selectedForPath{border-color:#16a34a}
+.instructionsTop{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:-20px;background:white;padding:6px 0 12px;z-index:2}
+.instructionsTop h2{margin:0}
+.winnerSelectBtn{display:block!important;margin:16px auto 8px!important;padding:13px 20px!important;border:0!important;border-radius:999px!important;background:#16a34a!important;color:white!important;font:900 17px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;box-shadow:0 7px 18px rgba(22,163,74,.28)!important;cursor:pointer!important;position:relative!important;z-index:2147483647!important}
+.adminBtn{background:#475569}
 
 
 /* v1.3.1 phone-fit homepage fix: do not crop the playground image; use a real visible ENTER button. */
@@ -585,10 +432,8 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
   .frontModeButtons{top:73% !important; gap:8px !important;}
 }
 
-</style>
 
-<!-- GoatCounter analytics -->
-<script data-goatcounter="https://kostadean.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</style>
 </head>
 <body class="homeMode">
 <header id="playgroundHome" class="playgroundHome">
@@ -598,15 +443,15 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
       <button class="enterBtn" onclick="enterMathPlayground()">ENTER</button>
     </div>
     <div class="frontModeButtons">
-      <button id="frontParentBtn" class="frontParentBtn" type="button" onclick="parentEnter()">Parent</button>
-      <button id="frontAdminBtn" class="frontAdminBtn" type="button" onclick="frontAdminEnter()">Admin</button>
+      <button class="frontParentBtn" type="button" onclick="parentEnter()">Parent</button>
+      <button class="frontAdminBtn" type="button" onclick="frontAdminEnter()">Admin</button>
     </div>
   </div>
   <div class="parentLinkRow">
     <button class="parentBtn" onclick="openInstructions()">Instructions to Parents</button>
+    <button class="parentBtn" style="margin-left:18px" onclick="openAdminAccess()">Admin</button>
   </div>
   <div class="notice">No login. No ads. Just tap a lesson and begin.</div>
-  <div id="enterHint" class="enterHint">Tap ENTER to begin.</div>
 </header>
 
 <main id="lessonsStart" class="hiddenUntilEnter">
@@ -614,7 +459,14 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
   <div class="toolbar">
     <input id="searchBox" class="search" type="search" placeholder="Search lessons: fractions, graphs, percents..." />
   </div>
-  <div class="categoryPanel">
+  <div id="parentPathPanel" class="parentPathPanel">
+    <div class="parentPathTop">
+      <div id="parentPathStatus" class="parentPathStatus">Open and complete a lesson. At its Winner Window, tap “Select for Learning Path.”</div>
+      <button class="good" onclick="openLearningPathSave()">Name/Save Learning Path</button>
+      <button class="secondary" onclick="reviewSelectedLessons()">Review Selected</button>
+    </div>
+  </div>
+  <div id="categoryPanel" class="categoryPanel hidden">
     <select id="categoryMenu"><option value="all">Categories: All Lessons</option></select>
     <button id="createBtn" class="good hidden">Create Category</button>
     <button id="nameSaveBtn" class="good hidden">Name/Save</button>
@@ -630,7 +482,7 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
     <p style="color:#64748b;font-weight:700">Comments section can be kept here when uploaded to GitHub.</p>
   </section>
 </main>
-<footer class="hiddenUntilEnter">© Kosta Dean Studio · Free interactive math learning</footer>
+<footer>© Kosta Dean Studio · Free interactive math learning</footer>
 
 <div id="modal" class="modal hidden"><div class="modalBox"><div id="modalContent"></div></div></div>
 
@@ -639,68 +491,22 @@ const ADMIN_PASSWORD="mathworks";
 const ADMIN_PASSWORDS=["mathworks","MathWorks","admin","Admin"];
 const DEFAULT_INSTRUCTIONS = `Welcome parents!
 
-MathWorks was created to help parents help their children understand mathematics.
+MathWorks lets you preview every lesson fully before assigning it.
 
-Every child is different. Some children learn by seeing. Some learn by hearing. Some learn by doing. Some learn quickly. Others need more time. No lesson, curriculum, teacher, or website can know your child as well as you do.
+To create a Learning Path:
+• Open a lesson from the lesson list.
+• Complete all of its exercises yourself.
+• At the Winner Window, tap “Select for Learning Path.”
+• Return to the lesson list and preview another lesson.
+• Near the top of the lesson page, tap “Name/Save Learning Path” when your selections are complete.
 
-As a parent, you are in the best position to recognize your child's strengths, interests, challenges, and learning style. Use these lessons in whatever way works best for your child. There is no single correct path.
+Your young learner can then follow the saved Learning Path on this same phone, tablet, or computer. Completed lessons receive check marks, and the next lesson opens automatically until the path is finished.
 
-Parents are natural teachers. A mother is often a child's first and most natural teacher. Long before children enter a classroom, they learn language, values, attitudes, and ways of thinking from their parents.
+Keep sessions friendly, short, and low-pressure. Encourage discovery rather than speed.
 
-This site is built on the belief that parents can play an important role in helping their children learn mathematics. You do not need to be a mathematician. You do not need to know all the answers. You only need curiosity, patience, and a willingness to learn alongside your child.
-
-The goal is understanding. Many people grow up believing they were never good at math. Often this means they struggled with memorization, calculations, or tests. Mathematics is much more than calculations. Mathematics is about recognizing patterns, understanding relationships, and making sense of ideas.
-
-For this reason, these lessons often use simple examples and easy numbers. The goal is to understand the idea first. When calculations become difficult, students should feel free to use a calculator. Understanding the idea is more important than performing difficult arithmetic.
-
-Suggested learning flow:
-
-1. Preview the lessons.
-Before assigning lessons to your child, work through several related lessons yourself. Read the explanations, listen to the audio, and try the exercises. You may be surprised by how much mathematics becomes easier when it is presented as ideas rather than rules to memorize.
-
-2. Create an assignment.
-Select several related lessons and mark them with a star. These become your child's current assignment. Choose only a few lessons at a time. Small successes build confidence.
-
-3. Learn together.
-Sit with your child and go through the assigned lessons together. Focus on the key ideas. Encourage questions. Avoid turning mistakes into frustrations. The goal is not speed. The goal is understanding.
-
-4. Let your child practice independently.
-After discussing the ideas together, allow your child to complete the exercises independently on a phone, tablet, or computer. Many children enjoy working through the lessons as part of normal screen time. The lessons are designed to feel more like interactive activities than traditional worksheets.
-
-5. Track progress.
-When a lesson is assigned, it appears with a star. When the lesson is completed, the star changes to a check mark. This makes it easy for both parent and child to see what has been completed and what remains to be done.
-
-One hope behind MathWorks is that parents may discover mathematics for themselves while helping their children. Children often adopt their parents' attitudes toward mathematics. When parents approach mathematics with curiosity and confidence, children are more likely to do the same.
-
-You do not need to know everything. You only need to be willing to explore, ask questions, and learn together.
-
-That may be the most valuable lesson of all.`;
+These free lessons were first written by a retired mathematics teacher for his two granddaughters.`;
 
 const LESSONS = [
-  {
-    title:"Ratios",
-    file:"RatiosInteractive_revised.html",
-    description:"Learn ratios as comparisons, words, and fractions.",
-    category:"Numbers",
-    emoji:"⚖️",
-    badge:"New"
-  },
-  {
-    title:"Proportions",
-    file:"ProportionsInteractive_revised.html",
-    description:"Learn how equal ratios form proportions.",
-    category:"Numbers",
-    emoji:"⚖️",
-    badge:"New"
-  },
-  {
-    title:"Rates",
-    file:"RatesInteractive.html",
-    description:"Learn rates as ratios comparing how one quantity changes relative to another.",
-    category:"Numbers",
-    emoji:"🚗",
-    badge:"New"
-  },
 {title:"Unseen Zeros of Decimal Numbers",file:"UnseenZerosDecimalNumbersInteractive.html",description:"Learn how unseen zeros help when multiplying and dividing decimal numbers.",category:"Decimals",emoji:"0️⃣🔟➗",badge:"New"},
 {title:"Close Enough Multiplication",file:"CloseEnoughMultiplicationInteractive.html",description:"Estimate multiplication and division quickly using nearby easy numbers.",category:"Numbers",emoji:"✖️≈",badge:"New"},
 {title:"Close Enough Calculations",file:"CloseEnoughCalculationsInteractive.html",description:"Learn how to estimate answers using nearby easy numbers like 100, 200, and 1000.",category:"Numbers",emoji:"≈🔢",badge:"New"},
@@ -748,118 +554,47 @@ let PLAYLISTS = [
  {name:"Graphs", files:["AlongTheCoordinatePlaneInteractive.html","CoordinatesAndGraphs.html","Graphs.html","GraphsOfEquations.html","LinearEquations.html","Slope.html"]}
 ];
 const grid=document.getElementById('lessonGrid'), searchBox=document.getElementById('searchBox'), categoryMenu=document.getElementById('categoryMenu'), statusEl=document.getElementById('status'), listTitle=document.getElementById('listTitle');
+
+const categoryPanel=document.getElementById('categoryPanel');
+const parentPathStatus=document.getElementById('parentPathStatus');
+const PATH_DRAFT_KEY='mw_learning_path_draft';
+const PATH_SAVED_KEY='mw_assigned_learning_path';
+let parentPreviewMode=false;
+let currentPreviewLesson=null;
+function getPathDraft(){try{return JSON.parse(localStorage.getItem(PATH_DRAFT_KEY)||'[]')}catch(e){return[]}}
+function setPathDraft(files){localStorage.setItem(PATH_DRAFT_KEY,JSON.stringify([...new Set(files)])); updateParentPathStatus(); renderLessons(searchBox.value);}
+function getSavedPath(){try{return JSON.parse(localStorage.getItem(PATH_SAVED_KEY)||'null')}catch(e){return null}}
+function updateParentPathStatus(){
+  const files=getPathDraft(); const saved=getSavedPath();
+  let text=files.length?files.length+' lesson'+(files.length===1?'':'s')+' selected for the new Learning Path.':'No lessons selected yet. Complete a lesson and select it at the Winner Window.';
+  if(saved && saved.name) text+=' Saved path: “'+saved.name+'”.';
+  if(parentPathStatus) parentPathStatus.textContent=text;
+}
+function lessonIsSelected(file){return getPathDraft().includes(file)}
 const createBtn=document.getElementById('createBtn'), nameSaveBtn=document.getElementById('nameSaveBtn'), clearBtn=document.getElementById('clearBtn'), modal=document.getElementById('modal'), modalContent=document.getElementById('modalContent');
-let mode='categories', pickSet=new Set(), admin=false, parentAssignMode=false;
+let mode='categories', pickSet=new Set(), admin=false;
 function savedCustom(){try{return JSON.parse(localStorage.getItem('mw_custom_playlists')||'[]')}catch(e){return[]}}
 function saveCustom(arr){localStorage.setItem('mw_custom_playlists',JSON.stringify(arr))}
 function allPlaylists(){return PLAYLISTS.map(p=>({...p,built:true})).concat(savedCustom().map(p=>({...p,built:false})))}
-function playlistKey(p){return (p.built?'built:':'custom:')+p.name+'|'+(p.files||[]).join(',')}
-function savedAssignments(){try{return JSON.parse(localStorage.getItem('mw_parent_assignments')||'{"assigned":[],"completed":{}}')}catch(e){return {assigned:[],completed:{}}}}
-function saveAssignments(obj){localStorage.setItem('mw_parent_assignments',JSON.stringify(obj||{assigned:[],completed:{}}))}
-function isAssigned(p){return savedAssignments().assigned.includes(playlistKey(p))}
-function isCompleted(p){return !!savedAssignments().completed[playlistKey(p)]}
-function assignPlaylistByIndex(i){const p=allPlaylists()[i]; if(!p) return; const key=playlistKey(p); const a=savedAssignments(); if(!a.assigned.includes(key)) a.assigned.push(key); delete a.completed[key]; saveAssignments(a); populatePlaylists(categoryMenu.value); updateEnterHint(); openAssignmentEditor();}
-function unassignPlaylistByIndex(i){const p=allPlaylists()[i]; if(!p) return; const key=playlistKey(p); const a=savedAssignments(); a.assigned=a.assigned.filter(k=>k!==key); delete a.completed[key]; saveAssignments(a); populatePlaylists(categoryMenu.value); updateEnterHint(); openAssignmentEditor();}
-function viewAssignmentCategory(i){
-  const p=allPlaylists()[i];
-  if(!p) return;
-  closeModal();
-  revealLessonLibrary();
-  categoryMenu.value='playlist:'+i;
-  mode='categories';
-  createBtn.classList.add('hidden');
-  nameSaveBtn.classList.add('hidden');
-  clearBtn.classList.add('hidden');
-  updateStatus();
-  renderLessons(searchBox.value);
-}
-function toggleAssignmentMode(){parentAssignMode=!parentAssignMode; openAssignmentEditor();}
-function toggleAssignmentByIndex(i){
-  const p=allPlaylists()[i];
-  if(!p) return;
-  if(!parentAssignMode){viewAssignmentCategory(i); return;}
-  const key=playlistKey(p);
-  const a=savedAssignments();
-  if(a.completed[key]){
-    if(!a.assigned.includes(key)) a.assigned.push(key);
-    delete a.completed[key];
-  }else if(a.assigned.includes(key)){
-    a.assigned=a.assigned.filter(k=>k!==key);
-  }else{
-    a.assigned.push(key);
-  }
-  saveAssignments(a);
-  populatePlaylists(categoryMenu.value);
-  updateEnterHint();
-  openAssignmentEditor();
-}
-function markPlaylistCompleteByKey(key){if(!key) return; const a=savedAssignments(); if(!a.assigned.includes(key)) a.assigned.push(key); a.completed[key]=new Date().toISOString(); saveAssignments(a); populatePlaylists(categoryMenu.value); updateEnterHint();}
-function firstUnfinishedAssignment(){const a=savedAssignments(); return allPlaylists().find(p=>a.assigned.includes(playlistKey(p)) && !a.completed[playlistKey(p)]) || null;}
-function assignmentSummary(){const a=savedAssignments(); const all=allPlaylists(); const waiting=all.filter(p=>a.assigned.includes(playlistKey(p)) && !a.completed[playlistKey(p)]).length; const done=all.filter(p=>a.assigned.includes(playlistKey(p)) && a.completed[playlistKey(p)]).length; return {waiting,done};}
-function updateEnterHint(){const next=firstUnfinishedAssignment(); const el=document.getElementById('enterHint'); if(!el) return; const sum=assignmentSummary(); el.innerHTML=next ? 'ENTER starts next assignment: <span class="learningPathBadge">⭐ '+escapeHtml(next.name)+'</span>' : (sum.done ? '✅ All assigned lessons are complete. Tap ENTER to browse lessons.' : 'No login. No ads. Just tap ENTER and begin.');}
 function populatePlaylists(selected='all'){
   categoryMenu.innerHTML='<option value="all">Categories: All Lessons</option>';
   allPlaylists().forEach((p,i)=>{
     let o=document.createElement('option');
     o.value='playlist:'+i;
-    const mark=isCompleted(p)?'✅ ': (isAssigned(p)?'⭐ ': (p.built?'📚 ':'☆ '));
-    o.textContent=mark+p.name;
+    o.textContent=(p.built?'📚 ':'⭐ ')+p.name;
     categoryMenu.appendChild(o);
   });
   const divider=document.createElement('option');
   divider.disabled=true;
-  divider.textContent='━━━';
-  divider.className='selectDivider';
+  divider.textContent='────────────';
   categoryMenu.appendChild(divider);
-  [['action:create','New Category'],['action:assign','Parent Assignments'],['action:personal','Edit My Categories'],['action:admin','Admin Edit']].forEach(([value,label])=>{
+  [['action:create','New Category'],['action:personal','Edit My Categories'],['action:admin','Admin Edit']].forEach(([value,label])=>{
     let o=document.createElement('option');
     o.value=value;
     o.textContent=label;
     categoryMenu.appendChild(o);
   });
   categoryMenu.value=selected;
-}
-
-function revealLessonLibrary(){
-  document.querySelectorAll('.hiddenUntilEnter').forEach(el=>el.classList.remove('hiddenUntilEnter'));
-  document.body.classList.remove('homeMode');
-  document.body.style.overflow='';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function returnHome(){
-  sessionStorage.removeItem('mw_parent_preview');
-  closeLessonPlayer();
-  closeModal();
-  document.body.classList.add('homeMode');
-  document.body.style.overflow='hidden';
-  window.scrollTo(0,0);
-  updateEnterHint();
-}
-function openParentSetup(){closeModal(); revealLessonLibrary();}
-
-function parentEnter(){
-  sessionStorage.setItem('mw_parent_preview','1');
-  localStorage.setItem('mw_last_mode','parent');
-  closeLessonPlayer();
-  closeModal();
-  revealLessonLibrary();
-  setTimeout(openInstructions,120);
-}
-function frontAdminEnter(){
-  sessionStorage.setItem('mw_parent_preview','1');
-  localStorage.setItem('mw_last_mode','admin');
-  closeLessonPlayer();
-  closeModal();
-  revealLessonLibrary();
-  setTimeout(askPassword,120);
-}
-
-function enterMathPlayground(){
-  const p=firstUnfinishedAssignment();
-  if(p && p.files && p.files.length){document.body.classList.remove('homeMode'); startPlaylistPath(p); return;}
-  const sum=assignmentSummary();
-  if(sum.done){alert('All assigned lessons are complete! You may now browse the Math Playground.');}
-  revealLessonLibrary();
 }
 function selectedPlaylistIndex(){
   const val=categoryMenu.value;
@@ -873,10 +608,29 @@ function currentLessons(){
   return p.files.map(f=>LESSONS.find(l=>l.file===f)).filter(Boolean);
 }
 
-function isSelectedPlaylist(){return selectedPlaylistIndex()!==null;}
-let activePathLessons=[], activeLessonIndex=0, activePathTimer=null, activeCountdownTimer=null, activeWinSeen=false, activePathKey="", activePathName="";
-function startPlaylistPath(p){if(!p || !p.files || !p.files.length){revealLessonLibrary();return;} activePathLessons=p.files.map(f=>LESSONS.find(l=>l.file===f)).filter(Boolean); activeLessonIndex=0; activePathKey=playlistKey(p); activePathName=p.name; if(activePathLessons.length) openLessonPlayer();}
-function startLessonPath(file){let idx=selectedPlaylistIndex(); let p=idx===null?null:allPlaylists()[idx]; if(!p){ window.location.href=file; return; } activePathLessons=p.files.map(f=>LESSONS.find(l=>l.file===f)).filter(Boolean); activeLessonIndex=Math.max(0,activePathLessons.findIndex(l=>l.file===file)); activePathKey=playlistKey(p); activePathName=p.name; openLessonPlayer();}
+function isSelectedPersonalCategory(){
+  let idx=selectedPlaylistIndex();
+  let p=idx===null?null:allPlaylists()[idx];
+  return !!(p && !p.built);
+}
+let activePathLessons=[], activeLessonIndex=0, activePathTimer=null, activeCountdownTimer=null, activeWinSeen=false;
+function startLessonPath(file){
+  let idx=selectedPlaylistIndex();
+  let p=idx===null?null:allPlaylists()[idx];
+  parentPreviewMode=!(p && !p.built);
+  if(parentPreviewMode){
+    const lesson=LESSONS.find(l=>l.file===file);
+    if(!lesson){window.location.href=file;return;}
+    currentPreviewLesson=lesson;
+    activePathLessons=[lesson];
+    activeLessonIndex=0;
+  }else{
+    activePathLessons=p.files.map(f=>LESSONS.find(l=>l.file===f)).filter(Boolean);
+    activeLessonIndex=Math.max(0,activePathLessons.findIndex(l=>l.file===file));
+    currentPreviewLesson=activePathLessons[activeLessonIndex]||null;
+  }
+  openLessonPlayer();
+}
 function openLessonPlayer(){
   clearLessonTimers();
   activeWinSeen=false;
@@ -889,36 +643,18 @@ function openLessonPlayer(){
     player.className='lessonPlayer';
     document.body.appendChild(player);
   }
-  player.innerHTML='<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Close</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="openDirectBtn" class="good" onclick="openCurrentLessonDirect()">Open Lesson</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote">When the winner celebration appears, the next lesson will open automatically after a brief delay.</div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe><div id="pathCelebrate" class="pathCelebrate hidden"></div>';
-  player.querySelector('.lessonPlayerTitle').textContent=(activePathName?activePathName+' · ':'')+(activeLessonIndex+1)+' of '+activePathLessons.length+': '+lesson.title;
+  player.innerHTML='<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe>';
+  player.querySelector('.lessonPlayerTitle').textContent=parentPreviewMode?'Parent Preview: '+lesson.title:(activeLessonIndex+1)+' of '+activePathLessons.length+': '+lesson.title;
+  player.querySelector('#lessonPlayerNote').textContent=parentPreviewMode?'Complete the lesson. A Select for Learning Path button will appear at the Winner Window.':'When the winner celebration appears, the next lesson will open automatically after a brief delay.';
+  player.querySelector('#prevLessonBtn').classList.toggle('hidden',parentPreviewMode);
+  player.querySelector('#nextLessonBtn').classList.toggle('hidden',parentPreviewMode);
   player.querySelector('#prevLessonBtn').disabled=activeLessonIndex<=0;
   player.querySelector('#nextLessonBtn').textContent=activeLessonIndex>=activePathLessons.length-1?'Finish':'Next Lesson';
   document.body.style.overflow='hidden';
   const frame=player.querySelector('#lessonFrame');
-  frame.onload=()=>{startWinnerWatch(); setTimeout(checkLessonFrameLoaded,900);};
+  frame.onload=()=>startWinnerWatch();
   frame.src=lesson.file;
 }
-
-function openCurrentLessonDirect(){
-  let lesson=activePathLessons[activeLessonIndex];
-  if(lesson) window.location.href=lesson.file;
-}
-function checkLessonFrameLoaded(){
-  const frame=document.getElementById('lessonFrame');
-  const note=document.getElementById('lessonPlayerNote');
-  if(!frame) return;
-  let ok=false;
-  try{
-    const doc=frame.contentDocument || frame.contentWindow.document;
-    const text=(doc && doc.body && doc.body.innerText || '').trim();
-    const html=(doc && doc.body && doc.body.innerHTML || '').trim();
-    ok=!!(doc && doc.body && (text.length>20 || html.length>200));
-  }catch(e){ ok=true; }
-  if(!ok && note){
-    note.textContent='This preview cannot find the lesson file in the same folder. Put this index file in the same Dropbox/GitHub folder as the lesson files, or tap Open Lesson.';
-  }
-}
-
 function closeLessonPlayer(){
   clearLessonTimers();
   let player=document.getElementById('lessonPlayer');
@@ -930,7 +666,7 @@ function previousPathLesson(){
 }
 function nextPathLesson(){
   if(activeLessonIndex<activePathLessons.length-1){activeLessonIndex++;openLessonPlayer();}
-  else {markPlaylistCompleteByKey(activePathKey); closeLessonPlayer(); alert('Assignment complete! It is now marked with a check mark.'); updateEnterHint();}
+  else {closeLessonPlayer(); alert('Category complete!');}
 }
 function clearLessonTimers(){
   if(activePathTimer){clearInterval(activePathTimer);activePathTimer=null;}
@@ -941,21 +677,34 @@ function startWinnerWatch(){
   activeWinSeen=false;
   activePathTimer=setInterval(checkWinnerAndAutoNext,900);
 }
-
-function showPathCelebration(seconds){
-  const box=document.getElementById('pathCelebrate');
-  if(!box) return;
-  const lesson=activePathLessons[activeLessonIndex];
-  const done=activeLessonIndex+1;
-  const total=activePathLessons.length;
-  const percent=Math.round(done/total*100);
-  const final=activeLessonIndex>=activePathLessons.length-1;
-  box.classList.remove('hidden');
-  box.innerHTML='<div class="pathCelebrateBox"><div class="pathCelebrateTitle">Great Job!</div><div class="pathCelebrateMsg">You completed:<br><b>'+escapeHtml(lesson.title)+'</b><div class="pathProgressBar"><div class="pathProgressFill" style="width:'+percent+'%"></div></div>Lesson '+done+' of '+total+' complete</div><div class="pathCountdown">'+(final?'🏆':seconds)+'</div><div class="modalBtns" style="justify-content:center"><button class="good" onclick="nextPathLesson()">'+(final?'Finish':'START NOW')+'</button></div></div>';
+function selectCurrentLessonForPath(){
+  const lesson=currentPreviewLesson||activePathLessons[activeLessonIndex];
+  if(!lesson) return;
+  const files=getPathDraft();
+  if(!files.includes(lesson.file)) files.push(lesson.file);
+  setPathDraft(files);
+  const frame=document.getElementById('lessonFrame');
+  try{
+    const doc=frame.contentDocument||frame.contentWindow.document;
+    const btn=doc.getElementById('mwSelectForPathBtn');
+    if(btn){btn.textContent='✓ Selected for Learning Path';btn.disabled=true;}
+  }catch(e){}
+  const note=document.getElementById('lessonPlayerNote');
+  if(note) note.textContent='✓ '+lesson.title+' has been selected. Tap Back to Lessons to preview another lesson.';
 }
-function updatePathCelebration(seconds){
-  const el=document.querySelector('#pathCelebrate .pathCountdown');
-  if(el) el.textContent=String(seconds);
+function addWinnerSelectButton(doc,celebrationNode){
+  if(!parentPreviewMode || !doc || doc.getElementById('mwSelectForPathBtn')) return;
+  const lesson=currentPreviewLesson||activePathLessons[activeLessonIndex];
+  if(!lesson) return;
+  const btn=doc.createElement('button');
+  btn.id='mwSelectForPathBtn';
+  btn.className='winnerSelectBtn';
+  btn.textContent=lessonIsSelected(lesson.file)?'✓ Selected for Learning Path':'Select for Learning Path';
+  btn.disabled=lessonIsSelected(lesson.file);
+  btn.addEventListener('click',selectCurrentLessonForPath);
+  const target=celebrationNode||doc.body;
+  target.appendChild(btn);
+  try{btn.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
 }
 function checkWinnerAndAutoNext(){
   if(activeWinSeen) return;
@@ -983,14 +732,17 @@ function checkWinnerAndAutoNext(){
   if(celebrationWords || visibleCelebration){
     activeWinSeen=true;
     if(activePathTimer){clearInterval(activePathTimer);activePathTimer=null;}
-    let seconds=5;
-    showPathCelebration(seconds);
-    if(note) note.textContent=(activeLessonIndex<activePathLessons.length-1)?'Great job! Next lesson opens in '+seconds+' seconds…':'Great job! This was the last lesson in this Learning Path.';
+    if(parentPreviewMode){
+      addWinnerSelectButton(doc,celebrationNode);
+      if(note) note.textContent=lessonIsSelected((currentPreviewLesson||{}).file)?'✓ This lesson is already selected.':'Winner! Tap “Select for Learning Path” in the Winner Window.';
+      return;
+    }
+    let seconds=4;
+    if(note) note.textContent=(activeLessonIndex<activePathLessons.length-1)?'Winner! Next lesson opens in '+seconds+' seconds…':'Winner! This was the last lesson in this category.';
     if(activeLessonIndex>=activePathLessons.length-1) return;
     activeCountdownTimer=setInterval(()=>{
       seconds--;
-      updatePathCelebration(seconds);
-      if(note) note.textContent='Great job! Next lesson opens in '+seconds+' seconds…';
+      if(note) note.textContent='Winner! Next lesson opens in '+seconds+' seconds…';
       if(seconds<=0){
         clearInterval(activeCountdownTimer);activeCountdownTimer=null;
         nextPathLesson();
@@ -998,14 +750,25 @@ function checkWinnerAndAutoNext(){
     },1000);
   }
 }
-function makeLessonCard(lesson){const a=document.createElement('a'); a.className='lesson'+(mode==='create'?' pickMode':''); a.href=mode==='create'?'#':lesson.file; let checked=pickSet.has(lesson.file)?'checked':''; a.innerHTML=(lesson.badge?'<div class="newBadge">'+lesson.badge+'</div>':'')+(mode==='create'?'<input class="lessonCheck" type="checkbox" '+checked+' aria-label="Select '+lesson.title+'">':'')+'<div class="emoji">'+(lesson.emoji||'📘')+'</div><h3>'+lesson.title+'</h3><p>'+lesson.description+'</p><span class="tag">'+lesson.category+'</span>'; if(mode==='create'){a.addEventListener('click',e=>{e.preventDefault(); pickSet.has(lesson.file)?pickSet.delete(lesson.file):pickSet.add(lesson.file); renderLessons(searchBox.value); updateStatus();})} else if(isSelectedPlaylist()){a.addEventListener('click',e=>{e.preventDefault(); startLessonPath(lesson.file);})} return a;}
+function makeLessonCard(lesson){
+  const a=document.createElement('a');
+  a.className='lesson'+(mode==='create'?' pickMode':'')+(lessonIsSelected(lesson.file)?' selectedForPath':'');
+  a.href=mode==='create'?'#':lesson.file;
+  let checked=pickSet.has(lesson.file)?'checked':'';
+  a.innerHTML=(lesson.badge?'<div class="newBadge">'+lesson.badge+'</div>':'')+(lessonIsSelected(lesson.file)?'<div class="selectedLessonBadge">✓ Selected</div>':'')+(mode==='create'?'<input class="lessonCheck" type="checkbox" '+checked+' aria-label="Select '+lesson.title+'">':'')+'<div class="emoji">'+(lesson.emoji||'📘')+'</div><h3>'+lesson.title+'</h3><p>'+lesson.description+'</p><span class="tag">'+lesson.category+'</span>';
+  if(mode==='create'){
+    a.addEventListener('click',e=>{e.preventDefault();pickSet.has(lesson.file)?pickSet.delete(lesson.file):pickSet.add(lesson.file);renderLessons(searchBox.value);updateStatus();});
+  }else{
+    a.addEventListener('click',e=>{e.preventDefault();startLessonPath(lesson.file);});
+  }
+  return a;
+}
 function renderLessons(filter=''){grid.innerHTML=''; const q=filter.trim().toLowerCase(); currentLessons().filter(l=>(l.title+' '+l.description+' '+l.category).toLowerCase().includes(q)).forEach(l=>grid.appendChild(makeLessonCard(l))); if(!grid.children.length) grid.innerHTML='<p>No lessons found. Try another search word.</p>'; let idx=selectedPlaylistIndex(); listTitle.textContent=idx===null?'Lessons':allPlaylists()[idx].name;}
 function updateStatus(){if(mode==='create') statusEl.textContent='New Category: selected '+pickSet.size+' lesson(s). Check lessons, then tap Create Category and Name/Save.'; else statusEl.textContent='Choose a category, create your own, or edit your saved categories.';}
 function setMode(m){mode=m; createBtn.classList.toggle('hidden',m!=='create'); nameSaveBtn.classList.add('hidden'); clearBtn.classList.toggle('hidden',m!=='create'); if(m==='personal') openPersonalEditor(); if(m==='admin') askPassword(); updateStatus(); renderLessons(searchBox.value)}
 function handleCategoryMenu(){
   const val=categoryMenu.value;
   if(val==='action:create') { setMode('create'); return; }
-  if(val==='action:assign') { openAssignmentEditor(); return; }
   if(val==='action:personal') { setMode('personal'); return; }
   if(val==='action:admin') { setMode('admin'); return; }
   if(mode!=='categories') mode='categories';
@@ -1014,26 +777,47 @@ function handleCategoryMenu(){
 }
 searchBox.addEventListener('input',e=>renderLessons(e.target.value)); categoryMenu.addEventListener('change',handleCategoryMenu); clearBtn.onclick=()=>{pickSet.clear(); renderLessons(searchBox.value); updateStatus();}; createBtn.onclick=()=>{if(!pickSet.size) return alert('Please check at least one lesson first.'); createBtn.classList.add('hidden'); nameSaveBtn.classList.remove('hidden'); statusEl.textContent='Now tap Name/Save to give this custom category a name.'}; nameSaveBtn.onclick=()=>openNameSave();
 function openModal(html){modalContent.innerHTML=html; modal.classList.remove('hidden'); document.body.style.overflow='hidden'; modal.scrollTop=0;} function closeModal(){modal.classList.add('hidden'); modalContent.innerHTML=''; document.body.style.overflow=''; if(categoryMenu.value.startsWith('action:')){categoryMenu.value='all'; mode='categories'; createBtn.classList.add('hidden'); nameSaveBtn.classList.add('hidden'); clearBtn.classList.add('hidden'); updateStatus(); renderLessons(searchBox.value);}}
-function openInstructions(){let txt=localStorage.getItem('mw_parent_instructions')||DEFAULT_INSTRUCTIONS; openModal('<h2>Instructions to Parents</h2><div class="assignmentNote" style="white-space:pre-wrap;font-size:1.05rem">'+escapeHtml(txt)+'</div><div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>');}
+function openInstructions(){let txt=localStorage.getItem('mw_parent_instructions')||DEFAULT_INSTRUCTIONS; openModal('<div class="instructionsTop"><h2>Instructions to Parents</h2><button class="secondary" onclick="closeModal()">Close</button></div><textarea id="instructionsText"></textarea><div class="modalBtns"><button class="good" onclick="saveInstructions()">Save Instructions</button><button class="secondary" onclick="closeModal()">Close</button></div>'); document.getElementById('instructionsText').value=txt;}
 function saveInstructions(){localStorage.setItem('mw_parent_instructions',document.getElementById('instructionsText').value); alert('Instructions saved on this device.');}
 function openNameSave(){openModal('<h2>Name/Save Category</h2><input id="pname" class="playName" placeholder="Example: Maria Week 1"><div class="modalBtns"><button class="secondary" onclick="closeModal()">Cancel</button><button class="good" onclick="saveNamedPlaylist()">Save</button></div>')}
 function saveNamedPlaylist(){let name=document.getElementById('pname').value.trim(); if(!name) return alert('Please enter a category name.'); let arr=savedCustom(); arr.push({name,files:[...pickSet]}); saveCustom(arr); pickSet.clear(); closeModal(); populatePlaylists('playlist:'+(allPlaylists().length-1)); setMode('categories');}
+function openLearningPathSave(){
+  const files=getPathDraft();
+  if(!files.length) return alert('No lessons have been selected yet. Complete a lesson and select it at the Winner Window.');
+  const saved=getSavedPath();
+  openModal('<div class="instructionsTop"><h2>Name/Save Learning Path</h2><button class="secondary" onclick="closeModal()">Close</button></div><p><b>'+files.length+' lesson'+(files.length===1?'':'s')+' selected.</b></p><input id="learningPathName" class="playName" placeholder="Example: Maria – Fractions Week 1" value="'+escapeHtml(saved&&saved.name?saved.name:'')+'"><div class="modalBtns"><button class="good" onclick="saveLearningPath()">Save Learning Path</button></div>');
+}
+function saveLearningPath(){
+  const name=(document.getElementById('learningPathName').value||'').trim();
+  if(!name) return alert('Please enter a name for the Learning Path.');
+  const files=getPathDraft();
+  localStorage.setItem(PATH_SAVED_KEY,JSON.stringify({name,files,completed:[],savedAt:new Date().toISOString()}));
+  closeModal(); updateParentPathStatus(); alert('Learning Path saved on this device.');
+}
+function reviewSelectedLessons(){
+  const files=getPathDraft();
+  if(!files.length) return alert('No lessons selected yet.');
+  const rows=files.map((f,i)=>{
+    const l=LESSONS.find(x=>x.file===f);
+    if(!l) return '';
+    const encoded=encodeURIComponent(f);
+    return `<div class="categoryEditCard"><b>${i+1}. ${escapeHtml(l.title)}</b><div class="modalBtns"><button class="warn" onclick="removeDraftLesson('${encoded}')">Remove</button></div></div>`;
+  }).join('');
+  openModal('<div class="instructionsTop"><h2>Selected Lessons</h2><button class="secondary" onclick="closeModal()">Close</button></div>'+rows+'<div class="modalBtns"><button class="good" onclick="closeModal();openLearningPathSave()">Name/Save Learning Path</button></div>');
+}
+function removeDraftLesson(encoded){const f=decodeURIComponent(encoded);setPathDraft(getPathDraft().filter(x=>x!==f));reviewSelectedLessons();}
 function checksHTML(files=[]){return '<div class="lessonChecks">'+LESSONS.map(l=>'<label><input type="checkbox" value="'+l.file+'" '+(files.includes(l.file)?'checked':'')+'> '+l.title+'</label>').join('')+'</div>'}
-function openPersonalEditor(){let arr=savedCustom(); let html='<h2>Edit My Categories</h2><p style="color:#64748b;font-weight:750">These categories are saved on this device. Open a category, rename it, check/uncheck lessons, then save. Use Parent Assignments to star assignments separately.</p>'; if(!arr.length) html+='<p><b>No personal categories saved on this device yet.</b></p>'; arr.forEach((p,i)=>{let pp={...p,built:false}; let mark=isCompleted(pp)?'✅ ': (isAssigned(pp)?'⭐ ':'☆ '); html+='<details class="categoryEditCard"><summary>'+mark+escapeHtml(p.name)+'</summary><input id="cname_'+i+'" value="'+escapeHtml(p.name)+'">'+checksHTML(p.files)+'<div class="modalBtns"><button class="good" onclick="savePersonalCategory('+i+')">Save Category</button><button class="warn" onclick="deletePersonalCategory('+i+')">Delete</button></div></details>'}); html+='<div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>'; openModal(html);}
-function savePersonalCategory(i){let arr=savedCustom(); let name=document.getElementById('cname_'+i).value.trim(); if(!name) return alert('Please enter a name.'); let card=document.getElementById('cname_'+i).closest('details'); let files=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value); arr[i]={name,files}; saveCustom(arr); populatePlaylists(categoryMenu.value); updateEnterHint(); alert('Category saved on this device.'); openPersonalEditor();}
-function deletePersonalCategory(i){let arr=savedCustom(); if(confirm('Delete this personal category?')){arr.splice(i,1); saveCustom(arr); populatePlaylists(categoryMenu.value); updateEnterHint(); openPersonalEditor();}}
-function openAssignmentEditor(){
-  const all=allPlaylists();
-  let html='<h2>Parent Assignments</h2><p class="assignmentNote">Browse Mode lets you tap a category to see its lessons. Tap <b>⭐ Star Categories</b> to turn Star Mode on. In Star Mode, tapping a category adds or removes its ⭐ assignment. Completed assignments show ✅.</p>';
-  html+='<div class="assignmentModeBar"><span class="assignmentModePill">Mode: '+(parentAssignMode?'⭐ Star Mode':'Browse')+'</span><button class="'+(parentAssignMode?'warn':'good')+'" onclick="toggleAssignmentMode()">'+(parentAssignMode?'Done Starring':'⭐ Star Categories')+'</button></div>';
-  if(!all.length) html+='<p><b>No categories are available yet.</b></p>';
-  html+='<div class="assignmentList">';
-  all.forEach((p,i)=>{
-    const mark=isCompleted(p)?'✅':(isAssigned(p)?'⭐':'');
-    html+='<button class="assignmentRow" onclick="toggleAssignmentByIndex('+i+')"><span class="assignmentMark">'+mark+'</span><span class="assignmentName">'+escapeHtml(p.name)+'</span></button>';
-  });
-  html+='</div><div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>';
-  openModal(html);
+function openPersonalEditor(){let arr=savedCustom(); let html='<h2>Edit My Categories</h2><p style="color:#64748b;font-weight:750">These categories are saved on this device. Open a category, rename it, check/uncheck lessons, then save.</p>'; if(!arr.length) html+='<p><b>No personal categories saved on this device yet.</b></p>'; arr.forEach((p,i)=>{html+='<details class="categoryEditCard"><summary>⭐ '+p.name+'</summary><input id="cname_'+i+'" value="'+escapeHtml(p.name)+'">'+checksHTML(p.files)+'<div class="modalBtns"><button class="good" onclick="savePersonalCategory('+i+')">Save Category</button><button class="warn" onclick="deletePersonalCategory('+i+')">Delete</button></div></details>'}); html+='<div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>'; openModal(html);}
+function savePersonalCategory(i){let arr=savedCustom(); let name=document.getElementById('cname_'+i).value.trim(); if(!name) return alert('Please enter a name.'); let card=document.getElementById('cname_'+i).closest('details'); let files=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value); arr[i]={name,files}; saveCustom(arr); populatePlaylists(categoryMenu.value); alert('Category saved on this device.'); openPersonalEditor();}
+function deletePersonalCategory(i){let arr=savedCustom(); if(confirm('Delete this personal category?')){arr.splice(i,1); saveCustom(arr); populatePlaylists(categoryMenu.value); openPersonalEditor();}}
+function openAdminAccess(){
+  if(admin){categoryPanel.classList.remove('hidden');categoryMenu.value='all';mode='categories';updateStatus();renderLessons(searchBox.value);categoryPanel.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  openModal('<div class="instructionsTop"><h2>Admin Access</h2><button class="secondary" onclick="closeModal()">Close</button></div><p>Only Admin can open the Categories menu and permanent editing controls.</p><input id="pw" type="password" placeholder="Password"><div class="modalBtns"><button onclick="checkPasswordAndShowCategories()">Enter</button></div>');
+}
+function checkPasswordAndShowCategories(){
+  const typed=(document.getElementById('pw').value||'').trim();
+  if(!ADMIN_PASSWORDS.includes(typed)) return alert('Wrong password.');
+  admin=true; closeModal(); categoryPanel.classList.remove('hidden'); populatePlaylists('all'); mode='categories'; updateStatus(); renderLessons(searchBox.value); categoryPanel.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function askPassword(){if(admin) return openAdminEditor(); openModal('<h2>Admin Password</h2><p>Only Admin can edit permanent built-in categories.</p><input id="pw" type="password" placeholder="Password"><div class="modalBtns"><button class="secondary" onclick="closeModal()">Cancel</button><button onclick="checkPassword()">Enter</button></div>');}
 function checkPassword(){const typed=(document.getElementById('pw').value||'').trim(); if(ADMIN_PASSWORDS.includes(typed)){admin=true; openAdminEditor();} else alert('Wrong password. Try: mathworks');}
@@ -1044,8 +828,39 @@ function deleteBuiltCategory(i){if(confirm('Delete this built-in category?')){PL
 function commitChanges(){const replacement='let PLAYLISTS = '+JSON.stringify(PLAYLISTS,null,2)+';'; let html='<!DOCTYPE html>\n'+document.documentElement.outerHTML; html=html.replace(/let PLAYLISTS = [\s\S]*?;\nconst grid=/, replacement+'\nconst grid='); openModal('<h2>Updated index.html Code Ready</h2><p>Tap copy, then paste over your GitHub index.html.</p><div class="modalBtns"><button onclick="copyExportCode()">COPY ENTIRE INDEX CODE</button><button class="secondary" onclick="closeModal()">Close</button></div><textarea id="exportCodeBox" readonly style="height:42vh"></textarea>'); setTimeout(()=>{document.getElementById('exportCodeBox').value=html;},50);}
 async function copyExportCode(){let box=document.getElementById('exportCodeBox'); box.focus(); box.select(); let ok=false; try{await navigator.clipboard.writeText(box.value); ok=true;}catch(e){try{ok=document.execCommand('copy')}catch(e2){}} alert(ok?'Copied.':'If copy was blocked, tap in the selected box and use Copy.');}
 function escapeHtml(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')}
-window.enterMathPlayground=enterMathPlayground; window.returnHome=returnHome; window.assignPlaylistByIndex=assignPlaylistByIndex; window.unassignPlaylistByIndex=unassignPlaylistByIndex; window.toggleAssignmentByIndex=toggleAssignmentByIndex; window.toggleAssignmentMode=toggleAssignmentMode; window.viewAssignmentCategory=viewAssignmentCategory; window.openAssignmentEditor=openAssignmentEditor; window.openParentSetup=openParentSetup; window.revealLessonLibrary=revealLessonLibrary; window.openCurrentLessonDirect=openCurrentLessonDirect; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
-populatePlaylists(); renderLessons(); updateStatus(); updateEnterHint(); document.body.classList.add('homeMode'); document.body.style.overflow='hidden';
+
+function revealLessonLibrary(){
+  document.querySelectorAll('.hiddenUntilEnter').forEach(el=>el.classList.remove('hiddenUntilEnter'));
+  document.body.classList.remove('homeMode');
+  document.body.style.overflow='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function returnHome(){
+  closeLessonPlayer();
+  closeModal();
+  document.body.classList.add('homeMode');
+  document.body.style.overflow='hidden';
+  window.scrollTo(0,0);
+}
+function parentEnter(){
+  revealLessonLibrary();
+  setTimeout(openInstructions,120);
+}
+function frontAdminEnter(){
+  revealLessonLibrary();
+  setTimeout(openAdminAccess,120);
+}
+function enterMathPlayground(){
+  const saved=getSavedLearningPath();
+  if(saved && Array.isArray(saved.files) && saved.files.length){
+    document.body.classList.remove('homeMode');
+    startPlaylistPath({name:saved.name||'Learning Path',files:saved.files});
+    return;
+  }
+  revealLessonLibrary();
+}
+window.enterMathPlayground=enterMathPlayground; window.parentEnter=parentEnter; window.frontAdminEnter=frontAdminEnter; window.returnHome=returnHome; window.openAdminAccess=openAdminAccess; window.checkPasswordAndShowCategories=checkPasswordAndShowCategories; window.openLearningPathSave=openLearningPathSave; window.saveLearningPath=saveLearningPath; window.reviewSelectedLessons=reviewSelectedLessons; window.removeDraftLesson=removeDraftLesson; window.selectCurrentLessonForPath=selectCurrentLessonForPath; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
+populatePlaylists(); renderLessons(); updateStatus(); updateParentPathStatus(); document.body.classList.add('homeMode'); document.body.style.overflow='hidden';
 </script>
 </body>
 </html>
