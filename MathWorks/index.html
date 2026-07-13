@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MathWorks Homepage v1.5-fullscreen-parent-winner-selection: personal categories open in a lesson player and auto-advance after winner celebration when detectable. -->
+<!-- MathWorks Homepage v1.5.1-fullscreen-parent-winner-selection-fixed: personal categories open in a lesson player and auto-advance after winner celebration when detectable. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -433,6 +433,54 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
 }
 
 
+
+/* v1.5.1 corrections: remove accidental blue oval; make Winner controls unmistakable and persistent. */
+.heroBanner::before{display:none!important;content:none!important;}
+.winnerPathControls{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:14px!important;
+  width:min(92%,560px)!important;
+  margin:22px auto 10px!important;
+  padding:18px!important;
+  border:4px solid #facc15!important;
+  border-radius:24px!important;
+  background:#fffbea!important;
+  box-shadow:0 14px 36px rgba(15,23,42,.28)!important;
+  position:relative!important;
+  z-index:2147483647!important;
+}
+.winnerSelectBtn{
+  display:block!important;
+  width:100%!important;
+  min-height:72px!important;
+  margin:0!important;
+  padding:18px 20px!important;
+  border:0!important;
+  border-radius:18px!important;
+  background:#16a34a!important;
+  color:white!important;
+  font:1000 clamp(20px,5vw,30px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  box-shadow:0 8px 20px rgba(22,163,74,.34)!important;
+  cursor:pointer!important;
+}
+.winnerSelectBtn:disabled{opacity:1!important;background:#15803d!important;}
+.winnerCloseBtn{
+  display:block!important;
+  width:100%!important;
+  min-height:58px!important;
+  margin:0!important;
+  padding:14px 18px!important;
+  border:0!important;
+  border-radius:18px!important;
+  background:#475569!important;
+  color:white!important;
+  font:900 clamp(18px,4vw,24px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  box-shadow:0 7px 18px rgba(71,85,105,.28)!important;
+  cursor:pointer!important;
+}
+
 </style>
 </head>
 <body class="homeMode">
@@ -696,15 +744,69 @@ function addWinnerSelectButton(doc,celebrationNode){
   if(!parentPreviewMode || !doc || doc.getElementById('mwSelectForPathBtn')) return;
   const lesson=currentPreviewLesson||activePathLessons[activeLessonIndex];
   if(!lesson) return;
+
+  const target=celebrationNode||doc.body;
+  const controls=doc.createElement('div');
+  controls.id='mwWinnerPathControls';
+  controls.className='winnerPathControls';
+
   const btn=doc.createElement('button');
   btn.id='mwSelectForPathBtn';
   btn.className='winnerSelectBtn';
-  btn.textContent=lessonIsSelected(lesson.file)?'✓ Selected for Learning Path':'Select for Learning Path';
+  btn.textContent=lessonIsSelected(lesson.file)?'✓ Selected for Learning Path':'SELECT FOR LEARNING PATH';
   btn.disabled=lessonIsSelected(lesson.file);
   btn.addEventListener('click',selectCurrentLessonForPath);
-  const target=celebrationNode||doc.body;
-  target.appendChild(btn);
-  try{btn.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
+
+  const closeBtn=doc.createElement('button');
+  closeBtn.id='mwWinnerCloseBtn';
+  closeBtn.className='winnerCloseBtn';
+  closeBtn.textContent='Close Winner Window';
+
+  controls.appendChild(btn);
+  controls.appendChild(closeBtn);
+  target.appendChild(controls);
+
+  // Keep the Winner Window visible until the parent deliberately closes it.
+  let keepingOpen=true;
+  let parent=target.parentNode;
+  let nextSibling=target.nextSibling;
+  const forceVisible=()=>{
+    if(!keepingOpen || target===doc.body) return;
+    try{
+      target.hidden=false;
+      target.removeAttribute('hidden');
+      target.style.setProperty('display','block','important');
+      target.style.setProperty('visibility','visible','important');
+      target.style.setProperty('opacity','1','important');
+      target.style.setProperty('pointer-events','auto','important');
+      if(parent && !target.isConnected){
+        if(nextSibling && nextSibling.parentNode===parent) parent.insertBefore(target,nextSibling);
+        else parent.appendChild(target);
+      }
+    }catch(e){}
+  };
+  forceVisible();
+  const attrObserver=new MutationObserver(forceVisible);
+  if(target!==doc.body) attrObserver.observe(target,{attributes:true,attributeFilter:['style','class','hidden']});
+  const parentObserver=new MutationObserver(forceVisible);
+  if(parent) parentObserver.observe(parent,{childList:true});
+  const keepTimer=setInterval(forceVisible,250);
+
+  closeBtn.addEventListener('click',()=>{
+    keepingOpen=false;
+    clearInterval(keepTimer);
+    attrObserver.disconnect();
+    parentObserver.disconnect();
+    if(target===doc.body){ controls.remove(); }
+    else {
+      target.style.setProperty('display','none','important');
+      target.setAttribute('hidden','');
+    }
+    const note=document.getElementById('lessonPlayerNote');
+    if(note) note.textContent='Winner Window closed. Tap Back to Lessons to preview another lesson.';
+  });
+
+  try{controls.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
 }
 function checkWinnerAndAutoNext(){
   if(activeWinSeen) return;
