@@ -839,9 +839,14 @@ function checkWinnerAndAutoNext(){
       if(note) note.textContent=lessonIsSelected((currentPreviewLesson||{}).file)?'✓ This lesson is already selected.':'Winner! Tap “Select for Learning Path” in the Winner Window.';
       return;
     }
+    const completedLesson=activePathLessons[activeLessonIndex];
+    if(completedLesson) saveCompletedLesson(completedLesson.file);
     let seconds=4;
-    if(note) note.textContent=(activeLessonIndex<activePathLessons.length-1)?'Winner! Next lesson opens in '+seconds+' seconds…':'Winner! This was the last lesson in this category.';
-    if(activeLessonIndex>=activePathLessons.length-1) return;
+    if(note) note.textContent=(activeLessonIndex<activePathLessons.length-1)?'✓ Lesson complete! Next lesson opens in '+seconds+' seconds…':'✓ Learning Path complete!';
+    if(activeLessonIndex>=activePathLessons.length-1){
+      setTimeout(()=>{ closeLessonPlayer(); alert('Learning Path complete!'); returnHome(); },1200);
+      return;
+    }
     activeCountdownTimer=setInterval(()=>{
       seconds--;
       if(note) note.textContent='Winner! Next lesson opens in '+seconds+' seconds…';
@@ -887,25 +892,45 @@ function openLearningPathSave(){
   const files=getPathDraft();
   if(!files.length) return alert('No lessons have been selected yet. Complete a lesson and select it at the Winner Window.');
   const saved=getSavedPath();
-  openModal('<div class="instructionsTop"><h2>Name/Save Learning Path</h2><button class="secondary" onclick="closeModal()">Close</button></div><p><b>'+files.length+' lesson'+(files.length===1?'':'s')+' selected.</b></p><input id="learningPathName" class="playName" placeholder="Example: Maria – Fractions Week 1" value="'+escapeHtml(saved&&saved.name?saved.name:'')+'"><div class="modalBtns"><button class="good" onclick="saveLearningPath()">Save Learning Path</button></div>');
+  openModal('<div class="instructionsTop"><h2>Name/Save Learning Path</h2><button id="closePathSaveBtn" class="secondary">Close</button></div><p><b>'+files.length+' lesson'+(files.length===1?'':'s')+' selected.</b></p><input id="learningPathName" class="playName" placeholder="Example: Maria – Fractions Week 1" value="'+escapeHtml(saved&&saved.name?saved.name:'')+'"><div class="modalBtns"><button id="confirmPathSaveBtn" class="good">Save Learning Path</button></div>');
+  document.getElementById('closePathSaveBtn').addEventListener('click',closeModal);
+  document.getElementById('confirmPathSaveBtn').addEventListener('click',saveLearningPath);
+  setTimeout(()=>{const el=document.getElementById('learningPathName'); if(el) el.focus();},50);
 }
 function saveLearningPath(){
-  const name=(document.getElementById('learningPathName').value||'').trim();
+  const input=document.getElementById('learningPathName');
+  const name=((input&&input.value)||'').trim();
   if(!name) return alert('Please enter a name for the Learning Path.');
   const files=getPathDraft();
-  localStorage.setItem(PATH_SAVED_KEY,JSON.stringify({name,files,completed:[],savedAt:new Date().toISOString()}));
-  closeModal(); updateParentPathStatus(); alert('Learning Path saved on this device.');
+  if(!files.length) return alert('No selected lessons were found. Please select a lesson again.');
+  const assignment={name,files:[...files],completed:[],savedAt:new Date().toISOString()};
+  try{
+    localStorage.setItem(PATH_SAVED_KEY,JSON.stringify(assignment));
+    localStorage.removeItem(PATH_DRAFT_KEY);
+  }catch(e){
+    return alert('The Learning Path could not be saved on this device.');
+  }
+  updateParentPathStatus();
+  renderLessons(searchBox.value);
+  openModal('<div style="text-align:center;padding:12px 4px"><h2 style="color:#16a34a;font-size:2rem;margin:0 0 12px">✓ Learning Path Saved</h2><p style="font-size:1.15rem;font-weight:800;line-height:1.45">“'+escapeHtml(name)+'” is ready.<br>The learner can now return Home and tap ENTER.</p><div class="modalBtns" style="justify-content:center"><button id="savedPathDoneBtn" class="good">Done</button></div></div>');
+  document.getElementById('savedPathDoneBtn').addEventListener('click',closeModal);
 }
 function reviewSelectedLessons(){
-  const files=getPathDraft();
-  if(!files.length) return alert('No lessons selected yet.');
+  const draft=getPathDraft();
+  const saved=getSavedPath();
+  const files=draft.length?draft:(saved&&Array.isArray(saved.files)?saved.files:[]);
+  if(!files.length) return alert('No lessons selected or saved yet.');
+  const isDraft=draft.length>0;
   const rows=files.map((f,i)=>{
     const l=LESSONS.find(x=>x.file===f);
     if(!l) return '';
     const encoded=encodeURIComponent(f);
-    return `<div class="categoryEditCard"><b>${i+1}. ${escapeHtml(l.title)}</b><div class="modalBtns"><button class="warn" onclick="removeDraftLesson('${encoded}')">Remove</button></div></div>`;
+    const remove=isDraft?`<div class="modalBtns"><button class="warn" onclick="removeDraftLesson('${encoded}')">Remove</button></div>`:'';
+    return `<div class="categoryEditCard"><b>${i+1}. ${escapeHtml(l.title)}</b>${remove}</div>`;
   }).join('');
-  openModal('<div class="instructionsTop"><h2>Selected Lessons</h2><button class="secondary" onclick="closeModal()">Close</button></div>'+rows+'<div class="modalBtns"><button class="good" onclick="closeModal();openLearningPathSave()">Name/Save Learning Path</button></div>');
+  const title=isDraft?'Selected Lessons':'Saved Learning Path';
+  const footer=isDraft?'<div class="modalBtns"><button class="good" onclick="closeModal();openLearningPathSave()">Name/Save Learning Path</button></div>':'';
+  openModal('<div class="instructionsTop"><h2>'+title+'</h2><button class="secondary" onclick="closeModal()">Close</button></div>'+rows+footer);
 }
 function removeDraftLesson(encoded){const f=decodeURIComponent(encoded);setPathDraft(getPathDraft().filter(x=>x!==f));reviewSelectedLessons();}
 function checksHTML(files=[]){return '<div class="lessonChecks">'+LESSONS.map(l=>'<label><input type="checkbox" value="'+l.file+'" '+(files.includes(l.file)?'checked':'')+'> '+l.title+'</label>').join('')+'</div>'}
@@ -931,6 +956,28 @@ function commitChanges(){const replacement='let PLAYLISTS = '+JSON.stringify(PLA
 async function copyExportCode(){let box=document.getElementById('exportCodeBox'); box.focus(); box.select(); let ok=false; try{await navigator.clipboard.writeText(box.value); ok=true;}catch(e){try{ok=document.execCommand('copy')}catch(e2){}} alert(ok?'Copied.':'If copy was blocked, tap in the selected box and use Copy.');}
 function escapeHtml(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')}
 
+
+function saveCompletedLesson(file){
+  const saved=getSavedPath();
+  if(!saved || !Array.isArray(saved.files)) return;
+  const completed=Array.isArray(saved.completed)?saved.completed:[];
+  if(!completed.includes(file)) completed.push(file);
+  saved.completed=completed;
+  localStorage.setItem(PATH_SAVED_KEY,JSON.stringify(saved));
+}
+function startAssignedLearningPath(saved){
+  if(!saved || !Array.isArray(saved.files) || !saved.files.length) return false;
+  activePathLessons=saved.files.map(f=>LESSONS.find(l=>l.file===f)).filter(Boolean);
+  if(!activePathLessons.length) return false;
+  const completed=Array.isArray(saved.completed)?saved.completed:[];
+  let firstIncomplete=activePathLessons.findIndex(l=>!completed.includes(l.file));
+  if(firstIncomplete<0) firstIncomplete=0;
+  activeLessonIndex=firstIncomplete;
+  parentPreviewMode=false;
+  currentPreviewLesson=null;
+  openLessonPlayer();
+  return true;
+}
 function revealLessonLibrary(){
   document.querySelectorAll('.hiddenUntilEnter').forEach(el=>el.classList.remove('hiddenUntilEnter'));
   document.body.classList.remove('homeMode');
@@ -953,11 +1000,11 @@ function frontAdminEnter(){
   setTimeout(openAdminAccess,120);
 }
 function enterMathPlayground(){
-  const saved=getSavedLearningPath();
+  const saved=getSavedPath();
   if(saved && Array.isArray(saved.files) && saved.files.length){
     document.body.classList.remove('homeMode');
-    startPlaylistPath({name:saved.name||'Learning Path',files:saved.files});
-    return;
+    document.body.style.overflow='';
+    if(startAssignedLearningPath(saved)) return;
   }
   revealLessonLibrary();
 }
