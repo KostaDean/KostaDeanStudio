@@ -906,7 +906,7 @@ function saveLearningPath(){
   const assignment={name,files:[...files],completed:[],savedAt:new Date().toISOString()};
   try{
     localStorage.setItem(PATH_SAVED_KEY,JSON.stringify(assignment));
-    localStorage.removeItem(PATH_DRAFT_KEY);
+    localStorage.setItem(PATH_DRAFT_KEY,'[]');
   }catch(e){
     return alert('The Learning Path could not be saved on this device.');
   }
@@ -958,6 +958,10 @@ function escapeHtml(s){return String(s).replaceAll('&','&amp;').replaceAll('<','
 
 
 function saveCompletedLesson(file){
+  // Learner completion must never leave a parent-selection draft visible.
+  localStorage.setItem(PATH_DRAFT_KEY,'[]');
+  updateParentPathStatus();
+  renderLessons(searchBox.value);
   const saved=getSavedPath();
   if(!saved || !Array.isArray(saved.files)) return;
   const completed=Array.isArray(saved.completed)?saved.completed:[];
@@ -967,6 +971,10 @@ function saveCompletedLesson(file){
 }
 function startAssignedLearningPath(saved){
   if(!saved || !Array.isArray(saved.files) || !saved.files.length) return false;
+  // Entering learner mode clears any leftover parent draft marks.
+  localStorage.setItem(PATH_DRAFT_KEY,'[]');
+  updateParentPathStatus();
+  renderLessons(searchBox.value);
   activePathLessons=saved.files.map(f=>LESSONS.find(l=>l.file===f)).filter(Boolean);
   if(!activePathLessons.length) return false;
   const completed=Array.isArray(saved.completed)?saved.completed:[];
