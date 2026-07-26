@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Times Table</title>
+<style>
+body{font-family:Arial,sans-serif;background:#eef7ff;margin:0;padding:12px;text-align:center}
+h1{color:#1565a8;margin:8px 0}
+#panel{border:3px solid #8fc4ea;border-radius:20px;padding:12px;background:#fff;max-width:820px;margin:auto}
+input{width:60px;height:50px;font-size:28px;text-align:center;border:3px solid #6da9d8;border-radius:10px}
+#ans{background:#ffd8ea;border-color:#e94d97}
+button{padding:10px 24px;font-size:22px;border-radius:25px;border:none;background:#1d6fb5;color:#fff;margin:10px}
+#stopBtn,#tableBtn{background:#e5edf4;color:#24435f}
+input[readonly]{background:#f8fbff;color:#17324d}
+.tablewrap.hidden{display:none}
+#msg{font-size:28px;font-weight:bold;color:#168048;height:36px}
+.tablewrap{display:flex;justify-content:center;margin-top:14px}
+table{border-collapse:collapse;width:min(100%,760px);table-layout:fixed;border:4px solid #355a77}
+th,td{border:1px solid #9fb7c9;font-size:clamp(10px,2.8vw,18px);height:clamp(24px,6vw,44px);padding:0}
+thead th{border-bottom:4px solid #355a77;background:#dfefff}
+tbody th{border-right:4px solid #355a77;background:#dfefff}
+td.diag{background:#c8e8ff}
+td.above{background:#e4faf5}
+td.below{background:#f1e9ff}
+.rowhi,.colhi{background:#fff17a!important;color:#142f49!important}
+.hit{background:#ffcf3d!important;color:#b00040!important;font-weight:900;font-size:clamp(14px,4vw,24px)}
+</style>
+</head>
+<body>
+<h1>Times Table</h1>
+<div id="panel">
+<input id=a min=1 max=10 readonly aria-label="First number"> × <input id=b min=1 max=10 readonly aria-label="Second number"> = <input id=ans inputmode="numeric" aria-label="Product">
+<br>
+<button id="doneBtn" onclick="check()">Done</button>
+<button id="stopBtn" onclick="toggleStop()">Stop</button>
+<button id="tableBtn" onclick="toggleTable()">Hide Table</button>
+<div id=msg></div>
+</div>
+<div class="tablewrap"><table id=t></table></div>
+<script>
+let t=document.getElementById('t');
+let h='<thead><tr><th>×</th>';
+for(let c=1;c<=10;c++)h+=`<th id=c${c}>${c}</th>`;
+h+='</tr></thead><tbody>';
+for(let r=1;r<=10;r++){h+=`<tr><th id=r${r}>${r}</th>`;
+for(let c=1;c<=10;c++){
+let symmetryClass=r===c?'diag':(r<c?'above':'below');
+h+=`<td id=x${r}_${c} class="${symmetryClass}">${r*c}</td>`;
+}
+h+='</tr>';}
+h+='</tbody>';t.innerHTML=h;
+
+function clearHi(){
+document.querySelectorAll('.rowhi,.colhi,.hit').forEach(e=>e.classList.remove('rowhi','colhi','hit'));
+}
+
+let running=true;
+let currentA=1;
+let currentB=1;
+let nextTimer=null;
+
+function randomFactor(){
+return Math.floor(Math.random()*10)+1;
+}
+
+function newProblem(){
+if(!running)return;
+clearTimeout(nextTimer);
+clearHi();
+msg.textContent='';
+currentA=randomFactor();
+currentB=randomFactor();
+a.value=currentA;
+b.value=currentB;
+ans.value='';
+highlightProblem();
+ans.focus();
+}
+
+function highlightProblem(){
+let r=currentA,c=currentB;
+document.getElementById('r'+r).classList.add('rowhi');
+document.getElementById('c'+c).classList.add('colhi');
+for(let i=1;i<=10;i++){
+document.getElementById('x'+r+'_'+i).classList.add('rowhi');
+document.getElementById('x'+i+'_'+c).classList.add('colhi');
+}
+let cell=document.getElementById('x'+r+'_'+c);
+cell.classList.remove('rowhi','colhi');
+cell.classList.add('hit');
+}
+
+function check(){
+if(!running)return;
+if(ans.value.trim()===''){
+msg.textContent='Enter the product.';
+msg.style.color='#b33';
+ans.focus();
+return;
+}
+let p=Number(ans.value);
+if(p===currentA*currentB){
+msg.textContent='You are so correct!';
+msg.style.color='#168048';
+nextTimer=setTimeout(newProblem,900);
+}else{
+msg.textContent='Try again';
+msg.style.color='#b33';
+ans.select();
+}
+}
+
+function toggleTable(){
+const wrap=document.querySelector('.tablewrap');
+const hidden=wrap.classList.toggle('hidden');
+tableBtn.textContent=hidden?'Show Table':'Hide Table';
+}
+
+function toggleStop(){
+running=!running;
+clearTimeout(nextTimer);
+if(running){
+stopBtn.textContent='Stop';
+doneBtn.disabled=false;
+newProblem();
+}else{
+stopBtn.textContent='Start';
+doneBtn.disabled=true;
+msg.textContent='Stopped';
+msg.style.color='#24435f';
+ans.blur();
+}
+}
+
+ans.addEventListener('keydown',e=>{
+if(e.key==='Enter')check();
+});
+
+newProblem();
+</script>
+</body>
+</html>
