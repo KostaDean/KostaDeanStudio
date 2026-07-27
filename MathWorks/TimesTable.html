@@ -15,6 +15,26 @@ button{padding:10px 24px;font-size:22px;border-radius:25px;border:none;backgroun
 #stopBtn,#tableBtn{background:#e5edf4;color:#24435f}
 input[readonly]{background:#f8fbff;color:#17324d}
 .tablewrap.hidden{display:none}
+.practiceOptions{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:8px;
+flex-wrap:wrap;
+margin:0 0 12px;
+font-size:18px;
+font-weight:700;
+color:#24435f;
+}
+.practiceOptions select{
+font-size:18px;
+padding:8px 12px;
+border:2px solid #7caed3;
+border-radius:12px;
+background:#fff;
+color:#17324d;
+}
+.hiddenControl{display:none}
 #msg{font-size:28px;font-weight:bold;color:#168048;height:36px}
 .tablewrap{display:flex;justify-content:center;margin-top:14px}
 table{border-collapse:collapse;width:min(100%,760px);table-layout:fixed;border:4px solid #355a77}
@@ -31,6 +51,23 @@ td.below{background:#f1e9ff}
 <body>
 <h1>Times Table</h1>
 <div id="panel">
+<div class="practiceOptions">
+<label for="modeSelect">Practice:</label>
+<select id="modeSelect" onchange="changeMode()">
+<option value="random">Random</option>
+<option value="rowOrder">By row in order</option>
+<option value="rowRandom">By row random</option>
+</select>
+
+<label id="rowLabel" for="rowSelect" class="hiddenControl">Row:</label>
+<select id="rowSelect" class="hiddenControl" onchange="changeRow()">
+<option value="1">1</option><option value="2">2</option><option value="3">3</option>
+<option value="4">4</option><option value="5">5</option><option value="6">6</option>
+<option value="7">7</option><option value="8">8</option><option value="9">9</option>
+<option value="10">10</option>
+</select>
+</div>
+
 <input id=a min=1 max=10 readonly aria-label="First number"> × <input id=b min=1 max=10 readonly aria-label="Second number"> = <input id=ans inputmode="numeric" aria-label="Product">
 <br>
 <button id="doneBtn" onclick="check()">Done</button>
@@ -52,6 +89,7 @@ h+=`<td id=x${r}_${c} class="${symmetryClass}">${r*c}</td>`;
 h+='</tr>';}
 h+='</tbody>';t.innerHTML=h;
 
+
 function clearHi(){
 document.querySelectorAll('.rowhi,.colhi,.hit').forEach(e=>e.classList.remove('rowhi','colhi','hit'));
 }
@@ -60,9 +98,69 @@ let running=true;
 let currentA=1;
 let currentB=1;
 let nextTimer=null;
+let orderedColumn=1;
+let previousRandomColumn=0;
 
 function randomFactor(){
 return Math.floor(Math.random()*10)+1;
+}
+
+function selectedMode(){
+return document.getElementById('modeSelect').value;
+}
+
+function selectedRow(){
+return Number(document.getElementById('rowSelect').value);
+}
+
+function changeMode(){
+const usesRow=selectedMode()!=='random';
+document.getElementById('rowLabel').style.display=usesRow?'inline-block':'none';
+document.getElementById('rowSelect').style.display=usesRow?'inline-block':'none';
+orderedColumn=1;
+previousRandomColumn=0;
+if(!running){
+running=true;
+stopBtn.textContent='Stop';
+doneBtn.disabled=false;
+}
+newProblem();
+}
+
+function changeRow(){
+orderedColumn=1;
+previousRandomColumn=0;
+if(!running){
+running=true;
+stopBtn.textContent='Stop';
+doneBtn.disabled=false;
+}
+newProblem();
+}
+
+function chooseProblem(){
+const mode=selectedMode();
+
+if(mode==='random'){
+currentA=randomFactor();
+currentB=randomFactor();
+return;
+}
+
+currentA=selectedRow();
+
+if(mode==='rowOrder'){
+currentB=orderedColumn;
+orderedColumn=orderedColumn===10?1:orderedColumn+1;
+return;
+}
+
+let nextColumn=randomFactor();
+if(nextColumn===previousRandomColumn){
+nextColumn=nextColumn===10?1:nextColumn+1;
+}
+previousRandomColumn=nextColumn;
+currentB=nextColumn;
 }
 
 function newProblem(){
@@ -70,8 +168,7 @@ if(!running)return;
 clearTimeout(nextTimer);
 clearHi();
 msg.textContent='';
-currentA=randomFactor();
-currentB=randomFactor();
+chooseProblem();
 a.value=currentA;
 b.value=currentB;
 ans.value='';
