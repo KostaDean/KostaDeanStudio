@@ -13,6 +13,7 @@ input{width:60px;height:50px;font-size:28px;text-align:center;border:3px solid #
 #ans{background:#ffd8ea;border-color:#e94d97}
 button{padding:10px 24px;font-size:22px;border-radius:25px;border:none;background:#1d6fb5;color:#fff;margin:10px}
 #stopBtn,#tableBtn{background:#e5edf4;color:#24435f}
+#donateBtn{background:#2e8b57;color:#fff;margin-top:12px}
 input[readonly]{background:#f8fbff;color:#17324d}
 .tablewrap.hidden{display:none}
 .practiceOptions{
@@ -41,11 +42,74 @@ table{border-collapse:collapse;width:min(100%,760px);table-layout:fixed;border:4
 th,td{border:1px solid #9fb7c9;font-size:clamp(10px,2.8vw,18px);height:clamp(24px,6vw,44px);padding:0}
 thead th{border-bottom:4px solid #355a77;background:#dfefff}
 tbody th{border-right:4px solid #355a77;background:#dfefff}
-td.diag{background:#c8e8ff}
+td.diag{background:#9fd5f5;color:#0b4f82;font-weight:900;border:2px solid #4f9dca}
 td.above{background:#e4faf5}
 td.below{background:#f1e9ff}
 .rowhi,.colhi{background:#fff17a!important;color:#142f49!important}
 .hit{background:#ffcf3d!important;color:#b00040!important;font-weight:900;font-size:clamp(14px,4vw,24px)}
+
+.cornerCell{
+  border-right:4px solid #355a77 !important;
+  border-bottom:4px solid #355a77 !important;
+  font-weight:900;
+  background:#dfefff;
+}
+
+
+.winnerOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(18,44,70,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:9999;
+}
+.winnerOverlay.show{display:flex}
+.winnerWindow{
+  position:relative;
+  width:min(92vw,520px);
+  background:#fff;
+  border:5px solid #78bdf0;
+  border-radius:24px;
+  padding:34px 20px 24px;
+  box-shadow:0 18px 60px rgba(0,0,0,.3);
+  text-align:center;
+}
+.winnerWindow h2{
+  color:#1473b7;
+  font-size:clamp(2rem,8vw,3.3rem);
+  margin:8px 0;
+}
+.winnerWindow p{
+  color:#168048;
+  font-size:clamp(1.25rem,5vw,1.8rem);
+  font-weight:900;
+}
+.winnerClose{
+  position:absolute;
+  top:8px;
+  right:10px;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  padding:0;
+  margin:0;
+  background:#e8eef4;
+  color:#233e56;
+  font-size:30px;
+  line-height:1;
+}
+.confetti{font-size:42px}
+.winnerButtons{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.donateWinner{background:#2e8b57}
+
 </style>
 </head>
 <body>
@@ -68,7 +132,7 @@ td.below{background:#f1e9ff}
 </select>
 </div>
 
-<input id=a min=1 max=10 readonly aria-label="First number"> × <input id=b min=1 max=10 readonly aria-label="Second number"> = <input id=ans inputmode="numeric" aria-label="Product">
+<input id="a" type="number" min="1" max="10" readonly aria-label="First number"> × <input id="b" type="number" min="1" max="10" readonly aria-label="Second number"> = <input id="ans" type="number" inputmode="numeric" aria-label="Product">
 <br>
 <button id="doneBtn" onclick="check()">Done</button>
 <button id="stopBtn" onclick="toggleStop()">Stop</button>
@@ -77,165 +141,251 @@ td.below{background:#f1e9ff}
 </div>
 <div class="tablewrap"><table id=t></table></div>
 <script>
-let t=document.getElementById('t');
-let h='<thead><tr><th>×</th>';
-for(let c=1;c<=10;c++)h+=`<th id=c${c}>${c}</th>`;
-h+='</tr></thead><tbody>';
-for(let r=1;r<=10;r++){h+=`<tr><th id=r${r}>${r}</th>`;
-for(let c=1;c<=10;c++){
-let symmetryClass=r===c?'diag':(r<c?'above':'below');
-h+=`<td id=x${r}_${c} class="${symmetryClass}">${r*c}</td>`;
-}
-h+='</tr>';}
-h+='</tbody>';t.innerHTML=h;
+const table = document.getElementById('t');
+const firstBox = document.getElementById('a');
+const secondBox = document.getElementById('b');
+const answerBox = document.getElementById('ans');
+const message = document.getElementById('msg');
+const doneButton = document.getElementById('doneBtn');
+const stopButton = document.getElementById('stopBtn');
+const tableButton = document.getElementById('tableBtn');
+const modeSelect = document.getElementById('modeSelect');
+const rowSelect = document.getElementById('rowSelect');
+const rowLabel = document.getElementById('rowLabel');
 
+let tableHTML='<thead><tr><th class="cornerCell">×</th>';
+for(let c=1;c<=10;c++) tableHTML+=`<th id="c${c}">${c}</th>`;
+tableHTML+='</tr></thead><tbody>';
 
-function clearHi(){
-document.querySelectorAll('.rowhi,.colhi,.hit').forEach(e=>e.classList.remove('rowhi','colhi','hit'));
+for(let r=1;r<=10;r++){
+  tableHTML+=`<tr><th id="r${r}">${r}</th>`;
+  for(let c=1;c<=10;c++){
+    const symmetryClass=r===c?'diag':(r<c?'above':'below');
+    tableHTML+=`<td id="x${r}_${c}" class="${symmetryClass}">${r*c}</td>`;
+  }
+  tableHTML+='</tr>';
 }
+tableHTML+='</tbody>';
+table.innerHTML=tableHTML;
 
 let running=true;
 let currentA=1;
 let currentB=1;
 let nextTimer=null;
+let correctStreak=0;
 let orderedColumn=1;
 let previousRandomColumn=0;
 
+function clearHi(){
+  document.querySelectorAll('.rowhi,.colhi,.hit').forEach(
+    element=>element.classList.remove('rowhi','colhi','hit')
+  );
+}
+
 function randomFactor(){
-return Math.floor(Math.random()*10)+1;
+  return Math.floor(Math.random()*10)+1;
 }
 
 function selectedMode(){
-return document.getElementById('modeSelect').value;
+  return modeSelect.value;
 }
 
 function selectedRow(){
-return Number(document.getElementById('rowSelect').value);
+  return Number(rowSelect.value);
 }
 
 function changeMode(){
-const usesRow=selectedMode()!=='random';
-document.getElementById('rowLabel').style.display=usesRow?'inline-block':'none';
-document.getElementById('rowSelect').style.display=usesRow?'inline-block':'none';
-orderedColumn=1;
-previousRandomColumn=0;
-if(!running){
-running=true;
-stopBtn.textContent='Stop';
-doneBtn.disabled=false;
-}
-newProblem();
+  const usesRow=selectedMode()!=='random';
+  rowLabel.style.display=usesRow?'inline-block':'none';
+  rowSelect.style.display=usesRow?'inline-block':'none';
+  orderedColumn=1;
+  previousRandomColumn=0;
+
+  if(!running){
+    running=true;
+    stopButton.textContent='Stop';
+    doneButton.disabled=false;
+  }
+  newProblem();
 }
 
 function changeRow(){
-orderedColumn=1;
-previousRandomColumn=0;
-if(!running){
-running=true;
-stopBtn.textContent='Stop';
-doneBtn.disabled=false;
-}
-newProblem();
+  orderedColumn=1;
+  previousRandomColumn=0;
+
+  if(!running){
+    running=true;
+    stopButton.textContent='Stop';
+    doneButton.disabled=false;
+  }
+  newProblem();
 }
 
 function chooseProblem(){
-const mode=selectedMode();
+  const mode=selectedMode();
 
-if(mode==='random'){
-currentA=randomFactor();
-currentB=randomFactor();
-return;
-}
+  if(mode==='random'){
+    currentA=randomFactor();
+    currentB=randomFactor();
+    return;
+  }
 
-currentA=selectedRow();
+  currentA=selectedRow();
 
-if(mode==='rowOrder'){
-currentB=orderedColumn;
-orderedColumn=orderedColumn===10?1:orderedColumn+1;
-return;
-}
+  if(mode==='rowOrder'){
+    currentB=orderedColumn;
+    orderedColumn=orderedColumn===10?1:orderedColumn+1;
+    return;
+  }
 
-let nextColumn=randomFactor();
-if(nextColumn===previousRandomColumn){
-nextColumn=nextColumn===10?1:nextColumn+1;
-}
-previousRandomColumn=nextColumn;
-currentB=nextColumn;
-}
-
-function newProblem(){
-if(!running)return;
-clearTimeout(nextTimer);
-clearHi();
-msg.textContent='';
-chooseProblem();
-a.value=currentA;
-b.value=currentB;
-ans.value='';
-highlightProblem();
-ans.focus();
+  let nextColumn=randomFactor();
+  if(nextColumn===previousRandomColumn){
+    nextColumn=nextColumn===10?1:nextColumn+1;
+  }
+  previousRandomColumn=nextColumn;
+  currentB=nextColumn;
 }
 
 function highlightProblem(){
-let r=currentA,c=currentB;
-document.getElementById('r'+r).classList.add('rowhi');
-document.getElementById('c'+c).classList.add('colhi');
-for(let i=1;i<=10;i++){
-document.getElementById('x'+r+'_'+i).classList.add('rowhi');
-document.getElementById('x'+i+'_'+c).classList.add('colhi');
+  const r=currentA;
+  const c=currentB;
+
+  document.getElementById(`r${r}`).classList.add('rowhi');
+  document.getElementById(`c${c}`).classList.add('colhi');
+
+  for(let i=1;i<=10;i++){
+    document.getElementById(`x${r}_${i}`).classList.add('rowhi');
+    document.getElementById(`x${i}_${c}`).classList.add('colhi');
+  }
+
+  const productCell=document.getElementById(`x${r}_${c}`);
+  productCell.classList.remove('rowhi','colhi');
+  productCell.classList.add('hit');
 }
-let cell=document.getElementById('x'+r+'_'+c);
-cell.classList.remove('rowhi','colhi');
-cell.classList.add('hit');
+
+function newProblem(){
+  if(!running) return;
+
+  clearTimeout(nextTimer);
+  clearHi();
+  message.textContent='';
+  chooseProblem();
+
+  firstBox.value=currentA;
+  secondBox.value=currentB;
+  answerBox.value='';
+  highlightProblem();
+  answerBox.focus();
 }
 
 function check(){
-if(!running)return;
-if(ans.value.trim()===''){
-msg.textContent='Enter the product.';
-msg.style.color='#b33';
-ans.focus();
-return;
-}
-let p=Number(ans.value);
-if(p===currentA*currentB){
-msg.textContent='You are so correct!';
-msg.style.color='#168048';
-nextTimer=setTimeout(newProblem,900);
-}else{
-msg.textContent='Try again';
-msg.style.color='#b33';
-ans.select();
-}
+  if(!running) return;
+
+  if(answerBox.value.trim()===''){
+    message.textContent='Enter the product.';
+    message.style.color='#b33';
+    answerBox.focus();
+    return;
+  }
+
+  const entered=Number(answerBox.value);
+
+  if(entered===currentA*currentB){
+    correctStreak++;
+    message.textContent='You are so correct!';
+    message.style.color='#168048';
+    if(correctStreak>=10){
+      clearTimeout(nextTimer);
+      setTimeout(showWinner,500);
+    }else{
+      nextTimer=setTimeout(newProblem,900);
+    }
+  }else{
+    correctStreak=0;
+    message.textContent='Try again';
+    message.style.color='#b33';
+    answerBox.select();
+  }
 }
 
 function toggleTable(){
-const wrap=document.querySelector('.tablewrap');
-const hidden=wrap.classList.toggle('hidden');
-tableBtn.textContent=hidden?'Show Table':'Hide Table';
+  const wrap=document.querySelector('.tablewrap');
+  const hidden=wrap.classList.toggle('hidden');
+  tableButton.textContent=hidden?'Show Table':'Hide Table';
 }
 
 function toggleStop(){
-running=!running;
-clearTimeout(nextTimer);
-if(running){
-stopBtn.textContent='Stop';
-doneBtn.disabled=false;
-newProblem();
-}else{
-stopBtn.textContent='Start';
-doneBtn.disabled=true;
-msg.textContent='Stopped';
-msg.style.color='#24435f';
-ans.blur();
-}
+  running=!running;
+  clearTimeout(nextTimer);
+
+  if(running){
+    stopButton.textContent='Stop';
+    doneButton.disabled=false;
+    newProblem();
+  }else{
+    stopButton.textContent='Start';
+    doneButton.disabled=true;
+    message.textContent='Stopped';
+    message.style.color='#24435f';
+    answerBox.blur();
+  }
 }
 
-ans.addEventListener('keydown',e=>{
-if(e.key==='Enter')check();
+
+function showWinner(){
+  running=false;
+  clearTimeout(nextTimer);
+  doneButton.disabled=true;
+  stopButton.textContent='Start';
+  const overlay=document.getElementById('winnerOverlay');
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
+  answerBox.blur();
+}
+
+function closeWinner(){
+  const overlay=document.getElementById('winnerOverlay');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
+  correctStreak=0;
+}
+
+function continuePractice(){
+  closeWinner();
+  running=true;
+  stopButton.textContent='Stop';
+  doneButton.disabled=false;
+  newProblem();
+}
+
+window.closeWinner=closeWinner;
+window.continuePractice=continuePractice;
+
+answerBox.addEventListener('keydown',event=>{
+  if(event.key==='Enter') check();
 });
+
+window.changeMode=changeMode;
+window.changeRow=changeRow;
+window.check=check;
+window.toggleTable=toggleTable;
+window.toggleStop=toggleStop;
 
 newProblem();
 </script>
+
+<div id="winnerOverlay" class="winnerOverlay" aria-hidden="true">
+  <div class="winnerWindow" role="dialog" aria-modal="true" aria-labelledby="winnerTitle">
+    <button class="winnerClose" onclick="closeWinner()" aria-label="Close">×</button>
+    <div class="confetti">🎉✨🎊</div>
+    <h2 id="winnerTitle">You are a Winner!</h2>
+    <p>10 correct answers in a row!</p>
+    <div class="winnerButtons">
+      <button onclick="continuePractice()">Continue Practice</button>
+      <button class="donateWinner" onclick="window.open('https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC','_blank')">❤️ Donate</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
