@@ -240,22 +240,22 @@ function highlightProblem(){
   productCell.classList.add('hit');
 }
 
-function newProblem(){
+function newProblem(keepMessage=false){
   if(!running) return;
 
   clearTimeout(nextTimer);
   clearHi();
-  message.textContent='';
+  if(!keepMessage) message.textContent='';
   chooseProblem();
 
   firstBox.value=currentA;
   secondBox.value=currentB;
   answerBox.value='';
   highlightProblem();
-  requestAnimationFrame(()=>{
-    answerBox.focus({preventScroll:true});
-    setTimeout(()=>answerBox.focus({preventScroll:true}),120);
-  });
+
+  /* Keep focus as part of the same tap that checked the answer.
+     This gives iPhone Safari the best chance of keeping the numeric keyboard open. */
+  answerBox.focus({preventScroll:true});
 }
 
 function check(){
@@ -278,19 +278,20 @@ function check(){
     if(correctStreak>=10 && !alreadyCelebrated){
       alreadyCelebrated=true;
       clearTimeout(nextTimer);
-      setTimeout(celebrate,500);
+      celebrate();
     }else{
-      nextTimer=setTimeout(newProblem,900);
+      /* Load the next problem immediately during the Done-button tap.
+         The feedback remains visible briefly while the next answer box is already active. */
+      newProblem(true);
+      nextTimer=setTimeout(()=>{ message.textContent=''; },700);
     }
   }else{
     correctStreak=0;
     alreadyCelebrated=false;
     message.textContent='Try again';
     message.style.color='#b33';
-    requestAnimationFrame(()=>{
-      answerBox.focus({preventScroll:true});
-      answerBox.select();
-    });
+    answerBox.focus({preventScroll:true});
+    answerBox.select();
   }
 }
 
@@ -430,7 +431,7 @@ newProblem();
      target="_blank">❤️ Support this work!</a>
 </div>
 <div style="text-align:center;font-size:11px;color:#6f8397;margin:16px 0 8px;">
-Times Table build 15
+Times Table build 16
 </div>
 </body>
 </html>
