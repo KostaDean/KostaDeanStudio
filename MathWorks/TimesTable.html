@@ -4,6 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Times Table</title>
 <style>
 body{font-family:Arial,sans-serif;background:#eef7ff;margin:0;padding:12px;text-align:center}
@@ -13,7 +16,6 @@ input{width:60px;height:50px;font-size:28px;text-align:center;border:3px solid #
 #ans{background:#ffd8ea;border-color:#e94d97}
 button{padding:10px 24px;font-size:22px;border-radius:25px;border:none;background:#1d6fb5;color:#fff;margin:10px}
 #stopBtn,#tableBtn{background:#e5edf4;color:#24435f}
-#donateBtn{background:#2e8b57;color:#fff;margin-top:12px}
 input[readonly]{background:#f8fbff;color:#17324d}
 .tablewrap.hidden{display:none}
 .practiceOptions{
@@ -55,60 +57,34 @@ td.below{background:#f1e9ff}
   background:#dfefff;
 }
 
+#celebrate{display:none;position:fixed;inset:0;background:rgba(15,23,42,.88);z-index:999;color:white;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:20px}#celebrate .big{font-size:4.5rem;animation:pulse .9s infinite}@keyframes pulse{50%{transform:scale(1.15)}}.donateBtn{display:inline-block;margin-top:22px;padding:16px 28px;border-radius:18px;background:#f59e0b;color:#172033;font-weight:900;font-size:1.3rem;text-decoration:none;border:4px solid #92400e;box-shadow:0 8px 20px rgba(0,0,0,.25)}.confetti{position:fixed;top:-40px;z-index:2001;pointer-events:none;animation:fall linear forwards}@keyframes fall{to{transform:translateY(115vh) rotate(720deg);opacity:0}}#flashOverlay{position:fixed;inset:0;background:white;opacity:0;pointer-events:none;z-index:2000}.flashOn{animation:flashAnim .22s linear 8}@keyframes flashAnim{0%{opacity:0}
 
-.winnerOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(18,44,70,.55);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  z-index:9999;
+#winnerCloseBtn{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  border:0;
+  background:#e5edf4;
+  color:#17324d;
+  font-size:34px;
+  line-height:1;
+  font-weight:700;
+  z-index:2100;
 }
-.winnerOverlay.show{display:flex}
-.winnerWindow{
-  position:relative;
-  width:min(92vw,520px);
-  background:#fff;
-  border:5px solid #78bdf0;
-  border-radius:24px;
-  padding:34px 20px 24px;
-  box-shadow:0 18px 60px rgba(0,0,0,.3);
-  text-align:center;
-}
-.winnerWindow h2{
-  color:#1473b7;
-  font-size:clamp(2rem,8vw,3.3rem);
-  margin:8px 0;
-}
-.winnerWindow p{
-  color:#168048;
-  font-size:clamp(1.25rem,5vw,1.8rem);
+#continuePracticeBtn{
+  display:inline-block;
+  margin-top:18px;
+  padding:14px 24px;
+  border-radius:18px;
+  border:3px solid #0f4f7f;
+  background:#1d6fb5;
+  color:white;
+  font-size:1.2rem;
   font-weight:900;
 }
-.winnerClose{
-  position:absolute;
-  top:8px;
-  right:10px;
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  padding:0;
-  margin:0;
-  background:#e8eef4;
-  color:#233e56;
-  font-size:30px;
-  line-height:1;
-}
-.confetti{font-size:42px}
-.winnerButtons{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.donateWinner{background:#2e8b57}
 
 </style>
 </head>
@@ -132,7 +108,7 @@ td.below{background:#f1e9ff}
 </select>
 </div>
 
-<input id="a" type="number" min="1" max="10" readonly aria-label="First number"> × <input id="b" type="number" min="1" max="10" readonly aria-label="Second number"> = <input id="ans" type="number" inputmode="numeric" aria-label="Product">
+<input id="a" type="number" min="1" max="10" readonly aria-label="First number"> × <input id="b" type="number" min="1" max="10" readonly aria-label="Second number"> = <input id="ans" type="number" inputmode="numeric" enterkeyhint="done" autocomplete="off" aria-label="Product">
 <br>
 <button id="doneBtn" onclick="check()">Done</button>
 <button id="stopBtn" onclick="toggleStop()">Stop</button>
@@ -173,6 +149,7 @@ let currentA=1;
 let currentB=1;
 let nextTimer=null;
 let correctStreak=0;
+let alreadyCelebrated=false;
 let orderedColumn=1;
 let previousRandomColumn=0;
 
@@ -275,7 +252,10 @@ function newProblem(){
   secondBox.value=currentB;
   answerBox.value='';
   highlightProblem();
-  answerBox.focus();
+  requestAnimationFrame(()=>{
+    answerBox.focus({preventScroll:true});
+    setTimeout(()=>answerBox.focus({preventScroll:true}),120);
+  });
 }
 
 function check(){
@@ -294,17 +274,23 @@ function check(){
     correctStreak++;
     message.textContent='You are so correct!';
     message.style.color='#168048';
-    if(correctStreak>=10){
+
+    if(correctStreak>=10 && !alreadyCelebrated){
+      alreadyCelebrated=true;
       clearTimeout(nextTimer);
-      setTimeout(showWinner,500);
+      setTimeout(celebrate,500);
     }else{
       nextTimer=setTimeout(newProblem,900);
     }
   }else{
     correctStreak=0;
+    alreadyCelebrated=false;
     message.textContent='Try again';
     message.style.color='#b33';
-    answerBox.select();
+    requestAnimationFrame(()=>{
+      answerBox.focus({preventScroll:true});
+      answerBox.select();
+    });
   }
 }
 
@@ -332,34 +318,92 @@ function toggleStop(){
 }
 
 
-function showWinner(){
+function celebrate(){
   running=false;
-  clearTimeout(nextTimer);
   doneButton.disabled=true;
   stopButton.textContent='Start';
-  const overlay=document.getElementById('winnerOverlay');
-  overlay.classList.add('show');
-  overlay.setAttribute('aria-hidden','false');
-  answerBox.blur();
+
+  const mode=selectedMode();
+  const mastery=document.getElementById('winnerMastery');
+
+  if(mode==='random'){
+    mastery.textContent='You mastered Random Multiplication!';
+  }else{
+    mastery.textContent='You mastered the '+selectedRow()+' Times Table!';
+  }
+
+  document.getElementById('celebrate').style.display='flex';
+  flashScreen();
+  launchConfetti();
+  playTrumpets();
 }
 
+
 function closeWinner(){
-  const overlay=document.getElementById('winnerOverlay');
-  overlay.classList.remove('show');
-  overlay.setAttribute('aria-hidden','true');
+  document.getElementById('celebrate').style.display='none';
   correctStreak=0;
+  alreadyCelebrated=false;
+  running=true;
+  doneButton.disabled=false;
+  stopButton.textContent='Stop';
+  newProblem();
 }
 
 function continuePractice(){
   closeWinner();
-  running=true;
-  stopButton.textContent='Stop';
-  doneButton.disabled=false;
-  newProblem();
 }
 
 window.closeWinner=closeWinner;
 window.continuePractice=continuePractice;
+
+function flashScreen(){
+  const f=document.getElementById('flashOverlay');
+  f.classList.remove('flashOn');
+  void f.offsetWidth;
+  f.classList.add('flashOn');
+}
+
+function launchConfetti(){
+  const pieces=['🎉','🎊','✨','⭐','🎈','🥳'];
+  for(let i=0;i<100;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.textContent=pieces[Math.floor(Math.random()*pieces.length)];
+    c.style.left=(Math.random()*100)+'vw';
+    c.style.fontSize=(24+Math.random()*30)+'px';
+    c.style.animationDuration=(3+Math.random()*4)+'s';
+    c.style.animationDelay=(Math.random()*0.8)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),8000);
+  }
+}
+
+function playTrumpets(){
+  try{
+    const AudioContext=window.AudioContext||window.webkitAudioContext;
+    const ctx=new AudioContext();
+    if(ctx.state==='suspended')ctx.resume();
+
+    function tone(freq,start,dur,type,vol){
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.type=type;
+      osc.frequency.setValueAtTime(freq,ctx.currentTime+start);
+      gain.gain.setValueAtTime(0.0001,ctx.currentTime+start);
+      gain.gain.exponentialRampToValueAtTime(vol,ctx.currentTime+start+0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+start+dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime+start);
+      osc.stop(ctx.currentTime+start+dur+0.05);
+    }
+
+    [523,659,784,1046,784,1046,1318].forEach((n,i)=>{
+      tone(n,i*0.18,0.35,'sawtooth',0.35);
+      tone(n*1.01,i*0.18,0.35,'square',0.10);
+    });
+  }catch(e){}
+}
 
 answerBox.addEventListener('keydown',event=>{
   if(event.key==='Enter') check();
@@ -374,18 +418,19 @@ window.toggleStop=toggleStop;
 newProblem();
 </script>
 
-<div id="winnerOverlay" class="winnerOverlay" aria-hidden="true">
-  <div class="winnerWindow" role="dialog" aria-modal="true" aria-labelledby="winnerTitle">
-    <button class="winnerClose" onclick="closeWinner()" aria-label="Close">×</button>
-    <div class="confetti">🎉✨🎊</div>
-    <h2 id="winnerTitle">You are a Winner!</h2>
-    <p>10 correct answers in a row!</p>
-    <div class="winnerButtons">
-      <button onclick="continuePractice()">Continue Practice</button>
-      <button class="donateWinner" onclick="window.open('https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC','_blank')">❤️ Donate</button>
-    </div>
-  </div>
+<div id="flashOverlay"></div>
+<div id="celebrate">
+  <button id="winnerCloseBtn" onclick="closeWinner()" aria-label="Close">×</button>
+  <div class="big">🎉0️⃣🎺</div>
+  <h2>You are a Winner!</h2>
+  <p id="winnerMastery">10 correct answers in a row!</p>
+  <button id="continuePracticeBtn" onclick="continuePractice()">Continue Practice</button>
+  <a class="donateBtn"
+     href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC"
+     target="_blank">❤️ Support this work!</a>
 </div>
-
+<div style="text-align:center;font-size:11px;color:#6f8397;margin:16px 0 8px;">
+Times Table build 15
+</div>
 </body>
 </html>
