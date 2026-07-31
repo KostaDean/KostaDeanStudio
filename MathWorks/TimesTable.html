@@ -97,6 +97,7 @@ td.below{background:#f1e9ff}
 <option value="random">Random</option>
 <option value="rowOrder">By row in order</option>
 <option value="rowRandom">By row random</option>
+<option value="missingFactor">Missing factor</option>
 </select>
 
 <label id="rowLabel" for="rowSelect" class="hiddenControl">Row:</label>
@@ -152,6 +153,8 @@ let correctStreak=0;
 let alreadyCelebrated=false;
 let orderedColumn=1;
 let previousRandomColumn=0;
+let missingSide='first';
+let missingAnswer=0;
 
 function clearHi(){
   document.querySelectorAll('.rowhi,.colhi,.hit').forEach(
@@ -172,7 +175,8 @@ function selectedRow(){
 }
 
 function changeMode(){
-  const usesRow=selectedMode()!=='random';
+  const mode=selectedMode();
+  const usesRow=mode==='rowOrder'||mode==='rowRandom';
   rowLabel.style.display=usesRow?'inline-block':'none';
   rowSelect.style.display=usesRow?'inline-block':'none';
   orderedColumn=1;
@@ -204,10 +208,20 @@ function chooseProblem(){
   if(mode==='random'){
     currentA=randomFactor();
     currentB=randomFactor();
+    missingSide='none';
+    return;
+  }
+
+  if(mode==='missingFactor'){
+    currentA=randomFactor();
+    currentB=randomFactor();
+    missingSide=Math.random()<0.5?'first':'second';
+    missingAnswer=missingSide==='first'?currentA:currentB;
     return;
   }
 
   currentA=selectedRow();
+  missingSide='none';
 
   if(mode==='rowOrder'){
     currentB=orderedColumn;
@@ -248,29 +262,56 @@ function newProblem(keepMessage=false){
   if(!keepMessage) message.textContent='';
   chooseProblem();
 
+  firstBox.readOnly=true;
+  secondBox.readOnly=true;
+  answerBox.readOnly=false;
+
   firstBox.value=currentA;
   secondBox.value=currentB;
   answerBox.value='';
+
+  if(selectedMode()==='missingFactor'){
+    const product=currentA*currentB;
+    answerBox.value=product;
+    answerBox.readOnly=true;
+
+    if(missingSide==='first'){
+      firstBox.value='';
+      firstBox.readOnly=false;
+    }else{
+      secondBox.value='';
+      secondBox.readOnly=false;
+    }
+  }
+
   highlightProblem();
 
-  /* Keep focus as part of the same tap that checked the answer.
-     This gives iPhone Safari the best chance of keeping the numeric keyboard open. */
-  answerBox.focus({preventScroll:true});
+  const activeBox=selectedMode()==='missingFactor'
+    ? (missingSide==='first'?firstBox:secondBox)
+    : answerBox;
+
+  activeBox.focus({preventScroll:true});
 }
 
 function check(){
   if(!running) return;
 
-  if(answerBox.value.trim()===''){
-    message.textContent='Enter the product.';
+  const mode=selectedMode();
+  const activeBox=mode==='missingFactor'
+    ? (missingSide==='first'?firstBox:secondBox)
+    : answerBox;
+
+  if(activeBox.value.trim()===''){
+    message.textContent=mode==='missingFactor'?'Enter the missing factor.':'Enter the product.';
     message.style.color='#b33';
-    answerBox.focus();
+    activeBox.focus();
     return;
   }
 
-  const entered=Number(answerBox.value);
+  const entered=Number(activeBox.value);
+  const expected=mode==='missingFactor'?missingAnswer:currentA*currentB;
 
-  if(entered===currentA*currentB){
+  if(entered===expected){
     correctStreak++;
     message.textContent='You are so correct!';
     message.style.color='#168048';
@@ -290,8 +331,8 @@ function check(){
     alreadyCelebrated=false;
     message.textContent='Try again';
     message.style.color='#b33';
-    answerBox.focus({preventScroll:true});
-    answerBox.select();
+    activeBox.focus({preventScroll:true});
+    activeBox.select();
   }
 }
 
@@ -329,6 +370,8 @@ function celebrate(){
 
   if(mode==='random'){
     mastery.textContent='You mastered Random Multiplication!';
+  }else if(mode==='missingFactor'){
+    mastery.textContent='You mastered Missing Factors!';
   }else{
     mastery.textContent='You mastered the '+selectedRow()+' Times Table!';
   }
@@ -406,8 +449,10 @@ function playTrumpets(){
   }catch(e){}
 }
 
-answerBox.addEventListener('keydown',event=>{
-  if(event.key==='Enter') check();
+[firstBox,secondBox,answerBox].forEach(box=>{
+  box.addEventListener('keydown',event=>{
+    if(event.key==='Enter') check();
+  });
 });
 
 window.changeMode=changeMode;
@@ -431,7 +476,7 @@ newProblem();
      target="_blank">❤️ Support this work!</a>
 </div>
 <div style="text-align:center;font-size:11px;color:#6f8397;margin:16px 0 8px;">
-Times Table build 16
+Times Table build 17
 </div>
 </body>
 </html>
