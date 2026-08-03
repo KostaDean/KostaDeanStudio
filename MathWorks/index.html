@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MathWorks Homepage v1.6.1-universal-parent-winner-overlay: Parent selection is controlled by index.html and overlays every detected lesson Winner Window. -->
+<!-- MathWorks Homepage v1.6.2-parent-winner-overlay-polish: Parent selection is controlled by index.html and overlays every detected lesson Winner Window. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -510,7 +510,7 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
   font-size:clamp(1.8rem,7vw,3rem);
 }
 .parentWinnerCard p{
-  margin:0 0 18px;
+  margin:0 0 10px;
   color:#475569;
   font-weight:800;
   font-size:clamp(1rem,4vw,1.25rem);
@@ -539,6 +539,17 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
   font:900 clamp(17px,4vw,23px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 .lessonPlayer{position:fixed}
+
+
+.parentWinnerQuestion{
+  margin:0 0 18px!important;
+  color:#334155!important;
+  font-weight:800!important;
+}
+.parentWinnerSelect.selected{
+  background:#15803d!important;
+  box-shadow:none!important;
+}
 
 </style>
 </head>
@@ -589,7 +600,7 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
     <p style="color:#64748b;font-weight:700">Comments section can be kept here when uploaded to GitHub.</p>
   </section>
 </main>
-<footer title="MathWorks index build 1.6.1">© Kosta Dean Studio · Free interactive math learning</footer>
+<footer title="MathWorks index build 1.6.2">© Kosta Dean Studio · Free interactive math learning</footer>
 
 <div id="modal" class="modal hidden"><div class="modalBox"><div id="modalContent"></div></div></div>
 
@@ -753,7 +764,7 @@ function openLessonPlayer(){
     player.className='lessonPlayer';
     document.body.appendChild(player);
   }
-  player.innerHTML='<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe><div id="parentWinnerOverlay" class="parentWinnerOverlay" aria-hidden="true"><div class="parentWinnerCard" role="dialog" aria-modal="true" aria-labelledby="parentWinnerTitle"><h2 id="parentWinnerTitle">Lesson Complete!</h2><p id="parentWinnerLessonName"></p><button id="parentWinnerSelectBtn" class="parentWinnerSelect" onclick="selectCurrentLessonForPath()">SELECT FOR LEARNING PATH</button><button class="parentWinnerClose" onclick="closeParentWinnerOverlay()">Close</button></div></div>';
+  player.innerHTML='<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe><div id="parentWinnerOverlay" class="parentWinnerOverlay" aria-hidden="true"><div class="parentWinnerCard" role="dialog" aria-modal="true" aria-labelledby="parentWinnerTitle"><h2 id="parentWinnerTitle">🏆 Lesson Complete!</h2><p id="parentWinnerLessonName"></p><p class="parentWinnerQuestion">Add this lesson to the current Learning Path?</p><button id="parentWinnerSelectBtn" class="parentWinnerSelect" onclick="selectCurrentLessonForPath()">SELECT FOR LEARNING PATH</button><button class="parentWinnerClose" onclick="closeParentWinnerOverlay()">Preview Another Lesson</button></div></div>';
   player.querySelector('.lessonPlayerTitle').textContent=parentPreviewMode?'Parent Preview: '+lesson.title:(activeLessonIndex+1)+' of '+activePathLessons.length+': '+lesson.title;
   player.querySelector('#lessonPlayerNote').textContent=parentPreviewMode?'Complete the lesson. MathWorks will place a Select for Learning Path panel over the Winner Window.':'When the winner celebration appears, the next lesson will open automatically after a brief delay.';
   player.querySelector('#prevLessonBtn').classList.toggle('hidden',parentPreviewMode);
@@ -794,7 +805,7 @@ function selectCurrentLessonForPath(){
   if(!files.includes(lesson.file)) files.push(lesson.file);
   setPathDraft(files);
   const btn=document.getElementById('parentWinnerSelectBtn');
-  if(btn){btn.textContent='✓ Selected for Learning Path';btn.disabled=true;}
+  if(btn){btn.textContent='✓ Added to Learning Path';btn.disabled=true;btn.classList.add('selected');}
   const note=document.getElementById('lessonPlayerNote');
   if(note) note.textContent='✓ '+lesson.title+' has been selected. Tap Back to Lessons to preview another lesson.';
 }
@@ -810,8 +821,9 @@ function showParentWinnerOverlay(){
 
   if(name) name.textContent=lesson.title;
   const selected=lessonIsSelected(lesson.file);
-  btn.textContent=selected?'✓ Selected for Learning Path':'SELECT FOR LEARNING PATH';
+  btn.textContent=selected?'✓ Added to Learning Path':'SELECT FOR LEARNING PATH';
   btn.disabled=selected;
+  btn.classList.toggle('selected',selected);
 
   overlay.classList.add('show');
   overlay.setAttribute('aria-hidden','false');
@@ -824,7 +836,7 @@ function closeParentWinnerOverlay(){
     overlay.setAttribute('aria-hidden','true');
   }
   const note=document.getElementById('lessonPlayerNote');
-  if(note) note.textContent='Winner panel closed. Tap Back to Lessons to preview another lesson.';
+  if(note) note.textContent='Returning to the lesson list so you can preview another lesson.';
 }
 
 window.closeParentWinnerOverlay=closeParentWinnerOverlay;
