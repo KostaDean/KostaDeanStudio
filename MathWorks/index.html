@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MathWorks Homepage v1.6.0-clean-times-table: current parent/student/admin flow preserved; Times Table integrated as a full lesson. -->
+<!-- MathWorks Homepage v1.6.1-universal-parent-winner-overlay: Parent selection is controlled by index.html and overlays every detected lesson Winner Window. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -481,6 +481,65 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
   cursor:pointer!important;
 }
 
+
+/* v1.6.1 universal Parent Winner overlay — controlled by index.html, not by lesson files */
+.parentWinnerOverlay{
+  position:absolute;
+  inset:0;
+  z-index:2147483646;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(15,23,42,.52);
+  pointer-events:auto;
+}
+.parentWinnerOverlay.show{display:flex!important}
+.parentWinnerCard{
+  width:min(92vw,560px);
+  background:#fffbea;
+  border:5px solid #facc15;
+  border-radius:26px;
+  padding:22px;
+  box-shadow:0 22px 70px rgba(0,0,0,.42);
+  text-align:center;
+}
+.parentWinnerCard h2{
+  margin:0 0 8px;
+  color:#172033;
+  font-size:clamp(1.8rem,7vw,3rem);
+}
+.parentWinnerCard p{
+  margin:0 0 18px;
+  color:#475569;
+  font-weight:800;
+  font-size:clamp(1rem,4vw,1.25rem);
+}
+.parentWinnerSelect{
+  display:block;
+  width:100%;
+  min-height:72px;
+  border:0;
+  border-radius:18px;
+  background:#16a34a;
+  color:white;
+  font:1000 clamp(20px,5vw,30px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  box-shadow:0 8px 20px rgba(22,163,74,.34);
+  margin:0 0 13px;
+}
+.parentWinnerSelect:disabled{background:#15803d;opacity:1}
+.parentWinnerClose{
+  display:block;
+  width:100%;
+  min-height:56px;
+  border:0;
+  border-radius:18px;
+  background:#475569;
+  color:white;
+  font:900 clamp(17px,4vw,23px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.lessonPlayer{position:fixed}
+
 </style>
 </head>
 <body class="homeMode">
@@ -530,7 +589,7 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
     <p style="color:#64748b;font-weight:700">Comments section can be kept here when uploaded to GitHub.</p>
   </section>
 </main>
-<footer title="MathWorks index build 1.6.0">© Kosta Dean Studio · Free interactive math learning</footer>
+<footer title="MathWorks index build 1.6.1">© Kosta Dean Studio · Free interactive math learning</footer>
 
 <div id="modal" class="modal hidden"><div class="modalBox"><div id="modalContent"></div></div></div>
 
@@ -694,9 +753,9 @@ function openLessonPlayer(){
     player.className='lessonPlayer';
     document.body.appendChild(player);
   }
-  player.innerHTML='<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe>';
+  player.innerHTML='<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe><div id="parentWinnerOverlay" class="parentWinnerOverlay" aria-hidden="true"><div class="parentWinnerCard" role="dialog" aria-modal="true" aria-labelledby="parentWinnerTitle"><h2 id="parentWinnerTitle">Lesson Complete!</h2><p id="parentWinnerLessonName"></p><button id="parentWinnerSelectBtn" class="parentWinnerSelect" onclick="selectCurrentLessonForPath()">SELECT FOR LEARNING PATH</button><button class="parentWinnerClose" onclick="closeParentWinnerOverlay()">Close</button></div></div>';
   player.querySelector('.lessonPlayerTitle').textContent=parentPreviewMode?'Parent Preview: '+lesson.title:(activeLessonIndex+1)+' of '+activePathLessons.length+': '+lesson.title;
-  player.querySelector('#lessonPlayerNote').textContent=parentPreviewMode?'Complete the lesson. A Select for Learning Path button will appear at the Winner Window.':'When the winner celebration appears, the next lesson will open automatically after a brief delay.';
+  player.querySelector('#lessonPlayerNote').textContent=parentPreviewMode?'Complete the lesson. MathWorks will place a Select for Learning Path panel over the Winner Window.':'When the winner celebration appears, the next lesson will open automatically after a brief delay.';
   player.querySelector('#prevLessonBtn').classList.toggle('hidden',parentPreviewMode);
   player.querySelector('#nextLessonBtn').classList.toggle('hidden',parentPreviewMode);
   player.querySelector('#prevLessonBtn').disabled=activeLessonIndex<=0;
@@ -734,83 +793,42 @@ function selectCurrentLessonForPath(){
   const files=getPathDraft();
   if(!files.includes(lesson.file)) files.push(lesson.file);
   setPathDraft(files);
-  const frame=document.getElementById('lessonFrame');
-  try{
-    const doc=frame.contentDocument||frame.contentWindow.document;
-    const btn=doc.getElementById('mwSelectForPathBtn');
-    if(btn){btn.textContent='✓ Selected for Learning Path';btn.disabled=true;}
-  }catch(e){}
+  const btn=document.getElementById('parentWinnerSelectBtn');
+  if(btn){btn.textContent='✓ Selected for Learning Path';btn.disabled=true;}
   const note=document.getElementById('lessonPlayerNote');
   if(note) note.textContent='✓ '+lesson.title+' has been selected. Tap Back to Lessons to preview another lesson.';
 }
-function addWinnerSelectButton(doc,celebrationNode){
-  if(!parentPreviewMode || !doc || doc.getElementById('mwSelectForPathBtn')) return;
+function showParentWinnerOverlay(){
+  if(!parentPreviewMode) return;
   const lesson=currentPreviewLesson||activePathLessons[activeLessonIndex];
   if(!lesson) return;
 
-  const target=celebrationNode||doc.body;
-  const controls=doc.createElement('div');
-  controls.id='mwWinnerPathControls';
-  controls.className='winnerPathControls';
+  const overlay=document.getElementById('parentWinnerOverlay');
+  const name=document.getElementById('parentWinnerLessonName');
+  const btn=document.getElementById('parentWinnerSelectBtn');
+  if(!overlay || !btn) return;
 
-  const btn=doc.createElement('button');
-  btn.id='mwSelectForPathBtn';
-  btn.className='winnerSelectBtn';
-  btn.textContent=lessonIsSelected(lesson.file)?'✓ Selected for Learning Path':'SELECT FOR LEARNING PATH';
-  btn.disabled=lessonIsSelected(lesson.file);
-  btn.addEventListener('click',selectCurrentLessonForPath);
+  if(name) name.textContent=lesson.title;
+  const selected=lessonIsSelected(lesson.file);
+  btn.textContent=selected?'✓ Selected for Learning Path':'SELECT FOR LEARNING PATH';
+  btn.disabled=selected;
 
-  const closeBtn=doc.createElement('button');
-  closeBtn.id='mwWinnerCloseBtn';
-  closeBtn.className='winnerCloseBtn';
-  closeBtn.textContent='Close Winner Window';
-
-  controls.appendChild(btn);
-  controls.appendChild(closeBtn);
-  target.appendChild(controls);
-
-  // Keep the Winner Window visible until the parent deliberately closes it.
-  let keepingOpen=true;
-  let parent=target.parentNode;
-  let nextSibling=target.nextSibling;
-  const forceVisible=()=>{
-    if(!keepingOpen || target===doc.body) return;
-    try{
-      target.hidden=false;
-      target.removeAttribute('hidden');
-      target.style.setProperty('display','block','important');
-      target.style.setProperty('visibility','visible','important');
-      target.style.setProperty('opacity','1','important');
-      target.style.setProperty('pointer-events','auto','important');
-      if(parent && !target.isConnected){
-        if(nextSibling && nextSibling.parentNode===parent) parent.insertBefore(target,nextSibling);
-        else parent.appendChild(target);
-      }
-    }catch(e){}
-  };
-  forceVisible();
-  const attrObserver=new MutationObserver(forceVisible);
-  if(target!==doc.body) attrObserver.observe(target,{attributes:true,attributeFilter:['style','class','hidden']});
-  const parentObserver=new MutationObserver(forceVisible);
-  if(parent) parentObserver.observe(parent,{childList:true});
-  const keepTimer=setInterval(forceVisible,250);
-
-  closeBtn.addEventListener('click',()=>{
-    keepingOpen=false;
-    clearInterval(keepTimer);
-    attrObserver.disconnect();
-    parentObserver.disconnect();
-    if(target===doc.body){ controls.remove(); }
-    else {
-      target.style.setProperty('display','none','important');
-      target.setAttribute('hidden','');
-    }
-    const note=document.getElementById('lessonPlayerNote');
-    if(note) note.textContent='Winner Window closed. Tap Back to Lessons to preview another lesson.';
-  });
-
-  try{controls.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
 }
+
+function closeParentWinnerOverlay(){
+  const overlay=document.getElementById('parentWinnerOverlay');
+  if(overlay){
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden','true');
+  }
+  const note=document.getElementById('lessonPlayerNote');
+  if(note) note.textContent='Winner panel closed. Tap Back to Lessons to preview another lesson.';
+}
+
+window.closeParentWinnerOverlay=closeParentWinnerOverlay;
+
 function checkWinnerAndAutoNext(){
   if(activeWinSeen) return;
   const frame=document.getElementById('lessonFrame');
@@ -838,8 +856,8 @@ function checkWinnerAndAutoNext(){
     activeWinSeen=true;
     if(activePathTimer){clearInterval(activePathTimer);activePathTimer=null;}
     if(parentPreviewMode){
-      addWinnerSelectButton(doc,celebrationNode);
-      if(note) note.textContent=lessonIsSelected((currentPreviewLesson||{}).file)?'✓ This lesson is already selected.':'Winner! Tap “Select for Learning Path” in the Winner Window.';
+      showParentWinnerOverlay();
+      if(note) note.textContent=lessonIsSelected((currentPreviewLesson||{}).file)?'✓ This lesson is already selected.':'Winner! Use the MathWorks panel to select this lesson for the Learning Path.';
       return;
     }
     const completedLesson=activePathLessons[activeLessonIndex];
