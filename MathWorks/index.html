@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MathWorks Homepage v1.6.2-parent-winner-overlay-polish: Parent selection is controlled by index.html and overlays every detected lesson Winner Window. -->
+<!-- MathWorks Homepage v1.7.0-parent-dashboard-times-table-options: progress, path history, and Times Table assignment settings. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -551,6 +551,53 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
   box-shadow:none!important;
 }
 
+
+.timesTableAssignmentOptions{
+  margin:0 0 18px;
+  padding:14px;
+  border:3px solid #93c5fd;
+  border-radius:18px;
+  background:#eff6ff;
+  text-align:left;
+}
+.timesTableAssignmentOptions label{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:8px 0;
+  font-weight:900;
+  color:#1e3a5f;
+}
+.timesTableAssignmentOptions select{
+  flex:1 1 190px;
+  max-width:250px;
+  padding:10px;
+  border:2px solid #60a5fa;
+  border-radius:12px;
+  background:white;
+  font-size:1rem;
+}
+.pathRecord{
+  border:3px solid #dbeafe;
+  border-radius:18px;
+  padding:14px;
+  margin:12px 0;
+  background:#f8fbff;
+}
+.pathRecord h3{margin:0 0 6px;color:#1d4ed8}
+.pathLessonRow{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  padding:8px 0;
+  border-top:1px solid #dbeafe;
+  line-height:1.35;
+}
+.pathLessonRow:first-of-type{border-top:0}
+.pathDone{color:#15803d;font-weight:900}
+.pathWaiting{color:#64748b;font-weight:800}
+
 </style>
 </head>
 <body class="homeMode">
@@ -582,6 +629,8 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
       <div id="parentPathStatus" class="parentPathStatus">Open and complete a lesson. At its Winner Window, tap “Select for Learning Path.”</div>
       <button class="good" onclick="openLearningPathSave()">Name/Save Learning Path</button>
       <button class="secondary" onclick="reviewSelectedLessons()">Review Selected</button>
+      <button class="secondary" onclick="openStudentProgress()">Student Progress</button>
+      <button class="secondary" onclick="openPathHistory()">Previous Paths</button>
     </div>
   </div>
   <div id="categoryPanel" class="categoryPanel hidden">
@@ -600,7 +649,7 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
     <p style="color:#64748b;font-weight:700">Comments section can be kept here when uploaded to GitHub.</p>
   </section>
 </main>
-<footer title="MathWorks index build 1.6.2">© Kosta Dean Studio · Free interactive math learning</footer>
+<footer title="MathWorks index build 1.7.0">© Kosta Dean Studio · Free interactive math learning</footer>
 
 <div id="modal" class="modal hidden"><div class="modalBox"><div id="modalContent"></div></div></div>
 
@@ -680,11 +729,28 @@ const categoryPanel=document.getElementById('categoryPanel');
 const parentPathStatus=document.getElementById('parentPathStatus');
 const PATH_DRAFT_KEY='mw_learning_path_draft';
 const PATH_SAVED_KEY='mw_assigned_learning_path';
+const PATH_HISTORY_KEY='mw_learning_path_history';
+const PATH_OPTIONS_KEY='mw_learning_path_draft_options';
 let parentPreviewMode=false;
 let currentPreviewLesson=null;
 function getPathDraft(){try{return JSON.parse(localStorage.getItem(PATH_DRAFT_KEY)||'[]')}catch(e){return[]}}
 function setPathDraft(files){localStorage.setItem(PATH_DRAFT_KEY,JSON.stringify([...new Set(files)])); updateParentPathStatus(); renderLessons(searchBox.value);}
 function getSavedPath(){try{return JSON.parse(localStorage.getItem(PATH_SAVED_KEY)||'null')}catch(e){return null}}
+function getPathHistory(){try{return JSON.parse(localStorage.getItem(PATH_HISTORY_KEY)||'[]')}catch(e){return[]}}
+function setPathHistory(items){localStorage.setItem(PATH_HISTORY_KEY,JSON.stringify(items))}
+function getDraftOptions(){try{return JSON.parse(localStorage.getItem(PATH_OPTIONS_KEY)||'{}')}catch(e){return{}}}
+function setDraftOptions(options){localStorage.setItem(PATH_OPTIONS_KEY,JSON.stringify(options||{}))}
+function lessonDisplayTitle(file){
+  const lesson=LESSONS.find(l=>l.file===file);
+  return lesson?lesson.title:file;
+}
+function timesTableOptionText(option){
+  if(!option) return '';
+  if(option.mode==='rowOrder') return 'By row in order · Row '+option.row;
+  if(option.mode==='rowRandom') return 'By row random · Row '+option.row;
+  if(option.mode==='missingFactor') return 'Missing factor';
+  return 'Random';
+}
 function updateParentPathStatus(){
   const files=getPathDraft(); const saved=getSavedPath();
   let text=files.length?files.length+' lesson'+(files.length===1?'':'s')+' selected for the new Learning Path.':'No lessons selected yet. Complete a lesson and select it at the Winner Window.';
@@ -752,6 +818,20 @@ function startLessonPath(file){
   }
   openLessonPlayer();
 }
+function lessonLaunchURL(lesson){
+  let url=lesson.file;
+  if(!parentPreviewMode && lesson.file==='TimesTable.html'){
+    const saved=getSavedPath();
+    const option=saved&&saved.lessonOptions?saved.lessonOptions[lesson.file]:null;
+    if(option){
+      const params=new URLSearchParams();
+      params.set('mode',option.mode||'random');
+      if(option.row) params.set('row',String(option.row));
+      url += '?' + params.toString();
+    }
+  }
+  return url;
+}
 function openLessonPlayer(){
   clearLessonTimers();
   activeWinSeen=false;
@@ -764,7 +844,24 @@ function openLessonPlayer(){
     player.className='lessonPlayer';
     document.body.appendChild(player);
   }
-  player.innerHTML='<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe><div id="parentWinnerOverlay" class="parentWinnerOverlay" aria-hidden="true"><div class="parentWinnerCard" role="dialog" aria-modal="true" aria-labelledby="parentWinnerTitle"><h2 id="parentWinnerTitle">🏆 Lesson Complete!</h2><p id="parentWinnerLessonName"></p><p class="parentWinnerQuestion">Add this lesson to the current Learning Path?</p><button id="parentWinnerSelectBtn" class="parentWinnerSelect" onclick="selectCurrentLessonForPath()">SELECT FOR LEARNING PATH</button><button class="parentWinnerClose" onclick="closeParentWinnerOverlay()">Preview Another Lesson</button></div></div>';
+  player.innerHTML='<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe><div id="parentWinnerOverlay" class="parentWinnerOverlay" aria-hidden="true"><div class="parentWinnerCard" role="dialog" aria-modal="true" aria-labelledby="parentWinnerTitle"><h2 id="parentWinnerTitle">🏆 Lesson Complete!</h2><p id="parentWinnerLessonName"></p><p class="parentWinnerQuestion">Add this lesson to the current Learning Path?</p>
+<div id="timesTableAssignmentOptions" class="timesTableAssignmentOptions hidden">
+  <label>Times Table practice
+    <select id="timesTableModeChoice" onchange="updateTimesTableRowChoice()">
+      <option value="random">Random</option>
+      <option value="rowOrder">By row in order</option>
+      <option value="rowRandom">By row random</option>
+      <option value="missingFactor">Missing factor</option>
+    </select>
+  </label>
+  <label id="timesTableRowChoiceLabel" class="hidden">Row
+    <select id="timesTableRowChoice">
+      <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+      <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+    </select>
+  </label>
+</div>
+<button id="parentWinnerSelectBtn" class="parentWinnerSelect" onclick="selectCurrentLessonForPath()">SELECT FOR LEARNING PATH</button><button class="parentWinnerClose" onclick="closeParentWinnerOverlay()">Preview Another Lesson</button></div></div>';
   player.querySelector('.lessonPlayerTitle').textContent=parentPreviewMode?'Parent Preview: '+lesson.title:(activeLessonIndex+1)+' of '+activePathLessons.length+': '+lesson.title;
   player.querySelector('#lessonPlayerNote').textContent=parentPreviewMode?'Complete the lesson. MathWorks will place a Select for Learning Path panel over the Winner Window.':'When the winner celebration appears, the next lesson will open automatically after a brief delay.';
   player.querySelector('#prevLessonBtn').classList.toggle('hidden',parentPreviewMode);
@@ -774,7 +871,7 @@ function openLessonPlayer(){
   document.body.style.overflow='hidden';
   const frame=player.querySelector('#lessonFrame');
   frame.onload=()=>startWinnerWatch();
-  frame.src=lesson.file;
+  frame.src=lessonLaunchURL(lesson);
 }
 function closeLessonPlayer(){
   clearLessonTimers();
@@ -798,11 +895,28 @@ function startWinnerWatch(){
   activeWinSeen=false;
   activePathTimer=setInterval(checkWinnerAndAutoNext,900);
 }
+function updateTimesTableRowChoice(){
+  const mode=document.getElementById('timesTableModeChoice');
+  const rowLabel=document.getElementById('timesTableRowChoiceLabel');
+  if(rowLabel) rowLabel.classList.toggle('hidden',!(mode && (mode.value==='rowOrder'||mode.value==='rowRandom')));
+}
+window.updateTimesTableRowChoice=updateTimesTableRowChoice;
+
 function selectCurrentLessonForPath(){
   const lesson=currentPreviewLesson||activePathLessons[activeLessonIndex];
   if(!lesson) return;
   const files=getPathDraft();
   if(!files.includes(lesson.file)) files.push(lesson.file);
+  if(lesson.file==='TimesTable.html'){
+    const modeEl=document.getElementById('timesTableModeChoice');
+    const rowEl=document.getElementById('timesTableRowChoice');
+    const options=getDraftOptions();
+    options[lesson.file]={
+      mode:modeEl?modeEl.value:'random',
+      row:rowEl?Number(rowEl.value):1
+    };
+    setDraftOptions(options);
+  }
   setPathDraft(files);
   const btn=document.getElementById('parentWinnerSelectBtn');
   if(btn){btn.textContent='✓ Added to Learning Path';btn.disabled=true;btn.classList.add('selected');}
@@ -820,6 +934,18 @@ function showParentWinnerOverlay(){
   if(!overlay || !btn) return;
 
   if(name) name.textContent=lesson.title;
+  const optionPanel=document.getElementById('timesTableAssignmentOptions');
+  if(optionPanel){
+    optionPanel.classList.toggle('hidden',lesson.file!=='TimesTable.html');
+    if(lesson.file==='TimesTable.html'){
+      const savedOption=getDraftOptions()[lesson.file]||{mode:'random',row:1};
+      const modeEl=document.getElementById('timesTableModeChoice');
+      const rowEl=document.getElementById('timesTableRowChoice');
+      if(modeEl) modeEl.value=savedOption.mode||'random';
+      if(rowEl) rowEl.value=String(savedOption.row||1);
+      updateTimesTableRowChoice();
+    }
+  }
   const selected=lessonIsSelected(lesson.file);
   btn.textContent=selected?'✓ Added to Learning Path':'SELECT FOR LEARNING PATH';
   btn.disabled=selected;
@@ -936,10 +1062,21 @@ function saveLearningPath(){
   if(!name) return alert('Please enter a name for the Learning Path.');
   const files=getPathDraft();
   if(!files.length) return alert('No selected lessons were found. Please select a lesson again.');
-  const assignment={name,files:[...files],completed:[],savedAt:new Date().toISOString()};
+  const assignment={
+    id:'path_'+Date.now(),
+    name,
+    files:[...files],
+    lessonOptions:getDraftOptions(),
+    completed:[],
+    savedAt:new Date().toISOString()
+  };
   try{
+    const history=getPathHistory();
+    history.unshift(JSON.parse(JSON.stringify(assignment)));
+    setPathHistory(history);
     localStorage.setItem(PATH_SAVED_KEY,JSON.stringify(assignment));
     localStorage.setItem(PATH_DRAFT_KEY,'[]');
+    localStorage.setItem(PATH_OPTIONS_KEY,'{}');
   }catch(e){
     return alert('The Learning Path could not be saved on this device.');
   }
@@ -965,11 +1102,59 @@ function reviewSelectedLessons(){
   const footer=isDraft?'<div class="modalBtns"><button class="good" onclick="closeModal();openLearningPathSave()">Name/Save Learning Path</button></div>':'';
   openModal('<div class="instructionsTop"><h2>'+title+'</h2><button class="secondary" onclick="closeModal()">Close</button></div>'+rows+footer);
 }
-function removeDraftLesson(encoded){const f=decodeURIComponent(encoded);setPathDraft(getPathDraft().filter(x=>x!==f));reviewSelectedLessons();}
+function removeDraftLesson(encoded){
+  const f=decodeURIComponent(encoded);
+  const options=getDraftOptions();
+  delete options[f];
+  setDraftOptions(options);
+  setPathDraft(getPathDraft().filter(x=>x!==f));
+  reviewSelectedLessons();
+}
 function checksHTML(files=[]){return '<div class="lessonChecks">'+LESSONS.map(l=>'<label><input type="checkbox" value="'+l.file+'" '+(files.includes(l.file)?'checked':'')+'> '+l.title+'</label>').join('')+'</div>'}
 function openPersonalEditor(){let arr=savedCustom(); let html='<h2>Edit My Categories</h2><p style="color:#64748b;font-weight:750">These categories are saved on this device. Open a category, rename it, check/uncheck lessons, then save.</p>'; if(!arr.length) html+='<p><b>No personal categories saved on this device yet.</b></p>'; arr.forEach((p,i)=>{html+='<details class="categoryEditCard"><summary>⭐ '+p.name+'</summary><input id="cname_'+i+'" value="'+escapeHtml(p.name)+'">'+checksHTML(p.files)+'<div class="modalBtns"><button class="good" onclick="savePersonalCategory('+i+')">Save Category</button><button class="warn" onclick="deletePersonalCategory('+i+')">Delete</button></div></details>'}); html+='<div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>'; openModal(html);}
 function savePersonalCategory(i){let arr=savedCustom(); let name=document.getElementById('cname_'+i).value.trim(); if(!name) return alert('Please enter a name.'); let card=document.getElementById('cname_'+i).closest('details'); let files=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value); arr[i]={name,files}; saveCustom(arr); populatePlaylists(categoryMenu.value); alert('Category saved on this device.'); openPersonalEditor();}
 function deletePersonalCategory(i){let arr=savedCustom(); if(confirm('Delete this personal category?')){arr.splice(i,1); saveCustom(arr); populatePlaylists(categoryMenu.value); openPersonalEditor();}}
+
+function pathRecordHTML(path,showDate=true){
+  const completed=Array.isArray(path.completed)?path.completed:[];
+  const files=Array.isArray(path.files)?path.files:[];
+  const date=path.savedAt?new Date(path.savedAt).toLocaleString():'';
+  const rows=files.map(file=>{
+    const done=completed.includes(file);
+    const option=path.lessonOptions&&path.lessonOptions[file];
+    const optionText=file==='TimesTable.html'&&option?' · '+timesTableOptionText(option):'';
+    return '<div class="pathLessonRow"><span class="'+(done?'pathDone':'pathWaiting')+'">'+(done?'✓':'○')+'</span><div><b>'+escapeHtml(lessonDisplayTitle(file))+'</b>'+escapeHtml(optionText)+'</div></div>';
+  }).join('');
+  return '<div class="pathRecord"><h3>'+escapeHtml(path.name||'Learning Path')+'</h3>'+
+    (showDate&&date?'<div style="color:#64748b;font-weight:750;margin-bottom:8px">'+escapeHtml(date)+'</div>':'')+
+    '<div style="font-weight:900;margin-bottom:8px">'+completed.length+' of '+files.length+' lessons completed</div>'+
+    rows+'</div>';
+}
+
+function openStudentProgress(){
+  const saved=getSavedPath();
+  if(!saved||!Array.isArray(saved.files)||!saved.files.length){
+    return alert('No Learning Path is currently assigned.');
+  }
+  const completed=Array.isArray(saved.completed)?saved.completed:[];
+  const allDone=completed.length>=saved.files.length;
+  openModal('<div class="instructionsTop"><h2>Student Progress</h2><button class="secondary" onclick="closeModal()">Close</button></div>'+
+    '<p style="font-weight:900;color:'+(allDone?'#15803d':'#334155')+'">'+
+    (allDone?'✓ All lessons in this Learning Path are complete.':'The learner has completed '+completed.length+' of '+saved.files.length+' lessons.')+
+    '</p>'+pathRecordHTML(saved,false));
+}
+
+function openPathHistory(){
+  const history=getPathHistory();
+  if(!history.length) return alert('No previous Learning Paths have been saved on this device.');
+  const records=history.map(path=>pathRecordHTML(path,true)).join('');
+  openModal('<div class="instructionsTop"><h2>Previous Learning Paths</h2><button class="secondary" onclick="closeModal()">Close</button></div>'+
+    '<p style="color:#64748b;font-weight:800">Each saved path and its lesson-completion record is shown below.</p>'+records);
+}
+
+window.openStudentProgress=openStudentProgress;
+window.openPathHistory=openPathHistory;
+
 function openAdminAccess(){
   if(admin){categoryPanel.classList.remove('hidden');categoryMenu.value='all';mode='categories';updateStatus();renderLessons(searchBox.value);categoryPanel.scrollIntoView({behavior:'smooth',block:'center'});return;}
   openModal('<div class="instructionsTop"><h2>Admin Access</h2><button class="secondary" onclick="closeModal()">Close</button></div><p>Only Admin can open the Categories menu and permanent editing controls.</p><input id="pw" type="password" placeholder="Password"><div class="modalBtns"><button onclick="checkPasswordAndShowCategories()">Enter</button></div>');
@@ -1001,6 +1186,12 @@ function saveCompletedLesson(file){
   if(!completed.includes(file)) completed.push(file);
   saved.completed=completed;
   localStorage.setItem(PATH_SAVED_KEY,JSON.stringify(saved));
+  const history=getPathHistory();
+  const idx=history.findIndex(p=>p.id&&saved.id&&p.id===saved.id);
+  if(idx>=0){
+    history[idx]=JSON.parse(JSON.stringify(saved));
+    setPathHistory(history);
+  }
 }
 function startAssignedLearningPath(saved){
   if(!saved || !Array.isArray(saved.files) || !saved.files.length) return false;
@@ -1049,7 +1240,7 @@ function enterMathPlayground(){
   }
   revealLessonLibrary();
 }
-window.enterMathPlayground=enterMathPlayground; window.parentEnter=parentEnter; window.frontAdminEnter=frontAdminEnter; window.returnHome=returnHome; window.openAdminAccess=openAdminAccess; window.checkPasswordAndShowCategories=checkPasswordAndShowCategories; window.openLearningPathSave=openLearningPathSave; window.saveLearningPath=saveLearningPath; window.reviewSelectedLessons=reviewSelectedLessons; window.removeDraftLesson=removeDraftLesson; window.selectCurrentLessonForPath=selectCurrentLessonForPath; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
+window.enterMathPlayground=enterMathPlayground; window.parentEnter=parentEnter; window.frontAdminEnter=frontAdminEnter; window.returnHome=returnHome; window.openStudentProgress=openStudentProgress; window.openPathHistory=openPathHistory; window.openAdminAccess=openAdminAccess; window.checkPasswordAndShowCategories=checkPasswordAndShowCategories; window.openLearningPathSave=openLearningPathSave; window.saveLearningPath=saveLearningPath; window.reviewSelectedLessons=reviewSelectedLessons; window.removeDraftLesson=removeDraftLesson; window.selectCurrentLessonForPath=selectCurrentLessonForPath; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
 populatePlaylists(); renderLessons(); updateStatus(); updateParentPathStatus(); document.body.classList.add('homeMode'); document.body.style.overflow='hidden';
 </script>
 </body>

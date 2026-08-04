@@ -461,6 +461,28 @@ window.check=check;
 window.toggleTable=toggleTable;
 window.toggleStop=toggleStop;
 
+
+function applyAssignedPracticeSettings(){
+  const params=new URLSearchParams(window.location.search);
+  const assignedMode=params.get('mode');
+  const assignedRow=params.get('row');
+  const allowed=['random','rowOrder','rowRandom','missingFactor'];
+
+  if(assignedMode && allowed.includes(assignedMode)){
+    modeSelect.value=assignedMode;
+  }
+  if(assignedRow && Number(assignedRow)>=1 && Number(assignedRow)<=10){
+    rowSelect.value=String(Number(assignedRow));
+  }
+
+  const usesRow=modeSelect.value==='rowOrder'||modeSelect.value==='rowRandom';
+  rowLabel.style.display=usesRow?'inline-block':'none';
+  rowSelect.style.display=usesRow?'inline-block':'none';
+  orderedColumn=1;
+  previousRandomColumn=0;
+}
+
+applyAssignedPracticeSettings();
 newProblem();
 </script>
 
@@ -476,7 +498,7 @@ newProblem();
      target="_blank">❤️ Support this work!</a>
 </div>
 <div style="text-align:center;font-size:11px;color:#6f8397;margin:16px 0 8px;">
-Times Table build 17
+Times Table build 18
 </div>
 </body>
 </html>
