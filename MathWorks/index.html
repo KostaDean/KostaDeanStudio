@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MathWorks Homepage v1.7.1-parent-dashboard-syntax-fixed: restores all homepage buttons and retains progress, path history, and Times Table assignment settings. -->
+<!-- MathWorks Homepage v1.8.0-parent-contact-module: private parent email form delegated to parent-contact.js. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -631,6 +631,7 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
       <button class="secondary" onclick="reviewSelectedLessons()">Review Selected</button>
       <button class="secondary" onclick="openStudentProgress()">Student Progress</button>
       <button class="secondary" onclick="openPathHistory()">Previous Paths</button>
+      <button class="secondary" onclick="openParentContact()">📧 Contact Kosta Dean</button>
     </div>
   </div>
   <div id="categoryPanel" class="categoryPanel hidden">
@@ -645,11 +646,12 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
   <div id="lessonGrid" class="grid"></div>
 
   <section id="comments" class="commentsSection">
-    <h2 class="sectionTitle">Comments, Questions & Suggestions</h2>
-    <p style="color:#64748b;font-weight:700">Comments section can be kept here when uploaded to GitHub.</p>
+    <h2 class="sectionTitle">Parent Communication</h2>
+    <p style="color:#64748b;font-weight:700">Questions, suggestions, lesson problems, teaching ideas, and success stories can be sent privately by email.</p>
+    <button class="good" onclick="openParentContact()">📧 Contact Kosta Dean</button>
   </section>
 </main>
-<footer title="MathWorks index build 1.7.1">© Kosta Dean Studio · Free interactive math learning</footer>
+<footer title="MathWorks index build 1.8.0">© Kosta Dean Studio · Free interactive math learning</footer>
 
 <div id="modal" class="modal hidden"><div class="modalBox"><div id="modalContent"></div></div></div>
 
@@ -1243,5 +1245,6 @@ function enterMathPlayground(){
 window.enterMathPlayground=enterMathPlayground; window.parentEnter=parentEnter; window.frontAdminEnter=frontAdminEnter; window.returnHome=returnHome; window.openStudentProgress=openStudentProgress; window.openPathHistory=openPathHistory; window.openAdminAccess=openAdminAccess; window.checkPasswordAndShowCategories=checkPasswordAndShowCategories; window.openLearningPathSave=openLearningPathSave; window.saveLearningPath=saveLearningPath; window.reviewSelectedLessons=reviewSelectedLessons; window.removeDraftLesson=removeDraftLesson; window.selectCurrentLessonForPath=selectCurrentLessonForPath; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
 populatePlaylists(); renderLessons(); updateStatus(); updateParentPathStatus(); document.body.classList.add('homeMode'); document.body.style.overflow='hidden';
 </script>
+<script src="parent-contact.js"></script>
 </body>
 </html>
