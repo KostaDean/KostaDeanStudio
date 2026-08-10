@@ -647,6 +647,260 @@ body:not(.homeMode) #playgroundHome{display:none!important;}
   }
 }
 
+
+/* v1.8.2 opening-screen alignment fix
+   - artwork fills the phone screen
+   - functional Student/Parent/Admin controls remain, but as invisible hit areas
+     over the buttons already drawn in the artwork
+   - remove duplicate visible music control on opening screen
+*/
+body.homeMode{
+  overflow:hidden!important;
+  background:#86dcff!important;
+}
+
+header.playgroundHome,
+.playgroundHome{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100svh!important;
+  min-height:100svh!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  background:#86dcff!important;
+}
+
+.playgroundHome .heroBanner{
+  position:absolute!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100svh!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+  display:block!important;
+  background:#86dcff!important;
+}
+
+.playgroundHome .heroBanner img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  display:block!important;
+}
+
+/* STUDENT: invisible live button over the large blue Student button in artwork */
+.playgroundHome .enterOverlay{
+  position:absolute!important;
+  left:50%!important;
+  top:68.0%!important;
+  width:64%!important;
+  height:10.2%!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:70!important;
+  pointer-events:none!important;
+}
+.playgroundHome .enterBtn{
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  opacity:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border:0!important;
+  pointer-events:auto!important;
+  animation:none!important;
+  color:transparent!important;
+  text-shadow:none!important;
+}
+
+/* Parent/Admin: keep functions, hide old white pills, position over artwork buttons */
+.playgroundHome .frontModeButtons{
+  position:absolute!important;
+  left:50%!important;
+  top:79.2%!important;
+  width:78%!important;
+  height:7.8%!important;
+  transform:translateX(-50%)!important;
+  display:flex!important;
+  flex-direction:row!important;
+  justify-content:space-between!important;
+  align-items:stretch!important;
+  gap:7%!important;
+  z-index:72!important;
+  pointer-events:none!important;
+}
+.playgroundHome .frontParentBtn,
+.playgroundHome .frontAdminBtn{
+  flex:1 1 0!important;
+  width:auto!important;
+  height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  opacity:0!important;
+  background:transparent!important;
+  color:transparent!important;
+  box-shadow:none!important;
+  border:0!important;
+  text-shadow:none!important;
+  pointer-events:auto!important;
+}
+
+/* Hide the separate floating music pill on the opening artwork only.
+   The artwork already contains the Music: Off visual. */
+body.homeMode #musicToggle,
+body.homeMode .musicToggle,
+body.homeMode .musicBtn,
+body.homeMode [id*="music"][class*="Btn"],
+body.homeMode [class*="music"][class*="Btn"]{
+  opacity:0!important;
+  pointer-events:auto!important;
+}
+
+/* Keep the tap-to-start control deliberately small/subtle if present. */
+body.homeMode #tapToStart,
+body.homeMode .tapToStart,
+body.homeMode #musicStartPrompt{
+  z-index:90!important;
+  font-size:clamp(13px,3.2vw,17px)!important;
+  padding:7px 13px!important;
+  min-width:0!important;
+  min-height:0!important;
+}
+
+/* Phone tuning */
+@media(max-width:700px){
+  .playgroundHome .heroBanner img{
+    object-fit:cover!important;
+    object-position:center center!important;
+  }
+  .playgroundHome .enterOverlay{
+    top:68.0%!important;
+    width:67%!important;
+    height:10.0%!important;
+  }
+  .playgroundHome .frontModeButtons{
+    top:79.1%!important;
+    width:80%!important;
+    height:7.5%!important;
+    gap:7%!important;
+  }
+}
+
+
+/* v1.8.3 phone-fit correction:
+   keep the artwork large, but preserve the entire lower control area
+   (Student, Parent, Admin, Music). */
+body.homeMode,
+header.playgroundHome,
+.playgroundHome,
+.playgroundHome .heroBanner{
+  background:#86dcff!important;
+}
+
+.playgroundHome .heroBanner{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+}
+
+/* Scale from viewport HEIGHT, not width.
+   This keeps the complete image vertically visible while still cropping
+   a little from the left/right on tall phones. */
+.playgroundHome .heroBanner img{
+  position:absolute!important;
+  left:50%!important;
+  top:2%!important;
+  transform:translateX(-50%)!important;
+  width:auto!important;
+  height:96%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  display:block!important;
+}
+
+/* Align invisible live controls to the artwork after the new scaling. */
+.playgroundHome .enterOverlay{
+  top:67.4%!important;
+  width:64%!important;
+  height:9.5%!important;
+}
+.playgroundHome .frontModeButtons{
+  top:78.2%!important;
+  width:75%!important;
+  height:7.1%!important;
+  gap:8%!important;
+}
+
+/* Put the actual music control over the artwork's Music: Off button
+   rather than leaving it as a separate floating pill. */
+body.homeMode #musicToggle,
+body.homeMode .musicToggle,
+body.homeMode .musicBtn,
+body.homeMode [id*="music"][class*="Btn"],
+body.homeMode [class*="music"][class*="Btn"]{
+  position:fixed!important;
+  left:5.5%!important;
+  right:auto!important;
+  bottom:3.8%!important;
+  width:24%!important;
+  height:5.5%!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  opacity:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  pointer-events:auto!important;
+  z-index:95!important;
+}
+
+@media(max-width:700px){
+  .playgroundHome .heroBanner img{
+    top:1.5%!important;
+    height:97%!important;
+  }
+  .playgroundHome .enterOverlay{
+    top:67.2%!important;
+    width:66%!important;
+    height:9.3%!important;
+  }
+  .playgroundHome .frontModeButtons{
+    top:78.0%!important;
+    width:77%!important;
+    height:7.0%!important;
+    gap:8%!important;
+  }
+  body.homeMode #musicToggle,
+  body.homeMode .musicToggle,
+  body.homeMode .musicBtn,
+  body.homeMode [id*="music"][class*="Btn"],
+  body.homeMode [class*="music"][class*="Btn"]{
+    left:4.5%!important;
+    bottom:3.1%!important;
+    width:26%!important;
+    height:5.2%!important;
+  }
+}
+
 </style>
 </head>
 <body class="homeMode">
