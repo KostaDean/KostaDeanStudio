@@ -118,6 +118,7 @@ td.below{background:#f1e9ff}
 </div>
 <div class="tablewrap"><table id=t></table></div>
 <script src="MathWorksWinner.js"></script>
+<script src="MathWorksSounds.js"></script>
 <script>
 const table = document.getElementById('t');
 const firstBox = document.getElementById('a');
@@ -322,6 +323,9 @@ function check(){
       clearTimeout(nextTimer);
       celebrate();
     }else{
+      /* Shared transition cue; the Winner branch above skips this sound. */
+      if(window.MathWorksSounds) MathWorksSounds.transition();
+
       /* Load the next problem immediately during the Done-button tap.
          The feedback remains visible briefly while the next answer box is already active. */
       newProblem(true);
@@ -532,7 +536,7 @@ newProblem();
      target="_blank">❤️ Support this work!</a>
 </div>
 <div style="text-align:center;font-size:11px;color:#6f8397;margin:16px 0 8px;">
-Times Table build 21 — SAFE Modular Winner
+Times Table build 22 — SAFE Modular Winner + Transitions
 </div>
 </body>
 </html>
