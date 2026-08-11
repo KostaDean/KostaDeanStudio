@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MathWorks Winner Module Test</title>
+<style>
+body{font-family:Arial,sans-serif;background:#eef7ff;text-align:center;padding:40px 18px}
+button{padding:16px 28px;border:0;border-radius:999px;background:#1d6fb5;color:#fff;font-size:22px;font-weight:900}
+</style>
+</head>
+<body>
+<h1>MathWorks Winner Module Test</h1>
+<p>This page simulates a future lesson finishing.</p>
+<button onclick="MathWorksWinner.show({
+  message:'You mastered the test lesson!',
+  continueText:'Continue',
+  onContinue:()=>alert('The lesson can continue here.')
+})">Finish Lesson</button>
+
+<script src="MathWorksWinner.js"></script>
+</body>
+</html>
