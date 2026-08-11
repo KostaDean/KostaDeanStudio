@@ -6,20 +6,20 @@
 <title>MathWorks Transition Sound Test</title>
 <style>
 body{font-family:Arial,sans-serif;text-align:center;background:#eef7ff;padding:50px 20px}
-button{font-size:24px;font-weight:900;padding:18px 30px;border:0;border-radius:999px;background:#1d6fb5;color:white}
+button{font-size:24px;font-weight:900;padding:18px 30px;border:0;border-radius:999px;background:#1d6fb5;color:#fff}
 p{font-size:18px}
 </style>
 </head>
 <body>
 <h1>Transition Sound Test</h1>
-<p>Tap the button. You should hear three rising notes.</p>
-<button onclick="MathWorksSounds.transition()">Play C–E–G</button>
+<p>Tap the button. This version should be much louder and brighter.</p>
+<button onclick="MathWorksSounds.transition()">Play LOUD C–E–G</button>
 <p id="ver"></p>
-<script src="MathWorksSounds.js?v=3"></script>
+<script src="MathWorksSounds.js?v=4"></script>
 <script>
 setTimeout(()=>{
-  document.getElementById('ver').textContent =
-    'MathWorksSounds build ' + (window.MathWorksSounds ? MathWorksSounds.build : 'NOT LOADED');
+ document.getElementById('ver').textContent =
+   'MathWorksSounds build ' + (window.MathWorksSounds ? MathWorksSounds.build : 'NOT LOADED');
 },300);
 </script>
 </body>
