@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MathWorks Lesson Editor v5.1 Visual Object Manager</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#eef7ff;color:#172033}
+header{background:#2563eb;color:white;text-align:center;padding:16px}
+h1{margin:0;font-size:clamp(1.6rem,6vw,2.7rem)}
+main{width:min(1100px,96vw);margin:14px auto 60px}
+.panel{background:white;border:3px solid #bfdbfe;border-radius:22px;padding:16px;margin:14px 0;box-shadow:0 10px 28px rgba(20,40,80,.12)}
+button,label.fileBtn{display:inline-block;border:0;border-radius:999px;padding:12px 16px;margin:5px;font-weight:900;font-size:1rem;cursor:pointer;background:#2563eb;color:white;box-shadow:0 6px 16px rgba(37,99,235,.22)}
+button.good{background:#16a34a}button.warn{background:#f59e0b;color:#172033}button.gray{background:#475569}button.red{background:#dc2626}button.purple{background:#7c3aed}
+input[type=file]{display:none}
+input[type=text],textarea.editText{width:100%;padding:12px;border:2px solid #bfdbfe;border-radius:14px;font-size:1rem;margin:6px 0}
+textarea.editText{min-height:86px;font-family:inherit}
+.small{color:#475569;line-height:1.45;font-weight:650}
+iframe{width:100%;height:64vh;border:3px solid #2563eb;border-radius:18px;background:white}
+textarea#output{width:100%;min-height:220px;border:3px solid #bfdbfe;border-radius:18px;padding:12px;font-family:monospace;font-size:.86rem}
+.status{font-weight:900;color:#1d4ed8;margin:8px 0}
+.exerciseEditor{background:#fffbea;border:3px solid #fde047;border-radius:18px;padding:14px;margin:12px 0}
+.sectionEditor{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:14px;margin:12px 0}
+.actionBar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.paneTitle{margin-top:0;color:#075985}
+.hidden{display:none!important}
+
+.objectManager{background:#ecfeff;border:3px solid #06b6d4;border-radius:18px;padding:14px;margin:14px 0}
+.selectedBox{font-family:monospace;background:white;border:2px solid #67e8f9;border-radius:12px;padding:10px;margin:8px 0;white-space:pre-wrap;overflow:auto}
+.objectHint{font-size:.95rem;color:#475569;font-weight:700;line-height:1.45}
+
+</style>
+</head>
+<body>
+<header><h1>MathWorks Lesson Editor v5.1 Visual Object Manager</h1><p>Edit wording, exercises, answers, and add About Math / Parent sections. Exports with the same original filename.</p></header>
+<main>
+<section class="panel">
+<h2>1. Open Lesson</h2>
+<label class="fileBtn">Open Lesson File<input id="fileInput" type="file" accept=".html,text/html"></label>
+<input id="filename" type="text" placeholder="Revised filename">
+<button class="gray" onclick="toggleEdit()">Toggle Visual Edit</button>
+<button class="warn" onclick="restoreOriginal()">Restore Original</button>
+<div id="status" class="status">No lesson loaded yet.</div>
+<p class="small">After opening a lesson, the original filename is preserved for easier Dropbox replacement.</p>
+</section>
+
+<section class="panel">
+<h2>2. Work Area</h2>
+<div class="actionBar">
+<button onclick="showPane('preview')">Lesson Preview</button>
+<button onclick="showPane('exercises')">Exercise Manager</button>
+<button class="purple" onclick="showPane('sections')">Section Manager</button>
+<button class="warn" onclick="showPane('objects')">Object Manager</button>
+</div>
+
+<div id="previewPane">
+<h3 class="paneTitle">Lesson Preview</h3>
+<iframe id="preview"></iframe>
+</div>
+
+<div id="objectPane" class="objectManager hidden">
+<h3 class="paneTitle">Object Manager</h3>
+<p class="objectHint">Tap any visible lesson object inside the Lesson Preview. The selected object gets a red outline. Then choose what to do.</p>
+<div id="selectedObjectName" class="selectedBox">No object selected.</div>
+<button class="red" onclick="deleteSelectedObject()">Delete Selected Object</button>
+<button class="gray" onclick="hideSelectedObject()">Hide Selected Object</button>
+<button class="good" onclick="unhideAllObjects()">Unhide Hidden Objects</button>
+<button class="gray" onclick="duplicateSelectedObject()">Duplicate Selected Object</button>
+<button class="gray" onclick="moveSelectedUp()">Move Up</button>
+<button class="gray" onclick="moveSelectedDown()">Move Down</button>
+<button class="warn" onclick="clearSelection()">Clear Selection</button>
+</div>
+
+<div id="exercisePane" class="hidden">
+<h3 class="paneTitle">Exercise Manager</h3>
+<p class="small">One accepted answer per line. This version supports older pink-box lessons using data-answer/data-answers and includes a Visual Object Manager.</p>
+<button class="good" onclick="scanExercises()">Refresh Exercises</button>
+<button class="good" onclick="addExercise()">Add Exercise</button>
+<div id="exerciseList"></div>
+</div>
+
+<div id="sectionPane" class="hidden">
+<h3 class="paneTitle">Section Manager</h3>
+<p class="small">These buttons insert new editable sections into the loaded lesson, before the Exercises section.</p>
+<button class="purple" onclick="addAboutMath()">Add About Math Section</button>
+<button class="purple" onclick="addParentNoteSection()">Add Notes to Parents Section</button>
+<button class="good" onclick="scanSections()">Refresh Sections</button>
+<div id="sectionList"></div>
+</div>
+</section>
+
+<section class="panel">
+<h2>3. Export</h2>
+<button class="good" onclick="exportHTML()">Export Revised HTML</button>
+<button class="good" onclick="shareHTML()">Save Revised Lesson</button>
+<button class="gray" onclick="copyHTML()">Copy HTML Code</button>
+<textarea id="output" placeholder="Exported HTML appears here."></textarea>
+</section>
+</main>
+
+<script>
+let originalHTML="", currentName="RevisedLesson.html", editMode=true, exercises=[], sections=[];
+
+const fileInput=document.getElementById("fileInput"), filename=document.getElementById("filename"), preview=document.getElementById("preview"), statusBox=document.getElementById("status");
+fileInput.addEventListener("change",async function(){
+  const f=this.files&&this.files[0]; if(!f)return;
+  currentName=f.name;
+  filename.value=currentName;
+  originalHTML=await f.text();
+  loadPreview(originalHTML);
+  statusBox.textContent="Loaded: "+f.name;
+});
+function doc(){return preview.contentDocument||preview.contentWindow.document}
+function loadPreview(src){preview.srcdoc=src;preview.onload=()=>setTimeout(()=>{ensureStyles();applyEditMode();enableObjectSelection();scanExercises();scanSections();showPane("preview")},250)}
+function showPane(w){
+  document.getElementById("previewPane").classList.toggle("hidden",!(w==="preview"||w==="objects"));
+  document.getElementById("exercisePane").classList.toggle("hidden",w!=="exercises");
+  document.getElementById("sectionPane").classList.toggle("hidden",w!=="sections");
+  const op=document.getElementById("objectPane");
+  if(op)op.classList.toggle("hidden",w!=="objects");
+  if(w==="exercises")scanExercises();
+  if(w==="sections")scanSections();
+  if(w==="objects"){enableObjectSelection();statusBox.textContent="Object Manager ON: tap an object in the Lesson Preview."}
+}
+function toggleEdit(){editMode=!editMode;applyEditMode();enableObjectSelection();statusBox.textContent=editMode?"Visual Edit ON":"Visual Edit OFF"}
+function restoreOriginal(){if(!originalHTML)return alert("No original lesson loaded.");if(confirm("Restore original?"))loadPreview(originalHTML)}
+
+function ensureStyles(){
+  const d=doc(); if(!d||!d.head)return;
+  if(d.getElementById("mw-added-section-styles"))return;
+  const st=d.createElement("style"); st.id="mw-added-section-styles";
+  st.textContent=".aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}";
+  d.head.appendChild(st);
+}
+function text(e){return(e.innerText||e.textContent||"").replace(/\s+/g," ").trim()}
+function applyEditMode(){
+  const d=doc(); if(!d||!d.body)return;
+  d.querySelectorAll("[data-mw-editable]").forEach(e=>{e.removeAttribute("data-mw-editable");e.removeAttribute("contenteditable");e.style.outline="";e.style.backgroundColor="";e.style.cursor=""});
+  if(!editMode)return;
+  const sel="h1,h2,h3,h4,p,li,span,b,strong,em,i,button,a,label,.mathBox,.defBox,.ruleBox,.parentNote,.pictureBox,.aboutMathBox,.parentGuidanceBox,.prompt,.smallHelp,.feedback,input,textarea";
+  d.querySelectorAll(sel).forEach(e=>{
+    if(e.closest("script,style,head")||e.id==="flashOverlay")return;
+    const isCtl=e.tagName==="INPUT"||e.tagName==="TEXTAREA";
+    const has=(e.innerText||e.textContent||"").trim();
+    if(!has&&!isCtl)return;
+    e.setAttribute("data-mw-editable","1");
+    e.style.outline="3px dashed rgba(37,99,235,.65)";
+    e.style.backgroundColor="rgba(255,255,180,.42)";
+    e.style.cursor="text";
+    if(isCtl)return;
+    e.setAttribute("contenteditable","true");
+    e.addEventListener("click",ev=>{if(editMode)ev.stopPropagation()},true);
+    e.addEventListener("keydown",ev=>ev.stopPropagation(),true);
+    e.addEventListener("input",()=>syncSpeak(e),true);
+  });
+}
+
+let selectedObject=null;
+let selectedObjectId=null;
+let objectIdCounter=1;
+
+function objectText(e){
+  if(!e)return "";
+  return (e.innerText||e.textContent||"").replace(/\s+/g," ").trim();
+}
+function objectName(e){
+  if(!e)return "No object selected.";
+  const tag=e.tagName?e.tagName.toLowerCase():"object";
+  const id=e.id?("#"+e.id):"";
+  const cls=e.className?("."+String(e.className).trim().replace(/\s+/g,".").slice(0,80)):"";
+  const tx=objectText(e).slice(0,160);
+  return "<"+tag+id+cls+">\\n"+(tx||"(no text; probably a box/input/fraction part)");
+}
+function updateSelectedBox(){
+  const box=document.getElementById("selectedObjectName");
+  if(box)box.textContent=objectName(selectedObject);
+}
+function clearSelection(){
+  const d=doc(); if(d)d.querySelectorAll("[data-mw-selected-object]").forEach(e=>{
+    e.removeAttribute("data-mw-selected-object");
+    e.style.boxShadow="";
+  });
+  selectedObject=null;
+  selectedObjectId=null;
+  updateSelectedBox();
+}
+function selectObject(e){
+  if(!e)return;
+  clearSelection();
+  selectedObject=e;
+  if(!selectedObject.getAttribute("data-mw-object-id")){
+    selectedObject.setAttribute("data-mw-object-id","mwobj_"+(objectIdCounter++));
+  }
+  selectedObjectId=selectedObject.getAttribute("data-mw-object-id");
+  selectedObject.setAttribute("data-mw-selected-object","1");
+  selectedObject.style.boxShadow="0 0 0 6px rgba(220,38,38,.75)";
+  updateSelectedBox();
+  statusBox.textContent="Selected object. Use Delete, Hide, Duplicate, Move Up, or Move Down.";
+}
+function bestSelectable(target){
+  if(!target||!target.closest)return null;
+  if(target.closest("script,style,head"))return null;
+
+  // Prefer meaningful whole objects, but allow selecting smaller pieces too.
+  return target.closest(".ex,.exercise,.exLine,.ruleBox,.aboutMathBox,.parentGuidanceBox,.card,section,p,h1,h2,h3,h4,li,.row,.frac,.longDiv,button,input,span,div");
+}
+function enableObjectSelection(){
+  const d=doc(); if(!d||!d.body)return;
+  if(d.body.getAttribute("data-mw-object-manager-ready")==="1")return;
+  d.body.setAttribute("data-mw-object-manager-ready","1");
+
+  d.addEventListener("click",function(ev){
+    const op=document.getElementById("objectPane");
+    const objectMode=op && !op.classList.contains("hidden");
+    if(!objectMode)return;
+    const obj=bestSelectable(ev.target);
+    if(!obj||obj===d.body||obj===d.documentElement)return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    selectObject(obj);
+  },true);
+}
+function resolveSelectedObject(){
+  const d=doc();
+  if(!d)return null;
+  if(selectedObject && selectedObject.isConnected)return selectedObject;
+  if(selectedObjectId)return d.querySelector('[data-mw-object-id="'+selectedObjectId+'"]');
+  return d.querySelector("[data-mw-selected-object]");
+}
+function deleteSelectedObject(){
+  if(!selectedObject)return alert("Tap an object in the Lesson Preview first.");
+  const label=objectName(selectedObject);
+  if(!confirm("Delete this object?\\n\\n"+label))return;
+  selectedObject.remove();
+  selectedObject=null; updateSelectedBox();
+  statusBox.textContent="Deleted selected object.";
+  scanExercises(); scanSections();
+}
+function hideSelectedObject(){
+  const obj=resolveSelectedObject();
+  if(!obj)return alert("Tap an object in the Lesson Preview first.");
+  obj.setAttribute("data-mw-hidden-object","1");
+  obj.style.display="none";
+  selectedObject=null;
+  selectedObjectId=null;
+  updateSelectedBox();
+  statusBox.textContent="Hidden selected object. It will be removed on export/save.";
+  scanExercises(); scanSections();
+}
+function unhideAllObjects(){
+  const d=doc(); if(!d||!d.body)return;
+  d.querySelectorAll("[data-mw-hidden-object]").forEach(e=>{
+    e.removeAttribute("data-mw-hidden-object");
+    e.style.display="";
+  });
+  statusBox.textContent="All hidden objects restored.";
+}
+function duplicateSelectedObject(){
+  const obj=resolveSelectedObject();
+  if(!obj)return alert("Tap an object in the Lesson Preview first.");
+  const clone=obj.cloneNode(true);
+  clone.removeAttribute("data-mw-selected-object");
+  clone.removeAttribute("data-mw-object-id");
+  clone.style.boxShadow="";
+  obj.after(clone);
+  statusBox.textContent="Duplicated selected object.";
+  applyEditMode(); enableObjectSelection(); scanExercises(); scanSections();
+}
+function moveSelectedUp(){
+  const obj=resolveSelectedObject();
+  if(!obj)return alert("Tap an object in the Lesson Preview first.");
+  const prev=obj.previousElementSibling;
+  if(prev)obj.parentNode.insertBefore(obj,prev);
+}
+function moveSelectedDown(){
+  const obj=resolveSelectedObject();
+  if(!obj)return alert("Tap an object in the Lesson Preview first.");
+  const next=obj.nextElementSibling;
+  if(next)obj.parentNode.insertBefore(next,obj);
+}
+
+
+function syncSpeak(e){
+  const c=e.closest(".speakRow,.ruleBox,.defBox,.parentNote,.exercise,.card,.aboutMathBox,.parentGuidanceBox");
+  if(!c)return; const b=c.querySelector("button[onclick^='speak']"); if(!b)return;
+  const p=c.querySelector(".prompt");
+  let t=p?text(p):text(c).replace(/^🔊/,"").replace(/Done$/,"").trim();
+  b.setAttribute("onclick","speak("+JSON.stringify(t)+")");
+}
+function esc(s){return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
+function getSpeak(on){const m=String(on||"").match(/speak\((['"])([\s\S]*?)\1\)/);if(!m)return"";try{return JSON.parse(m[1]+m[2]+m[1])}catch(e){return m[2]}}
+function answers(on){const m=String(on||"").match(/checkAny\s*\(\s*['"][^'"]+['"]\s*,\s*\[([\s\S]*?)\]/);if(!m)return[];let a=[],r=/['"]([^'"]*)['"]/g,x;while((x=r.exec(m[1])))a.push(x[1]);return a}
+
+
+function promptTextFromExercise(ex){
+  const clone=ex.cloneNode(true);
+  clone.querySelectorAll("button,input,textarea,script,style,.feedback,.rowMsg,.doneWrap").forEach(x=>x.remove());
+  return text(clone).replace(/^\d+\)\s*/,"").trim();
+}
+function exerciseCandidates(d){
+  let list=[...d.querySelectorAll(".exercise")];
+  if(list.length)return list;
+  const seen=new Set(), found=[];
+  function add(el){
+    if(!el || el===d.body || seen.has(el))return;
+    if(!el.querySelector("input,textarea"))return;
+    seen.add(el);
+    el.classList.add("exercise");
+    found.push(el);
+  }
+  [...d.querySelectorAll("input.blankInput,input.answerBox,input[data-answer],input[data-answers],textarea[data-answer],textarea[data-answers]")].forEach(inp=>{
+    let ex=inp.closest(".ex,.exercise,.question,.problem,.practiceItem,.task,.card,li,section,div");
+    while(ex && ex!==d.body && !ex.querySelector("input,textarea"))ex=ex.parentElement;
+    add(ex);
+  });
+  [...d.querySelectorAll("button")].forEach(b=>{
+    const on=b.getAttribute("onclick")||"";
+    if(!/(checkAny|checkAnswer|checkOne|checkInput|checkExercise|check\()/.test(on))return;
+    let ex=b.closest(".ex,.exercise,.question,.problem,.practiceItem,.task,.card,li,section,div")||b.parentElement;
+    while(ex && ex!==d.body && !ex.querySelector("input,textarea"))ex=ex.parentElement;
+    add(ex);
+  });
+  return found;
+}
+function answersFromDataInput(input){
+  if(!input)return[];
+  const many=input.getAttribute("data-answers");
+  if(many)return many.split("|").map(v=>v.trim()).filter(Boolean);
+  const one=input.getAttribute("data-answer")||input.getAttribute("answer")||"";
+  return one?[one]:[];
+}
+function hideRedundantPrompt(ex){
+  const pr=ex.querySelector(":scope > .prompt");
+  const line=ex.querySelector(".exLine");
+  if(pr && line){
+    pr.style.display="none";
+    pr.setAttribute("data-mw-hidden-prompt","1");
+  }
+}
+function hideAllRedundantPrompts(d){
+  if(!d||!d.body)return;
+  d.querySelectorAll(".ex.exercise,.ex .exercise,.exercise").forEach(ex=>hideRedundantPrompt(ex.closest(".ex")||ex));
+}
+function patchMultipleAnswerChecker(d){
+  if(!d||!d.body||d.getElementById("mw-multi-answer-patch"))return;
+  const sc=d.createElement("script");
+  sc.id="mw-multi-answer-patch";
+  sc.textContent = `
+function mwAccepted(inp){const many=inp.getAttribute("data-answers");if(many)return many.split("|").map(x=>x.trim()).filter(Boolean);const one=inp.getAttribute("data-answer")||"";return one?[one]:[]}
+function mwNorm(v){return String(v).trim()}
+if(typeof finishRow==="function"){
+  finishRow=function(r){
+    const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+    let ok=true;
+    inputs.forEach(inp=>{const val=mwNorm(inp.value);const answers=mwAccepted(inp);inp.classList.remove("ok","bad");if(answers.includes(val))inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});
+    const msg=document.getElementById("rowMsg_"+r);
+    if(ok){
+      inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=mwAccepted(inp)[0]||inp.value;inp.replaceWith(s)});
+      if(msg){msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';}
+      const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";
+      if(typeof playGood==="function")playGood();if(typeof flash==="function")flash("good");if(typeof maybeCelebrateWorksheet==="function")maybeCelebrateWorksheet();
+    }else{
+      if(msg){msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";}
+      if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
+    }
+  }
+}`;
+  d.body.appendChild(sc);
+}
+
+function scanExercises(){
+  const d=doc(); if(!d||!d.body){exerciseList.innerHTML="<p>No lesson loaded.</p>";return}
+  exercises=exerciseCandidates(d).map((ex,i)=>{
+    const box=ex.closest(".ex")||ex;
+    const input=box.querySelector("input,textarea"),fb=box.querySelector(".feedback,[id^='f'],.rowMsg,[id^='rowMsg']");
+    const done=[...box.querySelectorAll("button")].find(b=>(b.getAttribute("onclick")||"").includes("checkAny"));
+    const sp=[...box.querySelectorAll("button")].find(b=>(b.getAttribute("onclick")||"").startsWith("speak"));
+    const pr=box.querySelector(".prompt");
+    const a=done?answers(done.getAttribute("onclick")):answersFromDataInput(input);
+    return{el:box,prompt:pr,input,fb,done,sp,id:input?input.id:"q"+(i+1),fid:fb?fb.id:"f"+(i+1),q:pr?text(pr):promptTextFromExercise(box),s:sp?getSpeak(sp.getAttribute("onclick")):"",a:a};
+  });
+  renderExercises();
+}
+function renderExercises(){
+  exerciseList.innerHTML="";
+  if(!exercises.length){exerciseList.innerHTML="<p>No exercises found.</p>";return}
+  exercises.forEach((x,i)=>{
+    const div=document.createElement("div"); div.className="exerciseEditor";
+    div.innerHTML=`<h3>Exercise ${i+1}</h3><b>Question</b><textarea class="editText" id="qtxt${i}">${esc(x.q)}</textarea><b>Speak text</b><textarea class="editText" id="stxt${i}">${esc(x.s||x.q)}</textarea><b>Accepted answers</b><textarea class="editText" id="atxt${i}">${esc(x.a.join("\n"))}</textarea><p class="small">For pink-box lessons, multiple answers are saved and the exported lesson is patched to accept them.</p><button class="good" onclick="applyExercise(${i})">Apply</button><button class="gray" onclick="duplicateExercise(${i})">Duplicate</button><button class="red" onclick="deleteExercise(${i})">Delete</button>`;
+    exerciseList.appendChild(div);
+    const qBox=document.getElementById("qtxt"+i), sBox=document.getElementById("stxt"+i);
+    let manualSpeak=!!(x.s&&x.s!==x.q);
+    sBox.addEventListener("input",()=>{manualSpeak=(sBox.value!==qBox.value)});
+    qBox.addEventListener("input",()=>{if(!manualSpeak)sBox.value=qBox.value});
+  });
+}
+function applyExercise(i){
+  const x=exercises[i]; if(!x)return;
+  const q=document.getElementById("qtxt"+i).value.trim(), s=document.getElementById("stxt"+i).value.trim()||q, a=document.getElementById("atxt"+i).value.split(/\n/).map(v=>v.trim()).filter(Boolean);
+  if(x.prompt)x.prompt.innerText=q;
+  hideRedundantPrompt(x.el);
+  if(x.sp)x.sp.setAttribute("onclick","speak("+JSON.stringify(s)+")");
+  if(x.done)x.done.setAttribute("onclick",`checkAny('${x.id}',[${a.map(JSON.stringify).join(",")}],'${x.fid}')`);
+  if(x.input && a.length){x.input.setAttribute("data-answer",a[0]);x.input.setAttribute("data-answers",a.join("|"));}
+  patchMultipleAnswerChecker(doc());
+  scanExercises(); statusBox.textContent="Applied Exercise "+(i+1);
+}
+function renumber(){
+  const d=doc(),list=exerciseCandidates(d);
+  list.forEach((ex,i)=>{
+    const n=i+1,p=ex.querySelector(".prompt"),inp=ex.querySelector("input"),fb=ex.querySelector(".feedback"),done=[...ex.querySelectorAll("button")].find(b=>(b.getAttribute("onclick")||"").includes("checkAny"));
+    if(p)p.innerText=n+") "+text(p).replace(/^\d+\)\s*/,"");
+    if(inp)inp.id="q"+n; if(fb)fb.id="f"+n;
+    if(done)done.setAttribute("onclick",`checkAny('q${n}',[${answers(done.getAttribute("onclick")).map(JSON.stringify).join(",")}],'f${n}')`);
+  });
+  [...d.querySelectorAll("script")].forEach(s=>{if(s.textContent.includes("total="))s.textContent=s.textContent.replace(/total\s*=\s*\d+/,"total="+list.length)});
+}
+function duplicateExercise(i){const x=exercises[i];if(!x)return;x.el.after(x.el.cloneNode(true));renumber();scanExercises();applyEditMode()}
+function deleteExercise(i){const x=exercises[i];if(!x)return;if(confirm("Delete exercise "+(i+1)+"?")){x.el.remove();renumber();scanExercises()}}
+function addExercise(){
+  const d=doc(); if(!d||!d.body)return alert("Open a lesson first.");
+  const sec=[...d.querySelectorAll("section,.card")].find(s=>/Exercises/i.test(s.innerText||""))||d.body;
+  const n=d.querySelectorAll(".exercise").length+1, div=d.createElement("div");
+  div.className="exercise";
+  div.innerHTML=`<div class="prompt">${n}) If ..., then ?</div><button class="speakBtn" onclick="speak('If ..., then what?')">🔊</button><br><input class="answerBox" id="q${n}"><button class="doneBtn" onclick="checkAny('q${n}',['answer'],'f${n}')">Done</button><div id="f${n}" class="feedback"></div>`;
+  sec.appendChild(div); renumber(); scanExercises(); applyEditMode();
+}
+
+function addAboutMath(){addSection("about")}
+function addParentNoteSection(){addSection("parent")}
+function addSection(type){
+  const d=doc(); if(!d||!d.body)return alert("Open a lesson first.");
+  ensureStyles();
+  const main=d.querySelector("main")||d.body;
+  const before=[...d.querySelectorAll("section,.card")].find(s=>/Exercises/i.test(s.innerText||""));
+  const sec=d.createElement("section"); sec.className="card mw-extra-section";
+  sec.setAttribute("data-section-type",type==="about"?"aboutMath":"parentNote");
+  if(type==="about"){
+    sec.innerHTML=`<h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak('About Math. Mathematics is the study of patterns, relationships, and what follows from what is given.')">🔊</button><br><br><b>About Math:</b><br>Mathematics is the study of patterns, relationships, and what follows from what is given.</div>`;
+  }else{
+    sec.innerHTML=`<h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak('Notes to Parents. Focus first on understanding the idea. Use easy numbers first.')">🔊</button><br><br><b>Notes to Parents:</b><br>Focus first on understanding the idea. Use easy numbers first.</div>`;
+  }
+  if(before&&before.parentNode)before.parentNode.insertBefore(sec,before);else main.appendChild(sec);
+  applyEditMode(); scanSections(); statusBox.textContent=(type==="about"?"About Math":"Notes to Parents")+" section added."; showPane("preview");
+}
+function scanSections(){
+  const d=doc(); if(!d||!d.body){sectionList.innerHTML="<p>No lesson loaded.</p>";return}
+  sections=[...d.querySelectorAll(".mw-extra-section")].map((el,i)=>({el,title:el.querySelector("h2")?text(el.querySelector("h2")):"Section",body:text(el)}));
+  renderSections();
+}
+function renderSections(){
+  sectionList.innerHTML="";
+  if(!sections.length){sectionList.innerHTML="<p class='small'>No added sections yet. Tap Add About Math or Add Notes to Parents.</p>";return}
+  sections.forEach((s,i)=>{
+    const div=document.createElement("div"); div.className="sectionEditor";
+    div.innerHTML=`<h3>${esc(s.title)} ${i+1}</h3><p class="small">${esc(s.body).slice(0,220)}</p><button class="gray" onclick="moveSectionUp(${i})">Move Up</button><button class="gray" onclick="moveSectionDown(${i})">Move Down</button><button class="red" onclick="deleteSection(${i})">Delete</button>`;
+    sectionList.appendChild(div);
+  });
+}
+function moveSectionUp(i){const s=sections[i];if(!s||!s.el.previousElementSibling)return;s.el.parentNode.insertBefore(s.el,s.el.previousElementSibling);scanSections()}
+function moveSectionDown(i){const s=sections[i];if(!s||!s.el.nextElementSibling)return;s.el.parentNode.insertBefore(s.el.nextElementSibling,s.el);scanSections()}
+function deleteSection(i){const s=sections[i];if(!s)return;if(confirm("Delete this section?")){s.el.remove();scanSections()}}
+
+function clean(){
+  renumber();
+  const d=doc(); if(!d||!d.documentElement)return "";
+  hideAllRedundantPrompts(d);
+  patchMultipleAnswerChecker(d);
+  const c=d.documentElement.cloneNode(true);
+  c.querySelectorAll("[data-mw-hidden-object]").forEach(e=>e.remove());
+  c.querySelectorAll("[data-mw-selected-object]").forEach(e=>{e.removeAttribute("data-mw-selected-object");e.style.boxShadow="";});
+  c.querySelectorAll("[data-mw-object-id]").forEach(e=>e.removeAttribute("data-mw-object-id"));
+  c.querySelectorAll("[data-mw-editable]").forEach(e=>{e.removeAttribute("data-mw-editable");e.removeAttribute("contenteditable");e.style.outline="";e.style.backgroundColor="";e.style.cursor=""});
+  c.querySelectorAll("[style='']").forEach(e=>e.removeAttribute("style"));
+  return"<!DOCTYPE html>\n"+c.outerHTML;
+}
+function exportHTML(){
+  const h=clean(); if(!h)return alert("Open a lesson first."); output.value=h;
+  const name=(filename.value||currentName).trim(), final=name.endsWith(".html")?name:name+".html";
+  const blob=new Blob([h],{type:"text/html"}), url=URL.createObjectURL(blob), a=document.createElement("a");
+  a.href=url; a.download=final; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},1000);
+  statusBox.textContent="Exported: "+final;
+}
+async function shareHTML(){
+  const h=clean(); if(!h)return alert("Open a lesson first."); output.value=h;
+  const name=(filename.value||currentName).trim(), final=name.endsWith(".html")?name:name+".html";
+  const file=new File([h],final,{type:"text/html"});
+  if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:final,text:"Revised MathWorks lesson"});
+  else alert("Share file is not available. Use Export or Copy.");
+}
+async function copyHTML(){const h=clean(); if(!h)return alert("Open a lesson first."); output.value=h; try{await navigator.clipboard.writeText(h);alert("HTML copied.")}catch(e){alert("Copy failed. Use text box.")}}
+</script>
+</body>
+</html>

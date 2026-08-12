@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Signed Numbers Interactive</title>
+<style>
+:root{--bg:#f6f7fb;--ink:#1f2937;--line:#334155;--sub:#64748b;--pink:#f9a8d4;--pinkline:#c026d3;--ok:#bbf7d0;--bad:#fecaca;--accent:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.lesson{max-width:900px;margin:0 auto;background:white;border:2px solid var(--line);border-radius:20px;padding:18px}
+h1{text-align:center;font-size:34px;margin:0 0 14px;text-transform:uppercase}
+h2{font-size:26px;margin:22px 0 10px}
+p{font-size:20px;line-height:1.45}
+.row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.speakBtn{padding:6px 10px;font-size:18px;border:2px solid var(--line);border-radius:10px;background:white}
+.ruleBox{border:3px solid var(--line);border-radius:14px;padding:12px;margin:16px 0;background:#fff}
+.numberLineWrap{overflow-x:auto;margin:16px 0}
+.numberLine{position:relative;width:780px;height:128px;margin:0 auto}
+.axis{position:absolute;left:30px;right:30px;top:58px;border-top:5px solid var(--line)}
+.arrowR{position:absolute;right:19px;top:47px;font-size:32px;font-weight:900;color:var(--line)}
+.tick{position:absolute;top:45px;height:28px;border-left:4px solid var(--line)}
+.zeroTick{height:38px;top:40px;border-left:6px solid #dc2626}
+.numLabel{position:absolute;top:82px;transform:translateX(-50%);font-size:16px;font-weight:700}
+.zeroLabel{color:#dc2626;font-size:20px}
+.rightBand{position:absolute;left:390px;right:30px;top:44px;height:28px;background:#dcfce7;border:2px solid #22c55e;border-radius:8px;opacity:.55}
+.leftBand{position:absolute;left:30px;width:360px;top:44px;height:28px;background:#fee2e2;border:2px solid #ef4444;border-radius:8px;opacity:.45}
+.moveDemo{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.card{border:3px solid var(--line);border-radius:12px;padding:10px 14px;background:#f8fafc;font-size:24px;font-weight:800;text-align:center}
+.vectorRow{display:flex;gap:22px;align-items:stretch;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.vectorCard{border:3px solid var(--line);border-radius:14px;padding:14px;background:#f8fafc;min-width:280px;text-align:center}
+.vectorCard svg{width:260px;height:90px;max-width:100%}
+.vecLabel{font-size:28px;font-weight:900;margin:4px 0}
+.unitNote{font-size:16px;color:#475569;margin:0 0 6px}
+.pos{color:#15803d;font-weight:800}
+.neg{color:#dc2626;font-weight:800}
+.ex{margin:18px 0 24px;border-top:1px solid #e5e7eb;padding-top:14px}
+.exLine{font-size:24px;line-height:1.8;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.blankInput{width:76px;height:38px;padding:0 3px;border:2px solid var(--pinkline);border-radius:8px;background:var(--pink);text-align:center;font-size:22px}
+.blankInput.wide{width:95px}
+.blankInput.ok{background:var(--ok)!important;border-color:#15803d}
+.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.answerText{display:inline-block;min-width:54px;text-align:center;font-weight:700;color:#166534}
+.doneWrap{text-align:right;margin-top:8px}
+.doneBtn{padding:8px 14px;border:2px solid var(--line);border-radius:12px;background:white;font-size:18px;font-weight:700}
+.rowMsg{font-size:26px;font-weight:800;margin:6px 0;display:none;text-align:right}
+.rowMsg.bad{display:block;color:#991b1b}
+.rowMsg.good{display:block;color:var(--accent)}
+.banner{display:none;margin:14px 0 16px;padding:16px;text-align:center;font-size:36px;font-weight:800;border:3px solid #92400e;border-radius:16px;background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)}
+.donateWrap{display:none;text-align:center;margin:10px 0 18px}
+.donateText{font-size:20px;font-weight:700;margin-bottom:8px}
+.donateBtn{display:inline-block;padding:12px 18px;border:2px solid #92400e;border-radius:14px;background:#f59e0b;color:#111827;font-weight:700;text-decoration:none}
+.confetti{position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:999}
+.piece{position:absolute;width:12px;height:12px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.flash-bad{animation:flashBad .35s ease}.flash-win{animation:flashWin .7s ease 5}.flash-good{animation:flashGood .45s ease}
+@keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}
+@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
+@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
+@media(max-width:700px){h1{font-size:30px}.exLine{font-size:21px}.numberLine{width:720px}.blankInput{width:68px}}
+</style>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style><script id="mw-mathjax-config">window.MathJax={tex:{inlineMath:[[\"\\\\(\",\"\\\\)\"],[\"$\",\"$\"]],displayMath:[[\"\\\\[\",\"\\\\]\"]]},options:{skipHtmlTags:[\"script\",\"noscript\",\"style\",\"textarea\",\"pre\"]}};</script><script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style></head>
+<body data-mw-object-manager-ready="1" data-mw-math-select-ready="1">
+<div class="lesson">
+<div class="banner" id="banner">YOU ARE A WINNER!</div>
+<div id="donateWrap" class="donateWrap"><div class="donateText">Please support this work:</div><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a></div>
+
+<h1>Signed Numbers</h1>
+
+<div class="row">
+<button class="speakBtn" id="speakIntro" type="button">🔊</button>
+<p style="margin: 0px;">On the number line, moving to the right is positive <b>(+)</b>. Moving to the left is negative <b>(−)</b>.</p>
+</div>
+
+<div class="ruleBox">
+<h2>Positive and negative numbers</h2>
+<p>A number to the <b>right of 0</b> is a <span class="pos">positive number</span>. A number to the <b>left of 0</b> is a <span class="neg">negative number</span>.</p>
+
+<div class="numberLineWrap">
+<div class="numberLine" id="mainLine">
+<div class="leftBand"></div><div class="rightBand"></div><div class="axis"></div><div class="arrowR">→</div>
+<div class="tick" style="left: 45px;"></div><div class="numLabel" style="left: 45px;">-7</div><div class="tick" style="left: 92.142857px;"></div><div class="numLabel" style="left: 92.142857px;">-6</div><div class="tick" style="left: 139.285714px;"></div><div class="numLabel" style="left: 139.285714px;">-5</div><div class="tick" style="left: 186.428571px;"></div><div class="numLabel" style="left: 186.428571px;">-4</div><div class="tick" style="left: 233.571429px;"></div><div class="numLabel" style="left: 233.571429px;">-3</div><div class="tick" style="left: 280.714286px;"></div><div class="numLabel" style="left: 280.714286px;">-2</div><div class="tick" style="left: 327.857143px;"></div><div class="numLabel" style="left: 327.857143px;">-1</div><div class="tick zeroTick" style="left: 375px;"></div><div class="numLabel zeroLabel" style="left: 375px;">0</div><div class="tick" style="left: 422.142857px;"></div><div class="numLabel" style="left: 422.142857px;">+1</div><div class="tick" style="left: 469.285714px;"></div><div class="numLabel" style="left: 469.285714px;">+2</div><div class="tick" style="left: 516.428571px;"></div><div class="numLabel" style="left: 516.428571px;">+3</div><div class="tick" style="left: 563.571429px;"></div><div class="numLabel" style="left: 563.571429px;">+4</div><div class="tick" style="left: 610.714286px;"></div><div class="numLabel" style="left: 610.714286px;">+5</div><div class="tick" style="left: 657.857143px;"></div><div class="numLabel" style="left: 657.857143px;">+6</div><div class="tick" style="left: 705px;"></div><div class="numLabel" style="left: 705px;">+7</div></div>
+</div>
+
+<p>We use parentheses to include the sign of the number: <b>(−5)</b>, <b>(−1)</b>, <b>(+3)</b>, <b>(+6)</b>.</p>
+</div>
+
+<div class="ruleBox">
+<h2>Greater and less</h2>
+<p><b>Rule:</b> On the number line, if a number is to the right of another number it is greater <b>(&gt;)</b>; if it is to the left it is lesser <b>(&lt;)</b>.</p>
+<div class="moveDemo">
+<div class="card">(−10) &lt; (+2)</div>
+<div class="card">(−1) &gt; (−100)</div>
+</div>
+</div>
+
+<div class="ruleBox">
+<h2>Signed numbers as arrows</h2>
+<p>A signed number can be shown as an <b>arrow</b>. The sign tells the direction. The number tells the magnitude, or how long the arrow is.</p>
+
+<div class="vectorRow">
+  <div class="vectorCard">
+    <svg viewBox="0 0 260 90" aria-label="positive three vector">
+      <!-- pure vector: 3 equal unit intervals, small arrow showing right direction -->
+      <line x1="50" y1="42" x2="170" y2="42" stroke="#15803d" stroke-width="6" stroke-linecap="round"></line>
+      <polyline points="158,32 170,42 158,52" fill="none" stroke="#15803d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+      <line x1="50" y1="25" x2="50" y2="59" stroke="#334155" stroke-width="5"></line>
+      <line x1="90" y1="27" x2="90" y2="57" stroke="#15803d" stroke-width="5"></line>
+      <line x1="130" y1="27" x2="130" y2="57" stroke="#15803d" stroke-width="5"></line>
+      <line x1="170" y1="27" x2="170" y2="57" stroke="#15803d" stroke-width="5"></line>
+      <text x="110" y="82" text-anchor="middle" font-size="15" fill="#475569">3 equal unit lengths</text>
+    </svg>
+    <div class="vecLabel pos">(+3)</div>
+    <p style="margin: 6px 0px 0px; font-size: 18px;">An arrow 3 units to the right</p>
+  </div>
+
+  <div class="vectorCard">
+    <svg viewBox="0 0 260 90" aria-label="negative five vector">
+      <!-- pure vector: 5 equal unit intervals, small arrow showing left direction -->
+      <line x1="230" y1="42" x2="30" y2="42" stroke="#dc2626" stroke-width="6" stroke-linecap="round"></line>
+      <polyline points="42,32 30,42 42,52" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+      <line x1="230" y1="25" x2="230" y2="59" stroke="#334155" stroke-width="5"></line>
+      <line x1="190" y1="27" x2="190" y2="57" stroke="#dc2626" stroke-width="5"></line>
+      <line x1="150" y1="27" x2="150" y2="57" stroke="#dc2626" stroke-width="5"></line>
+      <line x1="110" y1="27" x2="110" y2="57" stroke="#dc2626" stroke-width="5"></line>
+      <line x1="70" y1="27" x2="70" y2="57" stroke="#dc2626" stroke-width="5"></line>
+      <line x1="30" y1="27" x2="30" y2="57" stroke="#dc2626" stroke-width="5"></line>
+      <text x="130" y="82" text-anchor="middle" font-size="15" fill="#475569">5 equal unit lengths</text>
+    </svg>
+    <div class="vecLabel neg">(−5)</div>
+    <p style="margin: 6px 0px 0px; font-size: 18px;">An arrow 5 units to the left</p>
+  </div>
+</div>
+
+<p>The dark mark shows where the vector begins. The small arrow shows direction. The last mark shows the magnitude.</p>
+</div>
+
+<h2>Exercises: Fill in the pink boxes</h2>
+
+<div class="ex"><div class="exLine exercise">1) A number to the right of 0 is <input class="blankInput wide" data-answer="positive" data-row="1" data-answers="positive|+" id="q1">.</div><div class="rowMsg" id="rowMsg_1"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="1">Done</button></div></div>
+
+<div class="ex"><div class="exLine exercise">2) A number to the left of 0 is <input class="blankInput wide" data-answer="negative" data-row="2" data-answers="negative|-" id="q2">.</div><div class="rowMsg" id="rowMsg_2"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="2">Done</button></div></div>
+
+<div class="ex"><div class="exLine exercise">3) Which is greater? (−3) or (+2): <input class="blankInput" data-answer="+2" data-alt="(+2)" data-row="3" id="q3"></div><div class="rowMsg" id="rowMsg_3"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="3">Done</button></div></div>
+
+<div class="ex"><div class="exLine exercise">4) Fill in the sign: (−10) <input class="blankInput" data-answer="&lt;" data-row="4" data-answers="&lt;|Less" id="q4"> (+2)</div><div class="rowMsg" id="rowMsg_4"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="4">Done</button></div></div>
+
+<div class="ex"><div class="exLine exercise">5) Fill in the sign: (−1) <input class="blankInput" data-answer="&gt;" data-row="5" data-answers="&gt;|Greater" id="q5"> (−100)</div><div class="rowMsg" id="rowMsg_5"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="5">Done</button></div></div>
+
+<div class="ex"><div class="exLine exercise">6) Moving left on the number line means moving in the <input class="blankInput wide" data-answer="negative" data-row="6" data-answers="negative|-" id="q6"> direction.</div><div class="rowMsg" id="rowMsg_6"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="6">Done</button></div></div>
+
+<div class="ex"><div class="exLine exercise">7) The signed number (+4) is an arrow 4 units to the <input class="blankInput wide" data-answer="right" data-row="7" data-answers="right|+" id="q7">.</div><div class="rowMsg" id="rowMsg_7"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="7">Done</button></div></div>
+
+<div class="ex"><div class="exLine exercise">8) The signed number (−6) is an arrow 6 units to the <input class="blankInput wide" data-answer="left" data-row="8" id="q8">.</div><div class="rowMsg" id="rowMsg_8"></div><div class="doneWrap"><button class="doneBtn" type="button" data-row="8">Done</button></div></div>
+
+</div>
+<div id="confetti" class="confetti"></div>
+
+<script>
+(function buildLine(){
+ const line=document.getElementById("mainLine");
+ const min=-7,max=7,start=45,end=705,w=end-start;
+ for(let n=min;n<=max;n++){
+   const x=start+(n-min)/(max-min)*w;
+   const tick=document.createElement("div");
+   tick.className="tick"+(n===0?" zeroTick":"");
+   tick.style.left=x+"px";
+   line.appendChild(tick);
+   const lab=document.createElement("div");
+   lab.className="numLabel"+(n===0?" zeroLabel":"");
+   lab.style.left=x+"px";
+   lab.textContent=n>0?("+"+n):String(n);
+   line.appendChild(lab);
+ }
+})();
+let audioCtx=null;
+function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()}if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function playTone(f,t,s,d,g){const c=getAudio(),o=c.createOscillator(),x=c.createGain();o.type=t;o.frequency.setValueAtTime(f,s);x.gain.setValueAtTime(.0001,s);x.gain.exponentialRampToValueAtTime(g,s+.02);x.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(x).connect(c.destination);o.start(s);o.stop(s+d+.03)}
+function playBad(){const t=getAudio().currentTime+.01;playTone(220,"sawtooth",t,.18,.08);playTone(180,"sawtooth",t+.12,.2,.08)}
+function playGood(){const t=getAudio().currentTime+.01;playTone(523.25,"triangle",t,.18,.1);playTone(659.25,"triangle",t+.12,.2,.1);playTone(783.99,"triangle",t+.24,.22,.12)}
+function playWin(){const t=getAudio().currentTime+.02;[523.25,659.25,783.99,1046.5,1318.51].forEach((f,i)=>playTone(f,"square",t+i*.12,.25,.12))}
+function flash(k){document.body.classList.remove("flash-bad","flash-win","flash-good");void document.body.offsetWidth;document.body.classList.add("flash-"+k)}
+function launchConfetti(){const c=document.getElementById("confetti");c.innerHTML="";const colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185","#38bdf8"];for(let i=0;i<160;i++){const p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.8+Math.random()*1.2)+"s";c.appendChild(p)}setTimeout(()=>c.innerHTML="",3200)}
+function speakText(t){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.95;window.speechSynthesis.speak(u)}
+document.getElementById("speakIntro").addEventListener("click",()=>speakText("Signed numbers. Moving right is positive. Moving left is negative. A number to the right of another number is greater. A signed number can also be shown as an arrow. The sign tells direction and the number tells length."))
+function norm(s){return String(s).trim().toLowerCase().replace("−","-").replace(/\s+/g,"")}
+function clearRowMessage(r){const m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
+function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),80);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");launchConfetti();setTimeout(launchConfetti,900);setTimeout(launchConfetti,1800)}}
+function finishRow(r){
+ const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+ let ok=true;
+ inputs.forEach(inp=>{
+   const val=norm(inp.value), ans=norm(inp.dataset.answer), alt=norm(inp.dataset.alt||"");
+   inp.classList.remove("ok","bad");
+   if(val===ans || (alt && val===alt)){inp.classList.add("ok")} else {inp.classList.add("bad");ok=false}
+ });
+ const msg=document.getElementById("rowMsg_"+r);
+ if(ok){
+   inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=inp.dataset.answer;inp.replaceWith(s)});
+   msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';
+   const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";
+   playGood();flash("good");maybeCelebrateWorksheet();
+ }else{msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";playBad();flash("bad")}
+}
+document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
+document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
+</script>
+
+
+<script id="mw-multi-answer-patch">
+function mwAccepted(inp){const many=inp.getAttribute("data-answers");if(many)return many.split("|").map(x=>x.trim()).filter(Boolean);const one=inp.getAttribute("data-answer")||"";return one?[one]:[]}
+function mwNorm(v){return String(v).trim()}
+if(typeof finishRow==="function"){
+  finishRow=function(r){
+    const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+    let ok=true;
+    inputs.forEach(inp=>{const val=mwNorm(inp.value);const answers=mwAccepted(inp);inp.classList.remove("ok","bad");if(answers.includes(val))inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});
+    const msg=document.getElementById("rowMsg_"+r);
+    if(ok){
+      inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=mwAccepted(inp)[0]||inp.value;inp.replaceWith(s)});
+      if(msg){msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';}
+      const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";
+      if(typeof playGood==="function")playGood();if(typeof flash==="function")flash("good");if(typeof maybeCelebrateWorksheet==="function")maybeCelebrateWorksheet();
+    }else{
+      if(msg){msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";}
+      if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
+    }
+  }
+}</script><section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: Signed numbers are first examples of what in more advanced math will be vectors. These will further develop the intimate connection between Algebra and Geometry.&quot;)">🔊</button><br><br><b>About Math:</b><br>Signed numbers are first examples of what in more advanced math will be vectors. These will further develop the intimate connection between Algebra and Geometry.</div></section></body></html>

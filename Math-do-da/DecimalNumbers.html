@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Decimal Numbers Interactive</title>
+<style>
+:root{--bg:#f6f7fb;--ink:#1f2937;--line:#334155;--sub:#64748b;--pink:#f9a8d4;--pinkline:#c026d3;--ok:#bbf7d0;--bad:#fecaca;--accent:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.lesson{max-width:900px;margin:0 auto;background:#fff;border:2px solid var(--line);border-radius:20px;padding:18px}
+h1{text-align:center;font-size:34px;margin:0 0 14px}
+h2{font-size:26px;margin:22px 0 10px}
+p{font-size:20px;line-height:1.45}
+.row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.speakBtn{padding:6px 10px;font-size:18px;border:2px solid var(--line);border-radius:10px;background:white}
+.placeTable{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:620px;margin:16px auto}
+.placeCell{border:3px solid var(--line);border-radius:12px;padding:10px;text-align:center;background:#fff}
+.placeCell .name{font-size:16px;font-weight:700;color:#475569}
+.placeCell .value{font-size:22px;font-weight:800}
+.numberBig{text-align:center;font-size:42px;font-weight:800;margin:14px 0}
+.decimalPoint{color:#dc2626}
+.numlineWrap{overflow-x:auto;margin:14px 0}
+.numline{position:relative;width:760px;height:145px;margin:0 auto}
+.axis{position:absolute;left:35px;right:35px;top:58px;border-top:4px solid var(--line)}
+.tick{position:absolute;top:43px;height:30px;border-left:5px solid var(--line)}
+.subtick{position:absolute;top:49px;height:20px;border-left:3px solid #475569}
+.hundredTick{position:absolute;top:53px;height:12px;border-left:1px solid #94a3b8}
+.dot{position:absolute;top:52px;width:12px;height:12px;background:#dc2626;border:2px solid white;box-shadow:0 0 0 2px #dc2626;border-radius:50%;transform:translateX(-50%)}
+.numLabel{position:absolute;top:84px;transform:translateX(-50%);font-size:18px;font-weight:700}
+.modeLabel{position:absolute;top:8px;left:35px;font-size:18px;font-weight:800;color:#334155}
+.markerText{position:absolute;top:106px;transform:translateX(-50%);font-size:17px;font-weight:800;color:#dc2626;background:white;border:2px solid #dc2626;border-radius:10px;padding:2px 8px}
+.lineBtns{text-align:center;margin:6px 0 10px}
+.lineBtns button{margin:4px;padding:7px 10px;border:2px solid var(--line);border-radius:10px;background:white;font-weight:700}
+.fracLine{font-size:28px;font-weight:700;text-align:center;line-height:1.6;margin:12px 0}
+.ex{margin:18px 0 24px;border-top:1px solid #e5e7eb;padding-top:14px}
+.exLine{font-size:24px;line-height:1.8;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.blankInput{width:44px;height:34px;padding:0 3px;border:2px solid var(--pinkline);border-radius:8px;background:var(--pink);text-align:center;font-size:22px}
+.blankInput.ok{background:var(--ok)!important;border-color:#15803d}
+.blankInput.bad{background:var(--bad)!important;border-color:#b91c1c}
+.answerText{display:inline-block;min-width:36px;text-align:center;font-weight:700;color:#166534}
+.doneWrap{text-align:right;margin-top:8px}
+.doneBtn{padding:8px 14px;border:2px solid var(--line);border-radius:12px;background:white;font-size:18px;font-weight:700}
+.rowMsg{font-size:26px;font-weight:800;margin:6px 0;display:none;text-align:right}
+.rowMsg.bad{display:block;color:#991b1b}
+.rowMsg.good{display:block;color:var(--accent)}
+.banner{display:none;margin:14px 0 16px;padding:16px;text-align:center;font-size:36px;font-weight:800;border:3px solid #92400e;border-radius:16px;background:linear-gradient(90deg,#fde68a,#fca5a5,#93c5fd,#86efac,#fde68a)}
+.donateWrap{display:none;text-align:center;margin:10px 0 18px}
+.donateText{font-size:20px;font-weight:700;margin-bottom:8px}
+.donateBtn{display:inline-block;padding:12px 18px;border:2px solid #92400e;border-radius:14px;background:#f59e0b;color:#111827;font-weight:700;text-decoration:none}
+.confetti{position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:999}
+.piece{position:absolute;width:12px;height:12px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.flash-bad{animation:flashBad .35s ease}
+.flash-win{animation:flashWin .7s ease 5}
+.flash-good{animation:flashGood .45s ease}
+@keyframes flashBad{0%{background:#fecaca}50%{background:#ef4444}100%{background:var(--bg)}}
+@keyframes flashWin{0%{background:#fde68a}25%{background:#86efac}50%{background:#93c5fd}75%{background:#f9a8d4}100%{background:var(--bg)}}
+@keyframes flashGood{0%{background:#bbf7d0}50%{background:#22c55e}100%{background:var(--bg)}}
+@media(max-width:700px){h1{font-size:30px}.numberBig{font-size:36px}.placeTable{grid-template-columns:repeat(2,1fr)}.exLine{font-size:21px}.fracLine{font-size:24px}}
+</style>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style><script id="mw-mathjax-config">window.MathJax={tex:{inlineMath:[[\"\\\\(\",\"\\\\)\"],[\"$\",\"$\"]],displayMath:[[\"\\\\[\",\"\\\\]\"]]},options:{skipHtmlTags:[\"script\",\"noscript\",\"style\",\"textarea\",\"pre\"]}};</script><script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style></head>
+<body data-mw-object-manager-ready="1" data-mw-math-select-ready="1">
+<div class="lesson">
+<div class="banner" id="banner">YOU ARE A WINNER!</div>
+<div id="donateWrap" class="donateWrap"><div class="donateText">Please support this work:</div><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank" rel="noopener noreferrer">Donate</a></div>
+
+<h1>Decimal Numbers</h1>
+
+<div class="row">
+<button class="speakBtn" id="speakIntro" type="button">🔊</button>
+<p style="margin: 0px;">Decimal numbers have a decimal point. The part on the left is the whole part. The part on the right is the decimal fraction part.</p>
+</div>
+
+<div class="numberBig">12<span class="decimalPoint">.</span>43</div>
+
+<div class="placeTable">
+  <div class="placeCell"><div class="name">tens</div><div class="value">1 × 10</div></div>
+  <div class="placeCell"><div class="name">ones</div><div class="value">2 × 1</div></div>
+  <div class="placeCell"><div class="name">tenths</div><div class="value">4 × <a href="x-apple-data-detectors://0" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="0" style="color: currentcolor; text-decoration-color: rgba(92, 122, 163, 0.38);">1/10</a></div></div>
+  <div class="placeCell"><div class="name">hundredths</div><div class="value">3 × 1/100</div></div>
+</div>
+
+<p>The decimal part tells us how much of one whole unit we have. On the number line, <b>0.4</b> means <b>4/10</b>.</p>
+
+<div class="lineBtns">
+  <button type="button" id="showTenths">Show 10 equal parts</button>
+  <button type="button" id="showHundredths">Show 100 equal parts</button>
+</div>
+<div class="numlineWrap">
+<div class="numline" id="decimalLine">
+  <div class="modeLabel" id="modeLabel">0 to 1 divided into 10 equal parts</div>
+  <div class="axis"></div>
+  <div class="tick" style="left:35px"></div>
+  <div class="tick" style="left:380px"></div>
+  <div class="tick" style="left:725px"></div>
+  <div class="numLabel" style="left:35px">0</div>
+  <div class="numLabel" style="left:380px">1</div>
+  <div class="numLabel" style="left:725px">2</div>
+  <div class="dot" id="decimalDot" style="left: 173px;"></div>
+  <div class="markerText" id="markerText" style="left: 173px;">0.4 = 4/10</div>
+<div class="subtick" style="left: 69.5px;"></div><div class="subtick" style="left: 104px;"></div><div class="subtick" style="left: 138.5px;"></div><div class="subtick" style="left: 173px;"></div><div class="subtick" style="left: 207.5px;"></div><div class="subtick" style="left: 242px;"></div><div class="subtick" style="left: 276.5px;"></div><div class="subtick" style="left: 311px;"></div><div class="subtick" style="left: 345.5px;"></div></div>
+</div>
+
+<div class="fracLine">0.43 = 4/10 + 3/100</div>
+<div class="fracLine">12.43 = 1(10) + 2(1) + 4(<a href="x-apple-data-detectors://4" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="4" style="color: currentcolor; text-decoration-color: rgba(92, 122, 163, 0.38);">1/10</a>) + 3(1/100)</div>
+
+<h2>Exercises: Fill in the pink boxes</h2>
+
+<div class="ex">
+<div class="exLine exercise">1) 7.35 = <input class="blankInput" data-answer="7" data-row="1" id="q1">(1) + <input class="blankInput" data-answer="3" data-row="1">(<a href="x-apple-data-detectors://5" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="5" style="color: currentcolor; text-decoration-color: rgba(92, 122, 163, 0.38);">1/10</a>) + <input class="blankInput" data-answer="5" data-row="1">(1/100)</div>
+<div class="rowMsg" id="rowMsg_1"></div>
+<div class="doneWrap"><button class="doneBtn" type="button" data-row="1">Done</button></div>
+</div>
+
+<div class="ex">
+<div class="exLine exercise">2) 24.6 = <input class="blankInput" data-answer="2" data-row="2" id="q2">(10) + <input class="blankInput" data-answer="4" data-row="2">(1) + <input class="blankInput" data-answer="6" data-row="2">(<a href="x-apple-data-detectors://6" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="6" style="color: currentcolor; text-decoration-color: rgba(92, 122, 163, 0.38);">1/10</a>)</div>
+<div class="rowMsg" id="rowMsg_2"></div>
+<div class="doneWrap"><button class="doneBtn" type="button" data-row="2">Done</button></div>
+</div>
+
+<div class="ex">
+<div class="exLine exercise">3) 0.58 = <input class="blankInput" data-answer="5" data-row="3" id="q3">(<a href="x-apple-data-detectors://7" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="7" style="color: currentcolor; text-decoration-color: rgba(92, 122, 163, 0.38);">1/10</a>) + <input class="blankInput" data-answer="8" data-row="3">(1/100)</div>
+<div class="rowMsg" id="rowMsg_3"></div>
+<div class="doneWrap"><button class="doneBtn" type="button" data-row="3">Done</button></div>
+</div>
+
+<div class="ex">
+<div class="exLine exercise">4) 3(10) + 6(1) + 4(<a href="x-apple-data-detectors://8" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="8" style="color: currentcolor; text-decoration-color: rgba(92, 122, 163, 0.38);">1/10</a>) = <input class="blankInput" data-answer="36.4" data-row="4" id="q4"></div>
+<div class="rowMsg" id="rowMsg_4"></div>
+<div class="doneWrap"><button class="doneBtn" type="button" data-row="4">Done</button></div>
+</div>
+
+<div class="ex">
+<div class="exLine exercise">5) 9(1) + 2(<a href="x-apple-data-detectors://9" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="9" style="color: currentcolor; text-decoration-color: rgba(92, 122, 163, 0.38);">1/10</a>) + 7(1/100) = <input class="blankInput" data-answer="9.27" data-row="5" id="q5"></div>
+<div class="rowMsg" id="rowMsg_5"></div>
+<div class="doneWrap"><button class="doneBtn" type="button" data-row="5">Done</button></div>
+</div>
+
+</div>
+<div id="confetti" class="confetti"></div>
+
+<script>
+function drawDecimalLine(mode){
+  const line=document.getElementById("decimalLine");
+  line.querySelectorAll(".subtick,.hundredTick").forEach(e=>e.remove());
+  const start=35, one=380;
+  const width=one-start;
+  if(mode==="hundredths"){
+    document.getElementById("modeLabel").textContent="0 to 1 divided into 100 equal parts";
+    for(let i=1;i<100;i++){
+      const t=document.createElement("div");
+      t.className=(i%10===0)?"subtick":"hundredTick";
+      t.style.left=(start+width*i/100)+"px";
+      line.appendChild(t);
+    }
+    const x=start+width*.43;
+    document.getElementById("decimalDot").style.left=x+"px";
+    document.getElementById("markerText").style.left=x+"px";
+    document.getElementById("markerText").textContent="0.43 = 43/100";
+  }else{
+    document.getElementById("modeLabel").textContent="0 to 1 divided into 10 equal parts";
+    for(let i=1;i<10;i++){
+      const t=document.createElement("div");
+      t.className="subtick";
+      t.style.left=(start+width*i/10)+"px";
+      line.appendChild(t);
+    }
+    const x=start+width*.4;
+    document.getElementById("decimalDot").style.left=x+"px";
+    document.getElementById("markerText").style.left=x+"px";
+    document.getElementById("markerText").textContent="0.4 = 4/10";
+  }
+}
+document.getElementById("showTenths").addEventListener("click",()=>drawDecimalLine("tenths"));
+document.getElementById("showHundredths").addEventListener("click",()=>drawDecimalLine("hundredths"));
+drawDecimalLine("tenths");
+let audioCtx=null;
+function getAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()}if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function playTone(f,t,s,d,g){const c=getAudio(),o=c.createOscillator(),x=c.createGain();o.type=t;o.frequency.setValueAtTime(f,s);x.gain.setValueAtTime(.0001,s);x.gain.exponentialRampToValueAtTime(g,s+.02);x.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(x).connect(c.destination);o.start(s);o.stop(s+d+.03)}
+function playBad(){const t=getAudio().currentTime+.01;playTone(220,"sawtooth",t,.18,.08);playTone(180,"sawtooth",t+.12,.2,.08)}
+function playGood(){const t=getAudio().currentTime+.01;playTone(523.25,"triangle",t,.18,.1);playTone(659.25,"triangle",t+.12,.2,.1);playTone(783.99,"triangle",t+.24,.22,.12)}
+function playWin(){const t=getAudio().currentTime+.02;[523.25,659.25,783.99,1046.5,1318.51].forEach((f,i)=>playTone(f,"square",t+i*.12,.25,.12))}
+function flash(k){document.body.classList.remove("flash-bad","flash-win","flash-good");void document.body.offsetWidth;document.body.classList.add("flash-"+k)}
+function launchConfetti(){const c=document.getElementById("confetti");c.innerHTML="";const colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185","#38bdf8"];for(let i=0;i<160;i++){const p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.8+Math.random()*1.2)+"s";c.appendChild(p)}setTimeout(()=>c.innerHTML="",3200)}
+function speakText(t){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.95;window.speechSynthesis.speak(u)}
+document.getElementById("speakIntro").addEventListener("click",()=>speakText("Decimal numbers have a decimal point. The part on the left is the whole part. The part on the right is the decimal fraction part. Twelve point four three means one ten, two ones, four tenths, and three hundredths."))
+function clearRowMessage(r){const m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
+function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),80);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");launchConfetti();setTimeout(launchConfetti,900);setTimeout(launchConfetti,1800)}}
+function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];let ok=true;inputs.forEach(inp=>{const ans=String(inp.dataset.answer).trim(),val=String(inp.value).trim();inp.classList.remove("ok","bad");if(val===ans)inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});const msg=document.getElementById("rowMsg_"+r);if(ok){inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=inp.dataset.answer;inp.replaceWith(s)});msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";playGood();flash("good");maybeCelebrateWorksheet()}else{msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";playBad();flash("bad")}}
+document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
+document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
+</script>
+
+
+<section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Numeracy is acquiring a sense of numbers. A young learner can acquire such sense with physical games being blindfolded and arranging small objects placed in front from more light to more heavy. Or judging if an object weighs twice or three times etc more than another object. You can invent more such games to play with your young learner. Make it fun as they acquire a sense of numbers.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Numeracy is acquiring a sense of numbers. A young learner can acquire such sense with physical games being blindfolded and arranging small objects placed in front from more light to more heavy. Or judging if an object weighs twice or three times etc more than another object.<div><br><div>You can invent more such games to play with your young learner. Make it fun as they acquire a sense of numbers.</div></div></div></section><section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: The Numberline is a \&quot;continuum\&quot; of real numbers. Between any two points there are an infinite number of other points. Between any two numbers there are an infinite number of other numbers. A \&quot;real number\&quot; is what can be represented as a point on the Numberline. If a number can be written as a \&quot;terminating\&quot; or \&quot;repeating\&quot; decimal number, it is said to be a \&quot;rational number\&quot;. Such numbers as 1.12121212.... that are repeated are \&quot;rational numbers\&quot;. As is 1.153. All rational numbers can be written as a fraction a whole number divided by another whole number, like 2/3. If a real number is not rational it is \&quot;irrational\&quot;. There are more irrational numbers than there are rational numbers!&quot;)">🔊</button><br><br><b>About Math:</b><br>The Numberline is a "continuum" of real numbers. Between any two points there are an infinite number of other points. Between any two numbers there are an infinite number of other numbers. A "real number" is what can be represented as a point on the Numberline. If a number can be written as a "terminating" or "repeating" decimal number, it is said to be a "rational number". Such numbers as 1.12121212.... that are repeated are "rational numbers". As is 1.153. All rational numbers can be written as a fraction a whole number divided by another whole number, like 2/3. If a real number is not rational it is "irrational". There are more irrational numbers than there are rational numbers!</div></section><script id="mw-multi-answer-patch">
+function mwAccepted(inp){const many=inp.getAttribute("data-answers");if(many)return many.split("|").map(x=>x.trim()).filter(Boolean);const one=inp.getAttribute("data-answer")||"";return one?[one]:[]}
+function mwNorm(v){return String(v).trim()}
+if(typeof finishRow==="function"){
+  finishRow=function(r){
+    const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+    let ok=true;
+    inputs.forEach(inp=>{const val=mwNorm(inp.value);const answers=mwAccepted(inp);inp.classList.remove("ok","bad");if(answers.includes(val))inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});
+    const msg=document.getElementById("rowMsg_"+r);
+    if(ok){
+      inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=mwAccepted(inp)[0]||inp.value;inp.replaceWith(s)});
+      if(msg){msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';}
+      const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";
+      if(typeof playGood==="function")playGood();if(typeof flash==="function")flash("good");if(typeof maybeCelebrateWorksheet==="function")maybeCelebrateWorksheet();
+    }else{
+      if(msg){msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";}
+      if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
+    }
+  }
+}</script></body></html>

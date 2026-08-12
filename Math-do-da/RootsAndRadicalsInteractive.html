@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roots and Radicals Interactive</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#eef7ff;color:#172033}
+header{background:#2563eb;color:white;text-align:center;padding:24px}
+main{max-width:950px;margin:auto;padding:20px}
+.card{background:white;border-radius:20px;padding:20px;margin:18px 0;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+h1{margin:0;font-size:clamp(2rem,8vw,4rem)}h2{color:#1d4ed8}
+p{font-size:1.15rem;line-height:1.5}
+.box{background:#f8fbff;border:3px solid #bfdbfe;border-radius:16px;padding:14px;margin:14px 0;font-size:1.25rem;text-align:center}
+.note{background:#fff7ed;border:3px solid #fdba74;border-radius:16px;padding:14px;margin:14px 0}
+.exercise{background:#fffbea;border:3px solid #fde047;border-radius:16px;padding:16px;margin:16px 0}
+input{font-size:1.15rem;padding:12px;border-radius:12px;border:3px solid #cbd5e1;width:130px}
+button{font-size:1rem;font-weight:bold;border:0;border-radius:12px;background:#2563eb;color:white;padding:12px 16px;margin-left:8px}
+.feedback{font-weight:bold;margin-top:10px}
+#celebrate{display:none;position:fixed;inset:0;background:rgba(15,23,42,.88);z-index:99;color:white;align-items:center;justify-content:center;text-align:center;flex-direction:column}
+.big{font-size:4rem;animation:pulse .9s infinite}@keyframes pulse{50%{transform:scale(1.18)}}
+</style>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style><script id="mw-mathjax-config">window.MathJax={tex:{inlineMath:[[\"\\\\(\",\"\\\\)\"],[\"$\",\"$\"]],displayMath:[[\"\\\\[\",\"\\\\]\"]]},options:{skipHtmlTags:[\"script\",\"noscript\",\"style\",\"textarea\",\"pre\"]}};</script><script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style></head>
+<body data-mw-object-manager-ready="1" data-mw-math-select-ready="1">
+<header><h1>Roots and Radicals</h1><p>Roots undo exponents. They are opposite operations.</p></header>
+<main>
+<div class="card"><h2>What is a root?</h2><p>A <b>root</b> asks what number must be multiplied
+by itself a certain number of times to make another number.</p><div class="box">If <b>a<sup>n</sup> = b</b>, then <b><sup>n</sup>√b = a</b>.</div><p>Roots and exponents are opposite operations, just like addition and subtraction or multiplication and division.</p></div>
+<div class="card"><h2>Square roots</h2><p>The most common root is the <b>square root</b>.</p><div class="box">If <b>a<sup>2</sup> = b</b>, then <b>√b = a</b>.</div><div class="box">4 = 2<sup>2</sup>, so √4 = 2<br>25 = 5<sup>2</sup>, so √25 = 5</div></div>
+<div class="card"><h2>Cube roots and index</h2><p>The small number in front of the radical is called the <b>index</b>. It tells how many equal factors are used.</p><div class="box"><sup>3</sup>√27 = 3 because 3<sup>3</sup> = 27.</div><div class="note">Usually we do not write the small 2 for square roots. So √9 means <sup>2</sup>√9.</div></div>
+<div class="card"><h2>Radical and radicand</h2><p>The symbol <b>√</b> is called a <b>radical</b>. The number under it is the <b>radicand</b>.</p><div class="box">√49 = 7</div></div>
+<section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: Every mathematical operation has its \&quot;inverse operation\&quot; (its opposite) that undoes what the operation did. The inverse of addition is subtraction. The inverse of multiplication is division. And so the inverse of exponents is radicals.&quot;)">🔊</button><br><br><b>About Math:</b><br>Every mathematical operation has its "inverse operation" (its opposite) that undoes what the operation did. The inverse of addition is subtraction. The inverse of multiplication is division. And so the inverse of exponents is radicals.</div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Knowing the squares and square roots etc of some simple numbers helps in mentally locating numbers. Have your young learner know these simple squares. 2, 4, 8, 16, 32, 64 3, 9, 27, 81, 5, 25, 125 7, 49 8, 64 9, 81 10, 100, 1000 We can use these to get rough approximations of some other square or square roots. For example, the square root of 15 is between 3 and 5 since 3^2=9 and 5^2=25 and 15 is between 9 and 25. Such estimates aim to acquire greater facility mentally placing numbers. But we should use calculators for greatest accuracy.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Knowing the squares and square roots etc of some simple numbers helps in mentally locating numbers.&nbsp;<div><br><div>Have your young learner know these simple squares.</div><div>2, 4, 8, 16, 32, 64</div><div>3, 9, 27, 81,&nbsp;</div><div>5, 25, 125</div><div>7, 49</div><div>8, 64</div><div>9, 81</div><div>10, 100, 1000</div><div><br></div><div>We can use these to get rough approximations of some other square or square roots. For example, the square root of 15 is between 3 and 5 since 3^2=9 and 5^2=25 and 15 is between 9 and 25.</div><div>Such estimates aim to acquire greater facility mentally placing numbers. But we should use calculators for greatest accuracy.</div></div></div></section><div class="card"><h2>Exercises</h2><p>Fill in the pink boxes.</p>
+<div class="exercise">1) √9 = <input id="q1"><button onclick="check('q1',['3','+3'])">Done</button><div id="f1" class="feedback"></div></div>
+<div class="exercise">2) √16 = <input id="q2"><button onclick="check('q2',['4','+4'])">Done</button><div id="f2" class="feedback"></div></div>
+<div class="exercise">3) √25 = <input id="q3"><button onclick="check('q3',['5','+5'])">Done</button><div id="f3" class="feedback"></div></div>
+<div class="exercise">4) <sup>3</sup>√27 = <input id="q4"><button onclick="check('q4',['3','+3'])">Done</button><div id="f4" class="feedback"></div></div>
+<div class="exercise">5) If x<sup>2</sup> = 49, then √49 = <input id="q5"><button onclick="check('q5',['7','+7'])">Done</button><div id="f5" class="feedback"></div></div>
+</div>
+</main>
+<div id="celebrate"><div class="big">🎉🎺</div><h2>You are a Winner!</h2><p>Excellent work with roots and radicals!</p></div>
+<script>
+let correct=0;
+function norm(s){return String(s).trim().toLowerCase().replace(/\s+/g,'');}
+function check(id,answers){
+ const inp=document.getElementById(id);
+ const n=id.replace('q','');
+ const f=document.getElementById('f'+n);
+ const ok=answers.map(norm).includes(norm(inp.value));
+ if(ok){f.textContent='✅ Correct!';f.style.color='green';if(!inp.dataset.done){inp.dataset.done='1';correct++;}}
+ else{f.textContent='❌ Try again.';f.style.color='red';}
+ if(correct===5)celebrate();
+}
+function celebrate(){
+ const box=document.getElementById('celebrate');
+ box.style.display='flex';
+ try{
+  const ctx=new (window.AudioContext||window.webkitAudioContext)();
+  [523,659,784,1046].forEach((freq,i)=>{
+   const osc=ctx.createOscillator(), gain=ctx.createGain();
+   osc.frequency.value=freq;osc.type='triangle';osc.connect(gain);gain.connect(ctx.destination);
+   gain.gain.setValueAtTime(.001,ctx.currentTime+i*.15);
+   gain.gain.exponentialRampToValueAtTime(.25,ctx.currentTime+i*.15+.03);
+   gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.15+.25);
+   osc.start(ctx.currentTime+i*.15);osc.stop(ctx.currentTime+i*.15+.28);
+  });
+ }catch(e){}
+ setTimeout(()=>box.style.display='none',4500);
+}
+</script>
+
+<script id="mw-multi-answer-patch">
+function mwAccepted(inp){const many=inp.getAttribute("data-answers");if(many)return many.split("|").map(x=>x.trim()).filter(Boolean);const one=inp.getAttribute("data-answer")||"";return one?[one]:[]}
+function mwNorm(v){return String(v).trim()}
+if(typeof finishRow==="function"){
+  finishRow=function(r){
+    const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+    let ok=true;
+    inputs.forEach(inp=>{const val=mwNorm(inp.value);const answers=mwAccepted(inp);inp.classList.remove("ok","bad");if(answers.includes(val))inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});
+    const msg=document.getElementById("rowMsg_"+r);
+    if(ok){
+      inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=mwAccepted(inp)[0]||inp.value;inp.replaceWith(s)});
+      if(msg){msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';}
+      const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";
+      if(typeof playGood==="function")playGood();if(typeof flash==="function")flash("good");if(typeof maybeCelebrateWorksheet==="function")maybeCelebrateWorksheet();
+    }else{
+      if(msg){msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";}
+      if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
+    }
+  }
+}</script></body></html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ratios Interactive</title>
+<style>
+:root{--bg:#eef7ff;--ink:#172033;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--pink:#f9a8d4;--pinkline:#c026d3}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#f7fbff,var(--bg));color:var(--ink)}
+header{background:#2563eb;color:white;text-align:center;padding:26px 18px}
+h1{margin:0;font-size:clamp(2rem,8vw,4rem)}
+header p{max-width:820px;margin:12px auto 0;font-size:1.15rem;line-height:1.5}
+main{width:min(950px,94vw);margin:24px auto 50px}
+.card{background:white;border-radius:22px;padding:22px;margin:20px 0;border:3px solid #bfdbfe;box-shadow:0 10px 28px rgba(20,40,80,.12)}
+h2{margin-top:0;color:#1d4ed8;font-size:1.7rem}
+p{font-size:1.16rem;line-height:1.6}
+.speakRow{display:flex;gap:12px;align-items:flex-start;margin:14px 0}
+.speakBtn{font-size:1.15rem;padding:10px 12px;border-radius:12px;border:2px solid #475569;background:white;color:#172033}
+.mathBox{background:#f8fbff;border:3px solid #bfdbfe;border-radius:18px;padding:18px;margin:18px 0;font-size:1.35rem;line-height:1.8;text-align:center}
+.pictureBox{background:#fffbea;border:3px solid #fde047;border-radius:18px;padding:18px;margin:18px 0;font-size:2.1rem;text-align:center;line-height:1.7}
+.parentNote{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:16px;margin:18px 0;line-height:1.55}
+.ruleBox{background:#ecfccb;border:3px solid #84cc16;border-radius:18px;padding:18px;font-size:1.15rem;line-height:1.6;margin-top:20px}
+.exercise{background:#fffbea;border:3px solid #fde047;border-radius:18px;padding:18px;margin:18px 0}
+.prompt{font-size:1.25rem;font-weight:800;line-height:1.5}
+.answerBox{min-width:120px;width:130px;height:62px;font-size:28px;text-align:center;border-radius:16px;border:3px solid var(--pinkline);background:var(--pink);margin:12px 6px;padding:6px 10px}
+.doneBtn{font-size:1.1rem;font-weight:800;padding:12px 18px;border-radius:14px;border:3px solid #475569;background:white;color:#2563eb}
+.feedback{font-size:1.1rem;font-weight:800;margin-top:12px;min-height:28px}.smallHelp{color:#64748b;font-size:1rem;font-weight:700}
+#celebrate{display:none;position:fixed;inset:0;background:rgba(15,23,42,.88);z-index:999;color:white;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:20px}
+#celebrate .big{font-size:4.5rem;animation:pulse .9s infinite}@keyframes pulse{50%{transform:scale(1.15)}}
+.donateBtn{display:inline-block;margin-top:22px;padding:16px 28px;border-radius:18px;background:#f59e0b;color:#172033;font-weight:900;font-size:1.3rem;text-decoration:none;border:4px solid #92400e;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.confetti{position:fixed;top:-40px;z-index:2001;pointer-events:none;animation:fall linear forwards}@keyframes fall{to{transform:translateY(115vh) rotate(720deg);opacity:0}}
+#flashOverlay{position:fixed;inset:0;background:white;opacity:0;pointer-events:none;z-index:2000}.flashOn{animation:flashAnim .22s linear 8}@keyframes flashAnim{0%{opacity:0}50%{opacity:.95}100%{opacity:0}}
+</style>
+<style id="mw-added-section-styles">.aboutMathBox{background:#f5f3ff;border:3px solid #a78bfa;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}.parentGuidanceBox{background:#fff7ed;border:3px solid #fb923c;border-radius:18px;padding:18px;margin:18px 0;font-size:1.15rem;line-height:1.6}</style><script id="mw-mathjax-config">window.MathJax={tex:{inlineMath:[[\"\\\\(\",\"\\\\)\"],[\"$\",\"$\"]],displayMath:[[\"\\\\[\",\"\\\\]\"]]},options:{skipHtmlTags:[\"script\",\"noscript\",\"style\",\"textarea\",\"pre\"]}};</script><script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style></head>
+<body data-mw-object-manager-ready="1" data-mw-math-select-ready="1">
+<div id="flashOverlay"></div>
+<header><h1>Ratios</h1><p>Learn how ratios compare quantities and connect to fractions.</p></header>
+<main>
+<section class="card"><h2>What is a ratio?</h2>
+<div class="speakRow"><button class="speakBtn" onclick="speak('A ratio compares two quantities.')">🔊</button><p>A <b>ratio</b> compares two quantities.</p></div>
+<div class="speakRow"><button class="speakBtn" onclick="speak('For example, if we have two apples and one orange, we compare apples to oranges.')">🔊</button><p>For example, if we have <b>2 apples</b> and <b>1 orange</b>, we compare apples to oranges.</p></div>
+<div class="pictureBox">🍎 🍎 &nbsp; : &nbsp; 🍊</div><div class="mathBox">Apples : Oranges = <b>2 : 1</b></div>
+<div class="speakRow"><button class="speakBtn" onclick="speak('We read two to one as two apples for every one orange.')">🔊</button><p>We read <b>2 : 1</b> as “two to one,” or <b>2 apples for every 1 orange</b>.</p></div>
+</section>
+
+<section class="card"><h2>Ratio language</h2>
+<div class="speakRow"><button class="speakBtn" onclick="speak('Ratios can be expressed in words. Five to two, five per two, and five for every two all describe the ratio five to two.')">🔊</button><p>Ratios can be expressed in words. These all describe the same ratio:</p></div>
+<div class="mathBox">5 to 2<br>5 per 2<br>5 for every 2<br>5 : 2</div>
+<div class="speakRow"><button class="speakBtn" onclick="speak('The word per often means a ratio. Miles per hour, dollars per pound, and feet per second are all ratios.')">🔊</button><p>The word <b>per</b> often means a ratio. <b>Miles per hour</b>, <b>dollars per pound</b>, and <b>feet per second</b> are all ratios.</p></div>
+</section>
+
+<section class="card"><h2>A ratio is a fraction</h2>
+<div class="speakRow"><button class="speakBtn" onclick="speak('A ratio can also be written as a fraction.')">🔊</button><p>A ratio can also be written as a <b>fraction</b>.</p></div>
+<div class="mathBox">5 : 2 = <b>5 / 2</b></div>
+<div class="speakRow"><button class="speakBtn" onclick="speak('The ratio five to two has value five divided by two.')">🔊</button><p>The ratio <b>5 : 2</b> has value <b>5 divided by 2</b>.</p></div>
+<div class="parentNote"><button class="speakBtn" onclick="speak(&quot;Parent Note: It is helpful to connect ratios with fractions. A ratio is another way of writing a fraction that compares two quantities.&quot;)">🔊</button><br><br><b>Parent Note:</b>&nbsp;It is helpful to connect ratios with fractions. A ratio is another way of writing a fraction that compares two quantities.</div>
+</section>
+
+<section class="card"><h2>Preparing for Algebra</h2>
+<div class="speakRow"><button class="speakBtn" onclick="speak('If we name one quantity A and the second quantity B, then their ratio A to B is the fraction A over B.')">🔊</button><p>If we name one quantity <b>A</b> and the second quantity <b>B</b>, then their ratio <b>A to B</b> is the fraction:</p></div>
+<div class="mathBox">A : B = <b>A / B</b></div>
+<div class="speakRow"><button class="speakBtn" onclick="speak('This language also prepares students for Algebra, where letters are used to name quantities.')">🔊</button><p>This language also prepares students for Algebra, where letters are used to name quantities.</p></div>
+<div class="mathBox">If A = 6 and B = 3,<br>A : B = 6 : 3 = 6 / 3 = <b>2</b></div>
+</section>
+
+<section class="card"><h2>Easy numbers first</h2>
+<div class="speakRow"><button class="speakBtn" onclick="speak('Use easy numbers to understand the idea. Use a calculator when the numbers become harder.')">🔊</button><p>Use <b>easy numbers</b> to understand the idea. Use a calculator when the numbers become harder.</p></div>
+<div class="mathBox">4 : 2 = 4 / 2 = 2<br>10 : 5 = <a href="x-apple-data-detectors://3" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="3" style="color: currentcolor; text-decoration-color: rgba(79, 110, 176, 0.38);">10 / 5</a> = 2</div>
+<div class="speakRow"><button class="speakBtn" onclick="speak(&quot;These two ratios have the same value. They are called equivalent ratios.&quot;)">🔊</button><p>These two ratios have the same value. They are called <b>equivalent ratios</b>.&nbsp;</p></div>
+</section>
+
+<section class="card"><h2>The rule</h2><div class="ruleBox"><button class="speakBtn" onclick="speak('Rule. A ratio compares two quantities. A ratio can be written with words, with a colon, or as a fraction. If the quantities are A and B, then the ratio A to B is A over B.')">🔊</button><br><br><b>Rule:</b> A ratio compares two quantities. A ratio can be written with words, with a colon, or as a fraction. If the quantities are <b>A</b> and <b>B</b>, then the ratio <b>A to B</b> is <b>A / B</b>.</div></section>
+
+<section class="card"><h2>Exercises</h2><p class="smallHelp">Type ratios with a colon, like <b>5:2</b>. Equivalent answers such as <b>10:5</b>, <b>2:1</b>, <b><a href="x-apple-data-detectors://4" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="4" style="color: currentcolor; text-decoration-color: rgba(107, 124, 148, 0.38);">10/5</a></b>, or <b>2</b> are accepted when they mean the same value.</p>
+<div class="exercise"><div class="prompt">1) Write “3 to 1” as a ratio.</div><button class="speakBtn" onclick="speak('Write three to one as a ratio.')">🔊</button><br><input class="answerBox" id="q1"><button class="doneBtn" onclick="checkAny('q1',[&quot;3:1&quot;],'f1')">Done</button><div id="f1" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">2) Write “5 per 2” as a ratio.</div><button class="speakBtn" onclick="speak('Write five per two as a ratio.')">🔊</button><br><input class="answerBox" id="q2"><button class="doneBtn" onclick="checkAny('q2',[&quot;5:2&quot;],'f2')">Done</button><div id="f2" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">3) 4 cats and 2 dogs. What is the ratio of cats to dogs?</div><button class="speakBtn" onclick="speak('Four cats and two dogs. What is the ratio of cats to dogs?')">🔊</button><br><input class="answerBox" id="q3"><button class="doneBtn" onclick="checkAny('q3',[&quot;4:2&quot;,&quot;2:1&quot;,&quot;2&quot;],'f3')">Done</button><div id="f3" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">4) 6 red blocks and 3 blue blocks. What is the ratio of red to blue?</div><button class="speakBtn" onclick="speak('Six red blocks and three blue blocks. What is the ratio of red to blue?')">🔊</button><br><input class="answerBox" id="q4"><button class="doneBtn" onclick="checkAny('q4',[&quot;6:3&quot;,&quot;2:1&quot;,&quot;2&quot;],'f4')">Done</button><div id="f4" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">5) Write 8 : 4 as a fraction.</div><button class="speakBtn" onclick="speak('Write eight to four as a fraction.')">🔊</button><br><input class="answerBox" id="q5"><button class="doneBtn" onclick="checkAny('q5',[&quot;8/4&quot;,&quot;2/1&quot;,&quot;2&quot;],'f5')">Done</button><div id="f5" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">6) Find the value of 8 : 4.</div><button class="speakBtn" onclick="speak('Find the value of eight to four.')">🔊</button><br><input class="answerBox" id="q6"><button class="doneBtn" onclick="checkAny('q6',[&quot;2&quot;],'f6')">Done</button><div id="f6" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">7) If A = 10 and B = 5, find A : B.</div><button class="speakBtn" onclick="speak('If A equals ten and B equals five, find A to B.')">🔊</button><br><input class="answerBox" id="q7"><button class="doneBtn" onclick="checkAny('q7',[&quot;10:5&quot;,&quot;2:1&quot;,&quot;2&quot;],'f7')">Done</button><div id="f7" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">8) If A = 10 and B = 5, find A / B.</div><button class="speakBtn" onclick="speak('If A equals ten and B equals five, find A over B.')">🔊</button><br><input class="answerBox" id="q8"><button class="doneBtn" onclick="checkAny('q8',[&quot;2&quot;,&quot;2.0&quot;,&quot;10/5&quot;,&quot;10:5&quot;,&quot;2:1&quot;],'f8')">Done</button><div id="f8" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">9) Find the value of 15 : 5.</div><button class="speakBtn" onclick="speak('Find the value of fifteen to five.')">🔊</button><br><input class="answerBox" id="q9"><button class="doneBtn" onclick="checkAny('q9',[&quot;3&quot;,&quot;3.0&quot;,&quot;15/5&quot;,&quot;15:5&quot;,&quot;3:1&quot;],'f9')">Done</button><div id="f9" class="feedback"></div></div>
+<div class="exercise"><div class="prompt">10) Write “7 for every 2” as a ratio.</div><button class="speakBtn" onclick="speak('Write seven for every two as a ratio.')">🔊</button><br><input class="answerBox" id="q10"><button class="doneBtn" onclick="checkAny('q10',[&quot;7:2&quot;],'f10')">Done</button><div id="f10" class="feedback"></div></div>
+</section>
+</main>
+
+<div id="celebrate"><div class="big">🎉⚖️🎺</div><h2>You are a Winner!</h2><p>You learned that ratios compare quantities and can be written as fractions.</p><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank">❤️ Support this work!</a></div>
+
+<script>
+let correct=0,alreadyCelebrated=false;
+function speak(text){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=.92;window.speechSynthesis.speak(u)}
+function normalize(s){
+  return String(s).trim().toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/：/g,':')
+    .replace(/÷/g,'/')
+    .replace(/,/g,'');
+}
+function numericValue(s){
+  s=normalize(s);
+  if(s.includes(':')){
+    const parts=s.split(':');
+    if(parts.length===2 && parts[1]!=='' && !isNaN(parts[0]) && !isNaN(parts[1])) return Number(parts[0])/Number(parts[1]);
+  }
+  if(s.includes('/')){
+    const parts=s.split('/');
+    if(parts.length===2 && parts[1]!=='' && !isNaN(parts[0]) && !isNaN(parts[1])) return Number(parts[0])/Number(parts[1]);
+  }
+  if(!isNaN(s) && s!=='') return Number(s);
+  return NaN;
+}
+function checkAny(id,answers,feedbackId){const box=document.getElementById(id),f=document.getElementById(feedbackId);let ok=answers.map(normalize).includes(normalize(box.value)); if(!ok){const v=numericValue(box.value); ok=answers.some(a=>!isNaN(v)&&Math.abs(v-numericValue(a))<1e-9);}if(ok){f.innerHTML='✅ Correct!';f.style.color='#16a34a';box.style.background='#bbf7d0';if(!box.dataset.done){box.dataset.done='1';correct++}}else{f.innerHTML='❌ Try again. Think of the ratio as a fraction.';f.style.color='#dc2626';box.style.background='#fecaca'}if(correct===10&&!alreadyCelebrated){alreadyCelebrated=true;celebrate()}}
+function celebrate(){document.getElementById('celebrate').style.display='flex';flashScreen();launchConfetti();playTrumpets();setTimeout(()=>{document.getElementById('celebrate').style.display='none'},9000)}
+function flashScreen(){const f=document.getElementById('flashOverlay');f.classList.remove('flashOn');void f.offsetWidth;f.classList.add('flashOn')}
+function launchConfetti(){const pieces=['🎉','🎊','✨','⭐','🎈','🥳'];for(let i=0;i<110;i++){const c=document.createElement('div');c.className='confetti';c.textContent=pieces[Math.floor(Math.random()*pieces.length)];c.style.left=(Math.random()*100)+'vw';c.style.fontSize=(24+Math.random()*30)+'px';c.style.animationDuration=(3+Math.random()*4)+'s';c.style.animationDelay=(Math.random()*0.8)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),8000)}}
+function playTrumpets(){try{const AudioContext=window.AudioContext||window.webkitAudioContext;const ctx=new AudioContext();if(ctx.state==='suspended')ctx.resume();function tone(freq,start,dur,type,vol){const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,ctx.currentTime+start);gain.gain.setValueAtTime(0.0001,ctx.currentTime+start);gain.gain.exponentialRampToValueAtTime(vol,ctx.currentTime+start+0.03);gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+start+dur);osc.connect(gain);gain.connect(ctx.destination);osc.start(ctx.currentTime+start);osc.stop(ctx.currentTime+start+dur+0.05)}[523,659,784,1046,784,1046,1318].forEach((n,i)=>{tone(n,i*0.18,0.35,'sawtooth',0.35);tone(n*1.01,i*0.18,0.35,'square',0.10)})}catch(e){}}
+</script>
+
+<script id="mw-multi-answer-patch">
+function mwAccepted(inp){const many=inp.getAttribute("data-answers");if(many)return many.split("|").map(x=>x.trim()).filter(Boolean);const one=inp.getAttribute("data-answer")||"";return one?[one]:[]}
+function mwNorm(v){return String(v).trim()}
+if(typeof finishRow==="function"){
+  finishRow=function(r){
+    const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+    let ok=true;
+    inputs.forEach(inp=>{const val=mwNorm(inp.value);const answers=mwAccepted(inp);inp.classList.remove("ok","bad");if(answers.includes(val))inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});
+    const msg=document.getElementById("rowMsg_"+r);
+    if(ok){
+      inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=mwAccepted(inp)[0]||inp.value;inp.replaceWith(s)});
+      if(msg){msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';}
+      const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";
+      if(typeof playGood==="function")playGood();if(typeof flash==="function")flash("good");if(typeof maybeCelebrateWorksheet==="function")maybeCelebrateWorksheet();
+    }else{
+      if(msg){msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";}
+      if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
+    }
+  }
+}</script></body></html>
