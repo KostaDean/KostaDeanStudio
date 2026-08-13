@@ -1488,14 +1488,37 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
 });
 function enterMathPlayground(){
-  startThemeMusic();
-  const saved=getSavedPath();
-  if(saved && Array.isArray(saved.files) && saved.files.length){
-    document.body.classList.remove('homeMode');
-    document.body.style.overflow='';
-    if(startAssignedLearningPath(saved)) return;
+  const audio=document.getElementById('mathPlaygroundTheme');
+
+  function enterNow(){
+    revealLessonLibrary();
   }
-  revealLessonLibrary();
+
+  /* If there is no theme audio, or it has already played to completion,
+     enter the lesson library immediately. */
+  if(!audio || (themeMusicStarted && audio.ended)){
+    enterNow();
+    return;
+  }
+
+  /* Keep the playground visible while the opening theme plays.
+     The lessons open only after the song finishes. */
+  const finishEntrance=()=>{
+    audio.removeEventListener('ended',finishEntrance);
+    enterNow();
+  };
+
+  audio.addEventListener('ended',finishEntrance,{once:true});
+  startThemeMusic();
+
+  /* If Safari refuses audio playback for any reason, do not trap the student
+     on the opening page forever. */
+  setTimeout(()=>{
+    if(!themeMusicStarted && audio.paused){
+      try{audio.removeEventListener('ended',finishEntrance);}catch(e){}
+      enterNow();
+    }
+  },1200);
 }
 function openLessonSearchFromHome(){
   revealLessonLibrary();
