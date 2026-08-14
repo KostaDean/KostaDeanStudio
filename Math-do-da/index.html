@@ -796,6 +796,40 @@ body.homeMode #playgroundHome > .notice{
   body.homeMode .frontSearchBtn{left:2.5%!important;width:34%!important;}
 }
 
+
+/* During an active incomplete Learning Path, keep Student dominant and move
+   Parent/Admin to small, discreet side buttons. Functionality is unchanged. */
+body.homeMode.pathActiveHome .frontModeButtons{
+  position:absolute!important;
+  inset:auto 0 2.2% 0!important;
+  width:100%!important;
+  height:0!important;
+  transform:none!important;
+  display:block!important;
+  pointer-events:none!important;
+}
+body.homeMode.pathActiveHome .frontParentBtn,
+body.homeMode.pathActiveHome .frontAdminBtn{
+  position:absolute!important;
+  top:0!important;
+  width:auto!important;
+  min-width:86px!important;
+  height:auto!important;
+  padding:8px 12px!important;
+  border-radius:999px!important;
+  opacity:1!important;
+  background:rgba(255,255,255,.88)!important;
+  color:#134e8a!important;
+  border:2px solid rgba(19,78,138,.22)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.16)!important;
+  font-size:0.92rem!important;
+  font-weight:900!important;
+  line-height:1!important;
+  pointer-events:auto!important;
+}
+body.homeMode.pathActiveHome .frontParentBtn{left:3.2%!important;}
+body.homeMode.pathActiveHome .frontAdminBtn{right:3.2%!important;}
+
 </style>
 </head>
 <body class="homeMode">
@@ -960,6 +994,18 @@ function updateParentPathStatus(){
   if(saved && saved.name) text+=' Saved path: “'+saved.name+'”.';
   if(parentPathStatus) parentPathStatus.textContent=text;
 }
+
+function hasActiveIncompleteLearningPath(){
+  const saved=getSavedPath();
+  if(!saved || !Array.isArray(saved.files) || !saved.files.length) return false;
+  const completed=Array.isArray(saved.completed)?saved.completed:[];
+  return completed.length < saved.files.length;
+}
+function refreshHomeAccessMode(){
+  const active=hasActiveIncompleteLearningPath();
+  document.body.classList.toggle('pathActiveHome',active);
+}
+
 function lessonIsSelected(file){return getPathDraft().includes(file)}
 const createBtn=document.getElementById('createBtn'), nameSaveBtn=document.getElementById('nameSaveBtn'), clearBtn=document.getElementById('clearBtn'), modal=document.getElementById('modal'), modalContent=document.getElementById('modalContent');
 let mode='categories', pickSet=new Set(), admin=false;
@@ -1285,6 +1331,7 @@ function saveLearningPath(){
   }
   updateParentPathStatus();
   renderLessons(searchBox.value);
+  refreshHomeAccessMode();
   openModal('<div style="text-align:center;padding:12px 4px"><h2 style="color:#16a34a;font-size:2rem;margin:0 0 12px">✓ Learning Path Saved</h2><p style="font-size:1.15rem;font-weight:800;line-height:1.45">“'+escapeHtml(name)+'” is ready.<br>The learner can now return Home and tap ENTER.</p><div class="modalBtns" style="justify-content:center"><button id="savedPathDoneBtn" class="good">Done</button></div></div>');
   document.getElementById('savedPathDoneBtn').addEventListener('click',closeModal);
 }
@@ -1395,6 +1442,7 @@ function saveCompletedLesson(file){
     history[idx]=JSON.parse(JSON.stringify(saved));
     setPathHistory(history);
   }
+  refreshHomeAccessMode();
 }
 function startAssignedLearningPath(saved){
   if(!saved || !Array.isArray(saved.files) || !saved.files.length) return false;
@@ -1422,6 +1470,7 @@ function revealLessonLibrary(){
 function returnHome(){
   closeLessonPlayer();
   closeModal();
+  refreshHomeAccessMode();
   document.body.classList.add('homeMode');
   document.body.style.overflow='hidden';
   window.scrollTo(0,0);
@@ -1531,7 +1580,7 @@ function openLessonSearchFromHome(){
   },120);
 }
 window.openLessonSearchFromHome=openLessonSearchFromHome; window.startThemeMusic=startThemeMusic; window.toggleThemeMusic=toggleThemeMusic; window.enterMathPlayground=enterMathPlayground; window.parentEnter=parentEnter; window.frontAdminEnter=frontAdminEnter; window.returnHome=returnHome; window.openStudentProgress=openStudentProgress; window.openPathHistory=openPathHistory; window.openAdminAccess=openAdminAccess; window.checkPasswordAndShowCategories=checkPasswordAndShowCategories; window.openLearningPathSave=openLearningPathSave; window.saveLearningPath=saveLearningPath; window.reviewSelectedLessons=reviewSelectedLessons; window.removeDraftLesson=removeDraftLesson; window.selectCurrentLessonForPath=selectCurrentLessonForPath; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
-populatePlaylists(); renderLessons(); updateStatus(); updateParentPathStatus(); document.body.classList.add('homeMode'); document.body.style.overflow='hidden';
+populatePlaylists(); renderLessons(); updateStatus(); updateParentPathStatus(); refreshHomeAccessMode(); document.body.classList.add('homeMode'); document.body.style.overflow='hidden';
 </script>
 <script src="parent-contact.js"></script>
 </body>
