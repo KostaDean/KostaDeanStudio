@@ -1475,6 +1475,47 @@ function closeParentWinnerOverlay(){
 
 window.closeParentWinnerOverlay=closeParentWinnerOverlay;
 
+function afterWinnerReward(callback){
+  const frame=document.getElementById('lessonFrame');
+  if(!frame){ callback(); return; }
+
+  let doc=null;
+  try{ doc=frame.contentDocument || frame.contentWindow.document; }catch(e){ callback(); return; }
+  if(!doc){ callback(); return; }
+
+  // A lesson may start its Winner song a fraction of a second after the
+  // WinnerWindow appears. Give it a short chance to begin, then wait until
+  // every playing audio track in the lesson has completely ended.
+  const started=Date.now();
+  let finished=false;
+  const finish=()=>{ if(finished) return; finished=true; callback(); };
+
+  function waitForPlayingAudio(){
+    let audios=[];
+    try{ audios=[...doc.querySelectorAll('audio')]; }catch(e){ finish(); return; }
+    const playing=audios.filter(a=>!a.paused && !a.ended && a.currentTime>0);
+
+    if(playing.length){
+      let remaining=playing.length;
+      const oneDone=()=>{ remaining--; if(remaining<=0) finish(); };
+      playing.forEach(a=>{
+        if(a.ended || a.paused){ oneDone(); return; }
+        a.addEventListener('ended',oneDone,{once:true});
+        a.addEventListener('error',oneDone,{once:true});
+      });
+      return;
+    }
+
+    if(Date.now()-started < 1800){
+      setTimeout(waitForPlayingAudio,120);
+    }else{
+      finish();
+    }
+  }
+
+  waitForPlayingAudio();
+}
+
 function checkWinnerAndAutoNext(){
   if(activeWinSeen) return;
   const frame=document.getElementById('lessonFrame');
@@ -1501,27 +1542,36 @@ function checkWinnerAndAutoNext(){
   if(celebrationWords || visibleCelebration){
     activeWinSeen=true;
     if(activePathTimer){clearInterval(activePathTimer);activePathTimer=null;}
-    if(parentPreviewMode){
-      showParentWinnerOverlay();
-      if(note) note.textContent=lessonIsSelected((currentPreviewLesson||{}).file)?'✓ This lesson is already selected.':'Winner! Use the MathWorks panel to select this lesson for the Learning Path.';
-      return;
-    }
-    const completedLesson=activePathLessons[activeLessonIndex];
-    if(completedLesson) saveCompletedLesson(completedLesson.file);
-    let seconds=4;
-    if(note) note.textContent=(activeLessonIndex<activePathLessons.length-1)?'✓ Lesson complete! Next lesson opens in '+seconds+' seconds…':'✓ Learning Path complete!';
-    if(activeLessonIndex>=activePathLessons.length-1){
-      setTimeout(()=>{ closeLessonPlayer(); alert('Learning Path complete!'); returnHome(); },1200);
-      return;
-    }
-    activeCountdownTimer=setInterval(()=>{
-      seconds--;
-      if(note) note.textContent='Winner! Next lesson opens in '+seconds+' seconds…';
-      if(seconds<=0){
-        clearInterval(activeCountdownTimer);activeCountdownTimer=null;
-        nextPathLesson();
+
+    // Nothing from the index interrupts the Winner reward. Parent controls,
+    // completion notices, countdowns and navigation all wait for the lesson's
+    // Winner audio to finish naturally.
+    afterWinnerReward(()=>{
+      if(parentPreviewMode){
+        showParentWinnerOverlay();
+        if(note) note.textContent=lessonIsSelected((currentPreviewLesson||{}).file)?'✓ This lesson is already selected.':'Winner! Use the MathWorks panel to select this lesson for the Learning Path.';
+        return;
       }
-    },1000);
+
+      const completedLesson=activePathLessons[activeLessonIndex];
+      if(completedLesson) saveCompletedLesson(completedLesson.file);
+      let seconds=4;
+      if(note) note.textContent=(activeLessonIndex<activePathLessons.length-1)?'✓ Lesson complete! Next lesson opens in '+seconds+' seconds…':'✓ Learning Path complete!';
+
+      if(activeLessonIndex>=activePathLessons.length-1){
+        setTimeout(()=>{ closeLessonPlayer(); alert('Learning Path complete!'); returnHome(); },500);
+        return;
+      }
+
+      activeCountdownTimer=setInterval(()=>{
+        seconds--;
+        if(note) note.textContent='Winner! Next lesson opens in '+seconds+' seconds…';
+        if(seconds<=0){
+          clearInterval(activeCountdownTimer);activeCountdownTimer=null;
+          nextPathLesson();
+        }
+      },1000);
+    });
   }
 }
 function makeLessonCard(lesson){
