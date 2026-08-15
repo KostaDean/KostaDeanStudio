@@ -926,15 +926,110 @@ body.homeMode.pathActiveHome .frontAdminBtn{
   }
 }
 
+
+
+/* ============================================================
+   Math-do-da HOME + WINNER compatibility patch — 2026-08-15
+   1) Show the ENTIRE opening artwork (never crop it on tall phones).
+   2) Keep each lesson's own current WinnerWindow visible.
+      The index supplies only a small Learning Path control card,
+      instead of covering/replacing the lesson WinnerWindow.
+   ============================================================ */
+body.homeMode #playgroundHome .heroBanner img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:linear-gradient(180deg,#78d7ff 0%,#e8fbff 55%,#fff9db 100%)!important;
+}
+
+/* Do NOT dim or replace the lesson WinnerWindow. */
+.parentWinnerOverlay{
+  position:absolute!important;
+  inset:auto 0 0 0!important;
+  z-index:2147483646!important;
+  display:none;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important;
+  background:transparent!important;
+  pointer-events:none!important;
+}
+.parentWinnerOverlay.show{display:flex!important;}
+.parentWinnerCard{
+  width:min(94vw,520px)!important;
+  max-height:42vh!important;
+  overflow:auto!important;
+  background:rgba(255,255,255,.97)!important;
+  border:3px solid #16a34a!important;
+  border-radius:20px!important;
+  padding:12px!important;
+  box-shadow:0 12px 34px rgba(15,23,42,.26)!important;
+  text-align:center!important;
+  pointer-events:auto!important;
+}
+.parentWinnerCard h2{
+  margin:0 0 3px!important;
+  font-size:clamp(1.05rem,4.5vw,1.35rem)!important;
+  color:#166534!important;
+}
+.parentWinnerCard p{
+  margin:2px 0 7px!important;
+  font-size:clamp(.88rem,3.7vw,1rem)!important;
+}
+.parentWinnerQuestion{margin-bottom:9px!important;}
+.timesTableAssignmentOptions{
+  margin:5px 0 9px!important;
+  padding:8px 10px!important;
+  border:2px solid #93c5fd!important;
+  border-radius:14px!important;
+}
+.timesTableAssignmentOptions label{margin:4px 0!important;font-size:.92rem!important;}
+.timesTableAssignmentOptions select{padding:7px!important;font-size:.92rem!important;}
+.parentWinnerSelect{
+  min-height:48px!important;
+  margin:0 0 7px!important;
+  border-radius:14px!important;
+  font:900 clamp(15px,4vw,19px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+.parentWinnerClose{
+  min-height:42px!important;
+  border-radius:14px!important;
+  font:850 clamp(14px,3.7vw,17px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+
+
+/* ============================================================
+   Math-do-da HOME IMAGE FIT FIX
+   Keep the complete Math-do-da-playground.png visible on phones.
+   This intentionally overrides earlier experimental home-image rules only.
+   ============================================================ */
+body.homeMode,
+body.homeMode #playgroundHome,
+body.homeMode #playgroundHome .heroBanner{
+  background:#78d7ff!important;
+}
+body.homeMode #playgroundHome .heroBanner img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#78d7ff!important;
+}
+
+/* Keep transparent Student/Parent/Admin hit areas aligned with the full artwork. */
+
 </style>
-  <link rel="preload" as="image" href="Math-do-da-playground.png?v=20260815-hero2">
+  <link rel="preload" as="image" href="Math-do-da-playground.png?v=20260815-hero3">
 </head>
 <body class="homeMode">
 <audio id="mathPlaygroundTheme" src="Math-do-da-song.mp3" preload="auto"></audio>
 <button id="musicToggle" class="musicToggle" type="button" onclick="toggleThemeMusic()" aria-pressed="false">🎵 Music On</button>
 <header id="playgroundHome" class="playgroundHome">
   <div class="heroBanner">
-    <img id="mathDoDaHeroImage" src="Math-do-da-playground.png?v=20260815-hero2" alt="KostaDean.studio Math-do-da! playground entrance">
+    <img id="mathDoDaHeroImage" src="Math-do-da-playground.png?v=20260815-full-image-3" alt="KostaDean.studio Math-do-da! playground entrance">
     <div class="enterOverlay">
       <button class="enterBtn" onclick="enterMathPlayground()" aria-label="Student — tap to start">Student</button>
     </div>
@@ -1178,7 +1273,7 @@ function openLessonPlayer(){
     player.className='lessonPlayer';
     document.body.appendChild(player);
   }
-  player.innerHTML=`<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe><div id="parentWinnerOverlay" class="parentWinnerOverlay" aria-hidden="true"><div class="parentWinnerCard" role="dialog" aria-modal="true" aria-labelledby="parentWinnerTitle"><h2 id="parentWinnerTitle">🏆 Lesson Complete!</h2><p id="parentWinnerLessonName"></p><p class="parentWinnerQuestion">Add this lesson to the current Learning Path?</p>
+  player.innerHTML=`<div class="lessonPlayerTop"><button class="secondary" onclick="closeLessonPlayer()">Back to Lessons</button><div class="lessonPlayerTitle"></div><button id="prevLessonBtn" class="secondary" onclick="previousPathLesson()">Back</button><button id="nextLessonBtn" class="good" onclick="nextPathLesson()">Next Lesson</button><div id="lessonPlayerNote" class="lessonPlayerNote"></div></div><iframe id="lessonFrame" class="lessonFrame" title="MathWorks lesson"></iframe><div id="parentWinnerOverlay" class="parentWinnerOverlay" aria-hidden="true"><div class="parentWinnerCard" role="dialog" aria-modal="true" aria-labelledby="parentWinnerTitle"><h2 id="parentWinnerTitle">Learning Path</h2><p id="parentWinnerLessonName"></p><p class="parentWinnerQuestion">Add this completed lesson to the current Learning Path?</p>
 <div id="timesTableAssignmentOptions" class="timesTableAssignmentOptions hidden">
   <label>Times Table practice
     <select id="timesTableModeChoice" onchange="updateTimesTableRowChoice()">
