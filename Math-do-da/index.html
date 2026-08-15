@@ -998,6 +998,34 @@ body.homeMode #playgroundHome .heroBanner img{
   font:850 clamp(14px,3.7vw,17px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
 }
 
+
+
+/* ============================================================
+   Student / Parent Library separation — 2026-08-15
+   Student with no active Learning Path sees a clean All Lessons Library.
+   Parent-only controls live in a collapsible Parent Tools pane.
+   ============================================================ */
+.parentToolsToggle{
+  background:#2563eb;
+  color:white;
+  box-shadow:0 6px 16px rgba(37,99,235,.22);
+}
+body.studentLibraryMode #parentPathPanel,
+body.studentLibraryMode #comments,
+body.studentLibraryMode #parentInstructionsTopBtn,
+body.studentLibraryMode #parentToolsToggle{
+  display:none!important;
+}
+body.parentLibraryMode #parentToolsToggle{
+  display:inline-block!important;
+}
+body.parentLibraryMode #parentPathPanel.parentPaneHidden{
+  display:none!important;
+}
+body.parentLibraryMode #comments.parentPaneHidden{
+  display:none!important;
+}
+
 </style>
   <link rel="preload" as="image" href="Math-do-da-playground.png?v=20260815-hero3">
 </head>
@@ -1024,7 +1052,7 @@ body.homeMode #playgroundHome .heroBanner img{
 </header>
 
 <main id="lessonsStart" class="hiddenUntilEnter">
-  <div class="lessonPageTop"><button class="homeBtn" onclick="returnHome()">🏠 Home</button><button class="parentBtn" onclick="openInstructions()">Instructions to Parents</button></div>
+  <div class="lessonPageTop"><button class="homeBtn" onclick="returnHome()">🏠 Home</button><button id="parentInstructionsTopBtn" class="parentBtn" onclick="openInstructions()">Instructions to Parents</button><button id="parentToolsToggle" class="parentToolsToggle hidden" type="button" onclick="toggleParentTools()">Hide Parent Tools</button></div>
   <div class="toolbar">
     <input id="searchBox" class="search" type="search" placeholder="Search lessons: fractions, graphs, percents..." />
   </div>
@@ -1779,9 +1807,56 @@ function revealLessonLibrary(){
   document.body.style.overflow='';
   window.scrollTo({top:0,behavior:'smooth'});
 }
+function setLibraryMode(appMode){
+  const body=document.body;
+  const panel=document.getElementById('parentPathPanel');
+  const comments=document.getElementById('comments');
+  const toggle=document.getElementById('parentToolsToggle');
+
+  body.classList.remove('studentLibraryMode','parentLibraryMode');
+
+  if(appMode==='parent'){
+    body.classList.add('parentLibraryMode');
+    if(panel) panel.classList.remove('parentPaneHidden');
+    if(comments) comments.classList.remove('parentPaneHidden');
+    if(toggle){
+      toggle.classList.remove('hidden');
+      toggle.textContent='Hide Parent Tools';
+    }
+  }else{
+    body.classList.add('studentLibraryMode');
+    if(panel) panel.classList.add('parentPaneHidden');
+    if(comments) comments.classList.add('parentPaneHidden');
+    if(toggle) toggle.classList.add('hidden');
+  }
+
+  // Student library always opens on All Lessons, never on a prior Parent category.
+  if(appMode==='student'){
+    try{
+      categoryMenu.value='all';
+      mode='categories';
+      renderLessons(searchBox.value);
+      if(listTitle) listTitle.textContent='All Lessons';
+    }catch(e){}
+  }
+}
+
+function toggleParentTools(){
+  const panel=document.getElementById('parentPathPanel');
+  const comments=document.getElementById('comments');
+  const toggle=document.getElementById('parentToolsToggle');
+  if(!panel || !toggle) return;
+
+  const hiding=!panel.classList.contains('parentPaneHidden');
+  panel.classList.toggle('parentPaneHidden',hiding);
+  if(comments) comments.classList.toggle('parentPaneHidden',hiding);
+  toggle.textContent=hiding?'Show Parent Tools':'Hide Parent Tools';
+}
+window.toggleParentTools=toggleParentTools;
 function returnHome(){
   closeLessonPlayer();
   closeModal();
+  document.body.classList.remove('studentLibraryMode','parentLibraryMode');
   document.body.classList.add('homeMode');
   document.body.style.overflow='hidden';
   window.scrollTo(0,0);
@@ -1841,6 +1916,7 @@ function runHomeActionAfterTheme(action){
 function parentEnter(){
   runHomeActionAfterTheme(()=>{
     revealLessonLibrary();
+    setLibraryMode('parent');
     setTimeout(openInstructions,120);
   });
 }
@@ -1848,6 +1924,7 @@ function parentEnter(){
 function frontAdminEnter(){
   runHomeActionAfterTheme(()=>{
     revealLessonLibrary();
+    setLibraryMode('parent');
     setTimeout(openAdminAccess,120);
   });
 }
@@ -1863,8 +1940,9 @@ function enterMathPlayground(){
       if(startAssignedLearningPath(saved)) return;
     }
 
-    // No assigned path yet: fall back to the lesson library.
+    // No active assigned path: show a clean All Lessons Library only.
     revealLessonLibrary();
+    setLibraryMode('student');
   });
 }
 
