@@ -1276,9 +1276,111 @@ function openLessonPlayer(){
   player.querySelector('#nextLessonBtn').textContent=activeLessonIndex>=activePathLessons.length-1?'Finish':'Next Lesson';
   document.body.style.overflow='hidden';
   const frame=player.querySelector('#lessonFrame');
-  frame.onload=()=>startWinnerWatch();
+  frame.onload=()=>{
+    enforceAssignedLessonOptions();
+    startWinnerWatch();
+  };
   frame.src=lessonLaunchURL(lesson);
 }
+
+function enforceAssignedLessonOptions(){
+  if(parentPreviewMode) return;
+
+  const lesson=activePathLessons[activeLessonIndex];
+  if(!lesson || lesson.file!=='TimesTable.html') return;
+
+  const saved=getSavedPath();
+  const option=saved&&saved.lessonOptions?saved.lessonOptions[lesson.file]:null;
+  if(!option) return;
+
+  const frame=document.getElementById('lessonFrame');
+  if(!frame) return;
+
+  let doc, win;
+  try{
+    doc=frame.contentDocument || frame.contentWindow.document;
+    win=frame.contentWindow;
+  }catch(e){ return; }
+  if(!doc) return;
+
+  // Find the Times Table practice selector by its four recognizable choices,
+  // without depending on a particular element id in TimesTable.html.
+  const selects=[...doc.querySelectorAll('select')];
+  const modeSelect=selects.find(sel=>{
+    const words=[...sel.options].map(o=>(o.textContent||'').trim().toLowerCase()).join('|');
+    return words.includes('random') &&
+           words.includes('by row in order') &&
+           words.includes('by row random') &&
+           words.includes('missing factor');
+  });
+
+  if(modeSelect){
+    const wanted=option.mode||'random';
+    const byValue=[...modeSelect.options].find(o=>o.value===wanted);
+    const labels={
+      random:'random',
+      rowOrder:'by row in order',
+      rowRandom:'by row random',
+      missingFactor:'missing factor'
+    };
+    const byText=[...modeSelect.options].find(
+      o=>(o.textContent||'').trim().toLowerCase()===labels[wanted]
+    );
+    const target=byValue||byText;
+    if(target) modeSelect.value=target.value;
+
+    // Let the lesson apply the assigned choice once, then lock it.
+    try{
+      modeSelect.dispatchEvent(new win.Event('change',{bubbles:true}));
+    }catch(e){}
+    modeSelect.disabled=true;
+    modeSelect.setAttribute('aria-label','Practice selected by parent');
+    modeSelect.title='Selected by parent';
+  }
+
+  // If a row was assigned, find the row selector (1 through 10), set it,
+  // trigger the lesson's own change logic, and lock it too.
+  if((option.mode==='rowOrder'||option.mode==='rowRandom') && option.row){
+    const rowSelect=selects.find(sel=>{
+      if(sel===modeSelect) return false;
+      const vals=[...sel.options].map(o=>String(o.value||o.textContent).trim());
+      return vals.includes('1') && vals.includes('10') && vals.length>=10;
+    });
+    if(rowSelect){
+      rowSelect.value=String(option.row);
+      try{
+        rowSelect.dispatchEvent(new win.Event('change',{bubbles:true}));
+      }catch(e){}
+      rowSelect.disabled=true;
+      rowSelect.setAttribute('aria-label','Row selected by parent');
+      rowSelect.title='Selected by parent';
+    }
+  }
+
+  // Re-apply shortly after load in case TimesTable initializes its controls
+  // a fraction later than the iframe load event.
+  setTimeout(()=>{
+    try{
+      if(modeSelect){
+        modeSelect.disabled=true;
+        const wanted=option.mode||'random';
+        const labels={random:'random',rowOrder:'by row in order',rowRandom:'by row random',missingFactor:'missing factor'};
+        const target=[...modeSelect.options].find(o=>o.value===wanted) ||
+          [...modeSelect.options].find(o=>(o.textContent||'').trim().toLowerCase()===labels[wanted]);
+        if(target) modeSelect.value=target.value;
+      }
+      if((option.mode==='rowOrder'||option.mode==='rowRandom') && option.row){
+        const rowSelect=[...doc.querySelectorAll('select')].find(sel=>{
+          if(sel===modeSelect) return false;
+          const vals=[...sel.options].map(o=>String(o.value||o.textContent).trim());
+          return vals.includes('1') && vals.includes('10') && vals.length>=10;
+        });
+        if(rowSelect){ rowSelect.value=String(option.row); rowSelect.disabled=true; }
+      }
+    }catch(e){}
+  },250);
+}
+
 function closeLessonPlayer(){
   clearLessonTimers();
   let player=document.getElementById('lessonPlayer');
@@ -1607,9 +1709,14 @@ function startAssignedLearningPath(saved){
   renderLessons(searchBox.value);
   activePathLessons=saved.files.map(f=>LESSONS.find(l=>l.file===f)).filter(Boolean);
   if(!activePathLessons.length) return false;
+
   const completed=Array.isArray(saved.completed)?saved.completed:[];
-  let firstIncomplete=activePathLessons.findIndex(l=>!completed.includes(l.file));
-  if(firstIncomplete<0) firstIncomplete=0;
+  const firstIncomplete=activePathLessons.findIndex(l=>!completed.includes(l.file));
+
+  // A finished assignment is no longer an active Student path.
+  // Keep it saved for Parent Progress/History, but send Student to the Lesson Library.
+  if(firstIncomplete<0) return false;
+
   activeLessonIndex=firstIncomplete;
   parentPreviewMode=false;
   currentPreviewLesson=null;
