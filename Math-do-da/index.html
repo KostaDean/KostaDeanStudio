@@ -998,29 +998,6 @@ body.homeMode #playgroundHome .heroBanner img{
   font:850 clamp(14px,3.7vw,17px)/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
 }
 
-
-/* ============================================================
-   Math-do-da HOME IMAGE FIT FIX
-   Keep the complete Math-do-da-playground.png visible on phones.
-   This intentionally overrides earlier experimental home-image rules only.
-   ============================================================ */
-body.homeMode,
-body.homeMode #playgroundHome,
-body.homeMode #playgroundHome .heroBanner{
-  background:#78d7ff!important;
-}
-body.homeMode #playgroundHome .heroBanner img{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  object-fit:contain!important;
-  object-position:center center!important;
-  background:#78d7ff!important;
-}
-
-/* Keep transparent Student/Parent/Admin hit areas aligned with the full artwork. */
-
 </style>
   <link rel="preload" as="image" href="Math-do-da-playground.png?v=20260815-hero3">
 </head>
@@ -1029,7 +1006,7 @@ body.homeMode #playgroundHome .heroBanner img{
 <button id="musicToggle" class="musicToggle" type="button" onclick="toggleThemeMusic()" aria-pressed="false">🎵 Music On</button>
 <header id="playgroundHome" class="playgroundHome">
   <div class="heroBanner">
-    <img id="mathDoDaHeroImage" src="Math-do-da-playground.png?v=20260815-full-image-3" alt="KostaDean.studio Math-do-da! playground entrance">
+    <img id="mathDoDaHeroImage" src="Math-do-da-playground.png?v=20260815-hero3" alt="KostaDean.studio Math-do-da! playground entrance">
     <div class="enterOverlay">
       <button class="enterBtn" onclick="enterMathPlayground()" aria-label="Student — tap to start">Student</button>
     </div>
@@ -1720,6 +1697,16 @@ function frontAdminEnter(){
 
 function enterMathPlayground(){
   runHomeActionAfterTheme(()=>{
+    const saved=getSavedPath();
+
+    // STUDENT flow:
+    // If a Learning Path has been saved on this device, go straight to
+    // the first unfinished assigned lesson. Do not expose the Parent page.
+    if(saved && Array.isArray(saved.files) && saved.files.length){
+      if(startAssignedLearningPath(saved)) return;
+    }
+
+    // No assigned path yet: fall back to the lesson library.
     revealLessonLibrary();
   });
 }
