@@ -597,34 +597,24 @@ if(typeof finishRow==="function"){
   }
 }</script>
 
+
 <script src="MathWorksWinner.js"></script>
 <script>
-/* Math-do-da Batch 5: route the older worksheet completion
-   into the common separate WinnerWindow + full Winner song. */
+/* Batch 5 v2: send either legacy completion style to the common WinnerWindow. */
 (function(){
-  let mwCommonWinnerShown = false;
-  const legacyCelebrate =
-    (typeof window.maybeCelebrateWorksheet === "function")
-      ? window.maybeCelebrateWorksheet
-      : null;
-
-  window.maybeCelebrateWorksheet = function(){
-    const remaining = document.querySelectorAll(".blankInput");
-    if(remaining.length !== 0 || mwCommonWinnerShown) return;
-
-    mwCommonWinnerShown = true;
-
-    if(window.MathWorksWinner &&
-       typeof window.MathWorksWinner.show === "function"){
-      window.MathWorksWinner.show({
-        message: "You completed this lesson!",
-        continueText: "Continue"
-      });
-    }else if(legacyCelebrate){
-      /* Fallback only if the shared Winner module failed to load. */
-      legacyCelebrate();
+  let shown=false;
+  function showCommonWinner(){
+    if(shown) return;
+    if(document.querySelectorAll('.blankInput').length!==0) return;
+    shown=true;
+    if(window.MathWorksWinner && typeof window.MathWorksWinner.show==='function'){
+      window.MathWorksWinner.show({message:'You completed this lesson!',continueText:'Continue'});
     }
-  };
+  }
+  window.maybeCelebrateWorksheet=showCommonWinner;
+  window.win=showCommonWinner;
+  try{ maybeCelebrateWorksheet=showCommonWinner; }catch(e){}
+  try{ win=showCommonWinner; }catch(e){}
 })();
 </script>
 
