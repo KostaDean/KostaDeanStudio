@@ -58,4 +58,26 @@ document.addEventListener('click',function(e){
   }
 });
 
-</script></body></html>
+</script>\n<!-- Math-do-da lesson consistency patch — Batch 2, 2026-08-16 -->
+<script src="MathWorksWinner.js"></script>
+<script id="mathDoDaLessonConsistencyV2">
+(function(){
+  "use strict";
+  const boxes=Array.from(document.querySelectorAll('.answerBox'));
+  if(!boxes.length) return;
+  boxes.forEach(b=>{b.setAttribute('autocomplete','off');b.setAttribute('enterkeyhint','done');});
+  function tone(){
+    try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const c=window.__mddTransitionAudio||(window.__mddTransitionAudio=new AC());if(c.state==='suspended')c.resume();const t=c.currentTime+.01;[659.25,783.99].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,t+i*.09);g.gain.exponentialRampToValueAtTime(.08,t+i*.09+.02);g.gain.exponentialRampToValueAtTime(.0001,t+i*.09+.16);o.connect(g).connect(c.destination);o.start(t+i*.09);o.stop(t+i*.09+.18);});}catch(e){}
+  }
+  function nextBox(after){const i=boxes.indexOf(after);for(let n=i+1;n<boxes.length;n++)if(!boxes[n].dataset.done)return boxes[n];for(let n=0;n<=i;n++)if(!boxes[n].dataset.done)return boxes[n];return null;}
+  function goNext(after){const n=nextBox(after);if(!n)return;setTimeout(()=>{try{n.focus({preventScroll:true});n.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});if(n.select)n.select();}catch(e){try{n.focus();n.scrollIntoView();}catch(_){}}},420);}
+  function winner(){if(window.__mddWinnerShown)return;window.__mddWinnerShown=true;if(window.MathWorksWinner&&typeof window.MathWorksWinner.show==='function'){window.MathWorksWinner.show({message:'You completed this lesson!',continueText:'Continue',showDonate:true});}else{const x=document.getElementById('celebrate');if(x)x.style.display='flex';}}
+  if(typeof window.celebrate==='function') window.celebrate=winner;
+  if(typeof window.check==='function'){
+    const old=window.check;
+    window.check=function(){const b=document.getElementById(arguments[0]);const was=!!(b&&b.dataset.done);old.apply(this,arguments);if(b&&!was&&b.dataset.done){tone();if(boxes.every(x=>x.dataset.done))winner();else goNext(b);}};
+  }
+  boxes.forEach(b=>b.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const ex=b.closest('.exercise');const done=ex&&ex.querySelector('button.done,button:not(.speakBtn)');if(done){e.preventDefault();done.click();}}));
+})();
+</script>
+</body></html>
