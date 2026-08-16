@@ -600,4 +600,69 @@ if(typeof finishRow==="function"){
       if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
     }
   }
-}</script></body></html>
+}</script>
+<!-- Math-do-da lesson consistency patch — Batch 4, 2026-08-16 -->
+<script src="MathWorksWinner.js"></script>
+<script id="mathDoDaLessonConsistencyV4">
+(function(){
+  "use strict";
+  function boxes(){return [...document.querySelectorAll('.blankInput, .blank')].filter(x=>!x.disabled && x.offsetParent!==null);}
+  function winner(){
+    if(window.__mddWinnerShown)return;
+    window.__mddWinnerShown=true;
+    if(window.MathWorksWinner&&typeof window.MathWorksWinner.show==='function'){
+      window.MathWorksWinner.show({message:'You completed this lesson!',continueText:'Continue',showDonate:true});
+    }
+  }
+  function focusNext(from){
+    const remaining=boxes().filter(x=>x!==from);
+    if(!remaining.length){winner();return;}
+    const next=remaining[0];
+    setTimeout(()=>{try{next.focus({preventScroll:true});next.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});if(next.select)next.select();}catch(e){try{next.focus();next.scrollIntoView();}catch(_){}}},420);
+  }
+  [...document.querySelectorAll('.blankInput, .blank')].forEach(b=>{b.setAttribute('autocomplete','off');b.setAttribute('enterkeyhint','done');});
+
+  if(typeof window.maybeCelebrateWorksheet==='function'){
+    window.maybeCelebrateWorksheet=function(){if(document.querySelectorAll('.blankInput').length===0)winner();};
+  }
+  if(typeof window.celebrate==='function'){
+    window.celebrate=function(){winner();};
+  }
+  if(typeof window.finishRow==='function'){
+    const old=window.finishRow;
+    window.finishRow=function(r){
+      const before=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+      old.apply(this,arguments);
+      const after=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
+      if(before.length && after.length===0){
+        if(document.querySelectorAll('.blankInput').length===0)winner(); else focusNext(before[0]);
+      }
+    };
+  }
+
+  // Run after each lesson's own Done handler. If that handler accepted the answer,
+  // move to the next live answer box; if it was the last one, show the shared Winner.
+  document.querySelectorAll('.doneBtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      setTimeout(()=>{
+        const row=btn.closest('.exercise,.ex,.row')||btn.parentElement;
+        const input=row&&row.querySelector?row.querySelector('.blankInput,.blank'):null;
+        const accepted = !input || input.disabled || input.classList.contains('ok') || input.offsetParent===null;
+        if(!accepted)return;
+        const live=boxes();
+        if(!live.length)winner(); else focusNext(input);
+      },80);
+    });
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'||!e.target.matches('.blankInput,.blank'))return;
+    const input=e.target;
+    let done=null;
+    if(input.classList.contains('blankInput') && input.dataset.row){done=document.querySelector('.doneBtn[data-row="'+input.dataset.row+'"]');}
+    if(!done){const row=input.closest('.exercise,.ex,.row'); if(row)done=row.querySelector('.doneBtn');}
+    if(done){e.preventDefault();done.click();}
+  },true);
+})();
+</script>
+</body></html>
