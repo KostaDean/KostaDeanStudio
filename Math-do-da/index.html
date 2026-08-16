@@ -1234,14 +1234,27 @@ function isSelectedPersonalCategory(){
   let p=idx===null?null:allPlaylists()[idx];
   return !!(p && !p.built);
 }
-let activePathLessons=[], activeLessonIndex=0, activePathTimer=null, activeCountdownTimer=null, activeWinSeen=false;
+let activePathLessons=[], activeLessonIndex=0, activePathTimer=null, activeCountdownTimer=null, activeWinSeen=false, studentFreeBrowseMode=false;
 function startLessonPath(file){
+  const lesson=LESSONS.find(l=>l.file===file);
+  if(!lesson){window.location.href=file;return;}
+
+  // Student browsing All Lessons is ordinary free exploration, never Parent Preview.
+  if(document.body.classList.contains('studentLibraryMode')){
+    parentPreviewMode=false;
+    studentFreeBrowseMode=true;
+    currentPreviewLesson=null;
+    activePathLessons=[lesson];
+    activeLessonIndex=0;
+    openLessonPlayer();
+    return;
+  }
+
+  studentFreeBrowseMode=false;
   let idx=selectedPlaylistIndex();
   let p=idx===null?null:allPlaylists()[idx];
   parentPreviewMode=!(p && !p.built);
   if(parentPreviewMode){
-    const lesson=LESSONS.find(l=>l.file===file);
-    if(!lesson){window.location.href=file;return;}
     currentPreviewLesson=lesson;
     activePathLessons=[lesson];
     activeLessonIndex=0;
@@ -1296,15 +1309,27 @@ function openLessonPlayer(){
   </label>
 </div>
 <button id="parentWinnerSelectBtn" class="parentWinnerSelect" onclick="selectCurrentLessonForPath()">SELECT FOR LEARNING PATH</button><button class="parentWinnerClose" onclick="closeParentWinnerOverlay()">Preview Another Lesson</button></div></div>`;
-  player.querySelector('.lessonPlayerTitle').textContent=parentPreviewMode?'Parent Preview: '+lesson.title:(activeLessonIndex+1)+' of '+activePathLessons.length+': '+lesson.title;
-  player.querySelector('#lessonPlayerNote').textContent=parentPreviewMode?'Complete the lesson. MathWorks will place a Select for Learning Path panel over the Winner Window.':'When the winner celebration appears, the next lesson will open automatically after a brief delay.';
-  player.querySelector('#prevLessonBtn').classList.toggle('hidden',parentPreviewMode);
-  player.querySelector('#nextLessonBtn').classList.toggle('hidden',parentPreviewMode);
+  player.querySelector('.lessonPlayerTitle').textContent=parentPreviewMode?'Parent Preview: '+lesson.title:(studentFreeBrowseMode?lesson.title:(activeLessonIndex+1)+' of '+activePathLessons.length+': '+lesson.title);
+  player.querySelector('#lessonPlayerNote').textContent=parentPreviewMode?'Complete the lesson. The Parent Learning Path panel will appear after the Winner reward.':(studentFreeBrowseMode?'Complete the lesson at your own pace.':'When the Winner reward finishes, the next assigned lesson will open automatically.');
+  player.querySelector('#prevLessonBtn').classList.toggle('hidden',parentPreviewMode||studentFreeBrowseMode);
+  player.querySelector('#nextLessonBtn').classList.toggle('hidden',parentPreviewMode||studentFreeBrowseMode);
   player.querySelector('#prevLessonBtn').disabled=activeLessonIndex<=0;
   player.querySelector('#nextLessonBtn').textContent=activeLessonIndex>=activePathLessons.length-1?'Finish':'Next Lesson';
   document.body.style.overflow='hidden';
   const frame=player.querySelector('#lessonFrame');
   frame.onload=()=>{
+    try{
+      frame.contentWindow.MathDoDaViewerMode=parentPreviewMode?'parent':'student';
+      if(!parentPreviewMode){
+        const d=frame.contentDocument || frame.contentWindow.document;
+        if(d && d.head && !d.getElementById('mathDoDaStudentOnlyStyle')){
+          const st=d.createElement('style');
+          st.id='mathDoDaStudentOnlyStyle';
+          st.textContent='a[href*="paypal.com/donate"],#mwWinnerDonate,[id*="donate" i],[class*="donate" i]{display:none!important}';
+          d.head.appendChild(st);
+        }
+      }
+    }catch(e){}
     enforceAssignedLessonOptions();
     startWinnerWatch();
   };
@@ -1577,7 +1602,14 @@ function checkWinnerAndAutoNext(){
     afterWinnerReward(()=>{
       if(parentPreviewMode){
         showParentWinnerOverlay();
-        if(note) note.textContent=lessonIsSelected((currentPreviewLesson||{}).file)?'✓ This lesson is already selected.':'Winner! Use the MathWorks panel to select this lesson for the Learning Path.';
+        if(note) note.textContent=lessonIsSelected((currentPreviewLesson||{}).file)?'✓ This lesson is already selected.':'Winner! Use the Parent panel to select this lesson for the Learning Path.';
+        return;
+      }
+
+      // Student browsing All Lessons is free exploration, not a Parent Preview
+      // and not an assigned Learning Path completion.
+      if(studentFreeBrowseMode){
+        if(note) note.textContent='✓ Lesson complete!';
         return;
       }
 
@@ -1797,6 +1829,7 @@ function startAssignedLearningPath(saved){
 
   activeLessonIndex=firstIncomplete;
   parentPreviewMode=false;
+  studentFreeBrowseMode=false;
   currentPreviewLesson=null;
   openLessonPlayer();
   return true;

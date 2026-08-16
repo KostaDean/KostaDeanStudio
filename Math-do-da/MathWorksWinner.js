@@ -197,7 +197,8 @@
 
     msg.textContent = options.message || "You mastered this lesson!";
     btn.textContent = options.continueText || "Continue";
-    donate.style.display = options.showDonate === false ? "none" : "inline-block";
+    const studentViewer = global.MathDoDaViewerMode === "student";
+    donate.style.display = (options.showDonate === false || studentViewer) ? "none" : "inline-block";
     onContinueCallback = typeof options.onContinue === "function"
       ? options.onContinue : null;
 
