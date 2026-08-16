@@ -79,4 +79,121 @@ function celebrate(){document.getElementById('celebrate').style.display='flex';f
 function flashScreen(){const f=document.getElementById('flashOverlay');f.classList.remove('flashOn');void f.offsetWidth;f.classList.add('flashOn')}
 function launchConfetti(){const pieces=['🎉','🎊','✨','⭐','🎈','🥳'];for(let i=0;i<100;i++){const c=document.createElement('div');c.className='confetti';c.textContent=pieces[Math.floor(Math.random()*pieces.length)];c.style.left=(Math.random()*100)+'vw';c.style.fontSize=(24+Math.random()*30)+'px';c.style.animationDuration=(3+Math.random()*4)+'s';c.style.animationDelay=(Math.random()*0.8)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),8000)}}
 function playTrumpets(){try{const AudioContext=window.AudioContext||window.webkitAudioContext;const ctx=new AudioContext();if(ctx.state==='suspended')ctx.resume();function tone(freq,start,dur,type,vol){const osc=ctx.createOscillator();const gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,ctx.currentTime+start);gain.gain.setValueAtTime(0.0001,ctx.currentTime+start);gain.gain.exponentialRampToValueAtTime(vol,ctx.currentTime+start+0.03);gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+start+dur);osc.connect(gain);gain.connect(ctx.destination);osc.start(ctx.currentTime+start);osc.stop(ctx.currentTime+start+dur+0.05)}[523,659,784,1046,784,1046,1318].forEach((n,i)=>{tone(n,i*0.18,0.35,'sawtooth',0.35);tone(n*1.01,i*0.18,0.35,'square',0.10)})}catch(e){}}
-</script></body></html>
+</script>\n<!-- Math-do-da lesson consistency patch — Batch 1, 2026-08-16 -->
+<script src="MathWorksWinner.js"></script>
+<script id="mathDoDaLessonConsistencyV1">
+(function(){
+  "use strict";
+
+  const boxes = Array.from(document.querySelectorAll('.answerBox'));
+  if(!boxes.length) return;
+
+  boxes.forEach(box=>{
+    if(!box.getAttribute('inputmode')) box.setAttribute('inputmode','decimal');
+    box.setAttribute('autocomplete','off');
+    box.setAttribute('enterkeyhint','done');
+  });
+
+  function transitionTone(){
+    if(typeof window.playGood === 'function') return; // older lesson already supplied it
+    try{
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC) return;
+      const ctx=window.__mddTransitionAudio||(window.__mddTransitionAudio=new AC());
+      if(ctx.state==='suspended') ctx.resume();
+      const now=ctx.currentTime+.01;
+      [[659.25,0],[783.99,.10]].forEach(([freq,delay])=>{
+        const o=ctx.createOscillator(), g=ctx.createGain();
+        o.type='triangle'; o.frequency.setValueAtTime(freq,now+delay);
+        g.gain.setValueAtTime(.0001,now+delay);
+        g.gain.exponentialRampToValueAtTime(.09,now+delay+.02);
+        g.gain.exponentialRampToValueAtTime(.0001,now+delay+.18);
+        o.connect(g).connect(ctx.destination); o.start(now+delay); o.stop(now+delay+.21);
+      });
+    }catch(e){}
+  }
+
+  function nextUnfinished(afterBox){
+    const start=Math.max(0,boxes.indexOf(afterBox)+1);
+    for(let i=start;i<boxes.length;i++) if(!boxes[i].dataset.done) return boxes[i];
+    for(let i=0;i<start;i++) if(!boxes[i].dataset.done) return boxes[i];
+    return null;
+  }
+
+  function moveToNext(afterBox){
+    const next=nextUnfinished(afterBox);
+    if(!next) return;
+    setTimeout(()=>{
+      try{
+        next.focus({preventScroll:true});
+        next.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});
+        if(typeof next.select==='function') next.select();
+      }catch(e){
+        try{ next.focus(); next.scrollIntoView(); }catch(_e){}
+      }
+    },520);
+  }
+
+  function showModernWinner(){
+    if(window.__mddWinnerShown) return;
+    window.__mddWinnerShown=true;
+    if(window.MathWorksWinner && typeof window.MathWorksWinner.show==='function'){
+      window.MathWorksWinner.show({
+        message:'You completed this lesson!',
+        continueText:'Continue',
+        showDonate:true
+      });
+    } else {
+      const legacy=document.getElementById('celebrate');
+      if(legacy) legacy.style.display='flex';
+    }
+  }
+
+  // Replace the older self-hiding/trumpet celebration with the shared current WinnerWindow.
+  if(typeof window.celebrate === 'function') window.celebrate = showModernWinner;
+  if(typeof window.maybeCelebrate === 'function'){
+    window.maybeCelebrate = function(){
+      const completed=boxes.filter(b=>b.dataset.done).length;
+      if(completed>=boxes.length) showModernWinner();
+    };
+  }
+
+  // Add automatic transition to the next pink answer box without changing the lesson's math checking.
+  if(typeof window.checkAny === 'function'){
+    const oldCheckAny=window.checkAny;
+    window.checkAny=function(id,answers,feedbackId){
+      const box=document.getElementById(id);
+      const wasDone=!!(box&&box.dataset.done);
+      oldCheckAny.apply(this,arguments);
+      if(box && !wasDone && box.dataset.done){
+        transitionTone();
+        if(boxes.every(b=>b.dataset.done)) showModernWinner();
+        else moveToNext(box);
+      }
+    };
+  }
+
+  if(typeof window.checkAnswer === 'function'){
+    const oldCheckAnswer=window.checkAnswer;
+    window.checkAnswer=function(id,answer,feedbackId){
+      const box=document.getElementById(id);
+      const wasDone=!!(box&&box.dataset.done);
+      oldCheckAnswer.apply(this,arguments);
+      if(box && !wasDone && box.dataset.done){
+        if(boxes.every(b=>b.dataset.done)) showModernWinner();
+        else moveToNext(box);
+      }
+    };
+  }
+
+  // Pressing Return/Enter is equivalent to tapping that exercise's Done button.
+  boxes.forEach(box=>{
+    box.addEventListener('keydown',ev=>{
+      if(ev.key!=='Enter') return;
+      const exercise=box.closest('.exercise');
+      const done=exercise&&exercise.querySelector('.doneBtn');
+      if(done){ ev.preventDefault(); done.click(); }
+    });
+  });
+})();
+</script>\n</body></html>
