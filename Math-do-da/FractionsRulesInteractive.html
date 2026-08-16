@@ -476,4 +476,22 @@ if(typeof finishRow==="function"){
       if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
     }
   }
-}</script></body></html>
+}</script>
+<script src="MathWorksWinner.js"></script>
+<script>
+/* Math-do-da common completion bridge */
+(function(){
+  function winner(){
+    try{
+      if(window.MathWorksWinner && typeof window.MathWorksWinner.show==='function'){
+        window.MathWorksWinner.show();
+      }else if(typeof window.showWinnerWindow==='function'){
+        window.showWinnerWindow();
+      }
+    }catch(e){}
+  }
+  window.mathDoDaWinner = winner;
+})();
+</script>
+
+</body></html>
