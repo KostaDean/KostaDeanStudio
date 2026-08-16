@@ -596,20 +596,35 @@ if(typeof finishRow==="function"){
     }
   }
 }</script>
+
 <script src="MathWorksWinner.js"></script>
 <script>
-/* Math-do-da common completion bridge */
+/* Math-do-da Batch 5: route the older worksheet completion
+   into the common separate WinnerWindow + full Winner song. */
 (function(){
-  function winner(){
-    try{
-      if(window.MathWorksWinner && typeof window.MathWorksWinner.show==='function'){
-        window.MathWorksWinner.show();
-      }else if(typeof window.showWinnerWindow==='function'){
-        window.showWinnerWindow();
-      }
-    }catch(e){}
-  }
-  window.mathDoDaWinner = winner;
+  let mwCommonWinnerShown = false;
+  const legacyCelebrate =
+    (typeof window.maybeCelebrateWorksheet === "function")
+      ? window.maybeCelebrateWorksheet
+      : null;
+
+  window.maybeCelebrateWorksheet = function(){
+    const remaining = document.querySelectorAll(".blankInput");
+    if(remaining.length !== 0 || mwCommonWinnerShown) return;
+
+    mwCommonWinnerShown = true;
+
+    if(window.MathWorksWinner &&
+       typeof window.MathWorksWinner.show === "function"){
+      window.MathWorksWinner.show({
+        message: "You completed this lesson!",
+        continueText: "Continue"
+      });
+    }else if(legacyCelebrate){
+      /* Fallback only if the shared Winner module failed to load. */
+      legacyCelebrate();
+    }
+  };
 })();
 </script>
 
