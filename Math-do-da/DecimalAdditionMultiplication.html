@@ -454,4 +454,44 @@ if(typeof finishRow==="function"){
       if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
     }
   }
-}</script></body></html>
+}</script>\n<!-- Math-do-da lesson consistency patch — Batch 3, 2026-08-16 -->
+<script src="MathWorksWinner.js"></script>
+<script id="mathDoDaLessonConsistencyV3">
+(function(){
+  "use strict";
+  function boxes(){return [...document.querySelectorAll('.blankInput')];}
+  boxes().forEach(b=>{b.setAttribute('autocomplete','off');b.setAttribute('enterkeyhint','done');});
+  function winner(){
+    if(window.__mddWinnerShown)return;
+    window.__mddWinnerShown=true;
+    if(window.MathWorksWinner&&typeof window.MathWorksWinner.show==='function'){
+      window.MathWorksWinner.show({message:'You completed this lesson!',continueText:'Continue',showDonate:true});
+    }
+  }
+  function focusNext(row){
+    const remaining=boxes();
+    if(!remaining.length){winner();return;}
+    let next=remaining.find(x=>Number(x.dataset.row)>Number(row))||remaining[0];
+    setTimeout(()=>{try{next.focus({preventScroll:true});next.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});if(next.select)next.select();}catch(e){try{next.focus();next.scrollIntoView();}catch(_){}}},420);
+  }
+  if(typeof window.maybeCelebrateWorksheet==='function'){
+    window.maybeCelebrateWorksheet=function(){if(boxes().length===0)winner();};
+  }
+  if(typeof window.finishRow==='function'){
+    const old=window.finishRow;
+    window.finishRow=function(r){
+      const before=document.querySelectorAll('.blankInput[data-row="'+r+'"]').length;
+      old.apply(this,arguments);
+      const after=document.querySelectorAll('.blankInput[data-row="'+r+'"]').length;
+      if(before&&after===0){if(boxes().length===0)winner();else focusNext(r);}
+    };
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'||!e.target.classList.contains('blankInput'))return;
+    const row=e.target.dataset.row;
+    const done=document.querySelector('.doneBtn[data-row="'+row+'"]');
+    if(done){e.preventDefault();done.click();}
+  },true);
+})();
+</script>
+</body></html>

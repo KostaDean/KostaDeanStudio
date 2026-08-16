@@ -79,4 +79,44 @@ document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>
 document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
 </script>
 
-<section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: Arithmetic expressions are quantities. They have form and value. They may contain other quantities to be calculated first. These may be contained within ( ), [ ], { } in a complex expression. Working from the innermost () outwards can avoid making mistakes in the \&quot;order of operations\&quot; calculating the value.&quot;)">🔊</button><br><br><b>About Math:</b><br>Arithmetic expressions are quantities. They have <b>form</b> and <b>value</b>. They may contain other quantities to be calculated first. These may be contained within<div>&nbsp;( ), [ ], { } in a complex expression. Working from the innermost () outwards can avoid making mistakes in the "order of operations" calculating the value.</div></div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Learning to calculate arithmetic expressions is the equivalent in Math to learning to read! A student that can with ease and confidence calculate arithmetic expressions can more quickly progress with more advanced mathematical ideas. The use of calculators for this should be encouraged.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Learning to calculate arithmetic expressions is the equivalent in Math to learning to read! A student that can with ease and confidence calculate arithmetic expressions can more quickly progress with more advanced mathematical ideas. The use of calculators for this should be encouraged.</div></section></body></html>
+<section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: Arithmetic expressions are quantities. They have form and value. They may contain other quantities to be calculated first. These may be contained within ( ), [ ], { } in a complex expression. Working from the innermost () outwards can avoid making mistakes in the \&quot;order of operations\&quot; calculating the value.&quot;)">🔊</button><br><br><b>About Math:</b><br>Arithmetic expressions are quantities. They have <b>form</b> and <b>value</b>. They may contain other quantities to be calculated first. These may be contained within<div>&nbsp;( ), [ ], { } in a complex expression. Working from the innermost () outwards can avoid making mistakes in the "order of operations" calculating the value.</div></div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Learning to calculate arithmetic expressions is the equivalent in Math to learning to read! A student that can with ease and confidence calculate arithmetic expressions can more quickly progress with more advanced mathematical ideas. The use of calculators for this should be encouraged.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Learning to calculate arithmetic expressions is the equivalent in Math to learning to read! A student that can with ease and confidence calculate arithmetic expressions can more quickly progress with more advanced mathematical ideas. The use of calculators for this should be encouraged.</div></section>\n<!-- Math-do-da lesson consistency patch — Batch 3, 2026-08-16 -->
+<script src="MathWorksWinner.js"></script>
+<script id="mathDoDaLessonConsistencyV3">
+(function(){
+  "use strict";
+  function boxes(){return [...document.querySelectorAll('.blankInput')];}
+  boxes().forEach(b=>{b.setAttribute('autocomplete','off');b.setAttribute('enterkeyhint','done');});
+  function winner(){
+    if(window.__mddWinnerShown)return;
+    window.__mddWinnerShown=true;
+    if(window.MathWorksWinner&&typeof window.MathWorksWinner.show==='function'){
+      window.MathWorksWinner.show({message:'You completed this lesson!',continueText:'Continue',showDonate:true});
+    }
+  }
+  function focusNext(row){
+    const remaining=boxes();
+    if(!remaining.length){winner();return;}
+    let next=remaining.find(x=>Number(x.dataset.row)>Number(row))||remaining[0];
+    setTimeout(()=>{try{next.focus({preventScroll:true});next.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});if(next.select)next.select();}catch(e){try{next.focus();next.scrollIntoView();}catch(_){}}},420);
+  }
+  if(typeof window.maybeCelebrateWorksheet==='function'){
+    window.maybeCelebrateWorksheet=function(){if(boxes().length===0)winner();};
+  }
+  if(typeof window.finishRow==='function'){
+    const old=window.finishRow;
+    window.finishRow=function(r){
+      const before=document.querySelectorAll('.blankInput[data-row="'+r+'"]').length;
+      old.apply(this,arguments);
+      const after=document.querySelectorAll('.blankInput[data-row="'+r+'"]').length;
+      if(before&&after===0){if(boxes().length===0)winner();else focusNext(r);}
+    };
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'||!e.target.classList.contains('blankInput'))return;
+    const row=e.target.dataset.row;
+    const done=document.querySelector('.doneBtn[data-row="'+row+'"]');
+    if(done){e.preventDefault();done.click();}
+  },true);
+})();
+</script>
+</body></html>

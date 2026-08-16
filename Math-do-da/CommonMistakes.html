@@ -69,4 +69,43 @@ function finish(r){let inputs=[...document.querySelectorAll('.blankInput[data-ro
 function speak(t){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.rate=.95;speechSynthesis.speak(u)}
 document.getElementById("speakIntro").onclick=()=>speak("Common mistakes. The form of a quantity can look like another form, but the values are not always equal. A safe way to check is to substitute easy numbers. If the values are different, the forms cannot be the same quantity.");
 document.querySelectorAll(".doneBtn").forEach(b=>b.onclick=()=>finish(b.dataset.row));document.querySelectorAll(".blankInput").forEach(i=>{i.onfocus=()=>{i.classList.remove("bad");clear(i.dataset.row)}})
-</script><section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: A quantity is what can have numerical value. This is different from a quality, which often has human value and is very subjective. Quantities are objective. Mathematics concerns objective truths. These are what are true for all people at all times. While subjective believes can divide us, objective truths can unite us.&quot;)">🔊</button><br><br><b>About Math:</b><br>A <b>quantity</b> is what can have numerical value. This is different from a <b>quality</b>, which often has human value and is very subjective. Quantities are objective. Mathematics concerns objective truths. These are what are true for all people at all times. While subjective believes can divide us, objective truths can unite us.</div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Often students have asked me \&quot;why I need to know Math? When I can always use calculators to get the answer?\&quot; My response has always been, \&quot;.. its not what you do with Math! Its what Math does with you!\&quot; As Math disciplines the Mind to seek Logic and Objective Truth. What unites us.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Often students have asked me "why I need to know Math? When I can always use calculators to get the answer?" My response has always been, ".. its not what you do with Math! Its what Math does with you!" As Math disciplines the Mind to seek Logic and Objective Truth. What unites us.</div></section></body></html>
+</script><section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: A quantity is what can have numerical value. This is different from a quality, which often has human value and is very subjective. Quantities are objective. Mathematics concerns objective truths. These are what are true for all people at all times. While subjective believes can divide us, objective truths can unite us.&quot;)">🔊</button><br><br><b>About Math:</b><br>A <b>quantity</b> is what can have numerical value. This is different from a <b>quality</b>, which often has human value and is very subjective. Quantities are objective. Mathematics concerns objective truths. These are what are true for all people at all times. While subjective believes can divide us, objective truths can unite us.</div></section><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Often students have asked me \&quot;why I need to know Math? When I can always use calculators to get the answer?\&quot; My response has always been, \&quot;.. its not what you do with Math! Its what Math does with you!\&quot; As Math disciplines the Mind to seek Logic and Objective Truth. What unites us.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Often students have asked me "why I need to know Math? When I can always use calculators to get the answer?" My response has always been, ".. its not what you do with Math! Its what Math does with you!" As Math disciplines the Mind to seek Logic and Objective Truth. What unites us.</div></section>\n<!-- Math-do-da lesson consistency patch — Batch 3, 2026-08-16 -->
+<script src="MathWorksWinner.js"></script>
+<script id="mathDoDaLessonConsistencyV3">
+(function(){
+  "use strict";
+  function boxes(){return [...document.querySelectorAll('.blankInput')];}
+  boxes().forEach(b=>{b.setAttribute('autocomplete','off');b.setAttribute('enterkeyhint','done');});
+  function winner(){
+    if(window.__mddWinnerShown)return;
+    window.__mddWinnerShown=true;
+    if(window.MathWorksWinner&&typeof window.MathWorksWinner.show==='function'){
+      window.MathWorksWinner.show({message:'You completed this lesson!',continueText:'Continue',showDonate:true});
+    }
+  }
+  function focusNext(row){
+    const remaining=boxes();
+    if(!remaining.length){winner();return;}
+    let next=remaining.find(x=>Number(x.dataset.row)>Number(row))||remaining[0];
+    setTimeout(()=>{try{next.focus({preventScroll:true});next.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});if(next.select)next.select();}catch(e){try{next.focus();next.scrollIntoView();}catch(_){}}},420);
+  }
+  if(typeof window.win==='function') window.win=winner;
+  if(typeof window.finish==='function'){
+    const old=window.finish;
+    window.finish=function(r){
+      const before=document.querySelectorAll('.blankInput[data-row="'+r+'"]').length;
+      old.apply(this,arguments);
+      const after=document.querySelectorAll('.blankInput[data-row="'+r+'"]').length;
+      if(before&&after===0){if(boxes().length===0)winner();else focusNext(r);}
+    };
+    document.querySelectorAll('.doneBtn').forEach(b=>b.onclick=()=>window.finish(b.dataset.row));
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'||!e.target.classList.contains('blankInput'))return;
+    const row=e.target.dataset.row;
+    const done=document.querySelector('.doneBtn[data-row="'+row+'"]');
+    if(done){e.preventDefault();done.click();}
+  },true);
+})();
+</script>
+</body></html>
