@@ -545,61 +545,36 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
 <div class="exercise">
 1) A quantity is a numerical
 <input id="q1" data-answer="Expression" data-answers="Expression|Value">
-<button onclick="check('a1','value')">Done</button>
+<button type="button" class="quantityDone" data-target="q1">Done</button>
 </div>
 
 <div class="exercise">
 2) Expressions contain smaller
 <input id="q2" data-answer="Quantities" data-answers="Quantities|expressions">
-<button onclick="check('a2','quantities')">Done</button>
+<button type="button" class="quantityDone" data-target="q2">Done</button>
 </div>
 
 <div class="exercise">
 3) In 2(b+c), the grouped quantity is
 <input id="q3" data-answer="b+c" data-answers="b+c|(b+c)">
-<button onclick="checkMulti('a3',['b+c','b + c'])">Done</button>
+<button type="button" class="quantityDone" data-target="q3">Done</button>
 </div>
 
 <div class="exercise">
 4) In 3(b+5d), the grouped quantity is
 <input id="q4" data-answer="(b+5d)" data-answers="(b+5d)|b+5d">
-<button onclick="checkMulti('a4',['b+5d','b + 5d'])">Done</button>
+<button type="button" class="quantityDone" data-target="q4">Done</button>
 </div>
 
 <div class="exercise">
 5) Grouping symbols include ( ), [ ], and
 <input id="q5" data-answer="{ }" data-answers="{ }">
-<button onclick="checkMulti('a5',['{}','{ }'])">Done</button>
+<button type="button" class="quantityDone" data-target="q5">Done</button>
 </div>
 
 </div>
 
-<script>
-function normalize(s){
-return s.toLowerCase().replace(/\s+/g,'');
-}
 
-function check(id,ans){
-let x=document.getElementById(id);
-if(normalize(x.value)==normalize(ans)){
-x.classList.add('correct');
-celebrate();
-}
-}
-
-function checkMulti(id,list){
-let x=document.getElementById(id);
-let v=normalize(x.value);
-for(let i=0;i<list.length;i++){
-if(v==normalize(list[i])){
-x.classList.add('correct');
-celebrate();
-}
-}
-}
-
-function celebrate(){if(document.querySelectorAll(".correct").length===5){mwShowCommonWinner()}}
-</script>
 
 
 
@@ -637,6 +612,83 @@ function mwShowCommonWinner(){
     });
   }
 }
+</script>
+
+
+<script id="quantities-reliable-checker">
+(function(){
+  "use strict";
+
+  function norm(v){
+    return String(v == null ? "" : v)
+      .toLowerCase()
+      .replace(/\s+/g,"")
+      .replace(/[()]/g,"");
+  }
+
+  function acceptedAnswers(input){
+    var raw = input.getAttribute("data-answers") || input.getAttribute("data-answer") || "";
+    return raw.split("|").map(function(x){ return norm(x); }).filter(Boolean);
+  }
+
+  function isCorrect(input){
+    var value = norm(input.value);
+    var answers = acceptedAnswers(input);
+    return answers.indexOf(value) !== -1;
+  }
+
+  function showWinner(){
+    if (window.MathWorksWinner && typeof window.MathWorksWinner.show === "function") {
+      window.MathWorksWinner.show({
+        message: "You completed this lesson!",
+        continueText: "Continue"
+      });
+    } else if (typeof window.mwShowCommonWinner === "function") {
+      window.mwShowCommonWinner();
+    }
+  }
+
+  function checkAllFinished(){
+    var inputs = Array.prototype.slice.call(document.querySelectorAll("#q1,#q2,#q3,#q4,#q5"));
+    if (inputs.length === 5 && inputs.every(function(inp){ return inp.dataset.quantityCorrect === "yes"; })) {
+      showWinner();
+    }
+  }
+
+  function checkOne(button){
+    var id = button.getAttribute("data-target");
+    var input = document.getElementById(id);
+    if (!input) return;
+
+    if (isCorrect(input)) {
+      input.classList.add("correct");
+      input.dataset.quantityCorrect = "yes";
+      button.textContent = "✓ Correct";
+      button.disabled = true;
+      checkAllFinished();
+    } else {
+      input.classList.remove("correct");
+      input.dataset.quantityCorrect = "no";
+      button.textContent = "Try again";
+      setTimeout(function(){
+        if (!button.disabled) button.textContent = "Done";
+      }, 900);
+      input.focus();
+    }
+  }
+
+  function init(){
+    document.querySelectorAll(".quantityDone").forEach(function(button){
+      button.addEventListener("click", function(){ checkOne(button); });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
 </script>
 
 </body></html>
