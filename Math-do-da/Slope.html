@@ -422,7 +422,8 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
   font-family: MJXTEX-VB;
   src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
 }
-</style></head>
+</style><script src="MathWorksWinner.js"></script>
+</head>
 <body data-mw-object-manager-ready="1" data-mw-math-select-ready="1"><div class="lesson">
 <div class="banner" id="banner">YOU ARE A WINNER!</div>
 <div id="donateWrap" class="donateWrap"><b>Please support this work:</b><br><a class="donateBtn" href="https://www.paypal.com/donate/?hosted_button_id=DMMXW39SYGURC" target="_blank">Donate</a></div>
@@ -478,7 +479,7 @@ let audioCtx=null;function getAudio(){if(!audioCtx){audioCtx=new (window.AudioCo
 function tone(f,s,d,type="square"){try{const c=getAudio(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,c.currentTime+s);g.gain.setValueAtTime(.001,c.currentTime+s);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+s+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+s+d);o.connect(g).connect(c.destination);o.start(c.currentTime+s);o.stop(c.currentTime+s+d+.05)}catch(e){}}
 function good(){tone(523,0,.15,"triangle");tone(659,.12,.18,"triangle");tone(784,.25,.2,"triangle")}function bad(){tone(220,0,.18,"sawtooth");tone(180,.13,.2,"sawtooth")}function trumpets(){[523,659,784,1046,1318].forEach((f,i)=>tone(f,i*.13,.28,"square"))}
 function confetti(){let c=document.getElementById("confetti");c.innerHTML="";let colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185"];for(let i=0;i<160;i++){let p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.7+Math.random()*1.4)+"s";c.appendChild(p)}setTimeout(()=>c.innerHTML="",3500)}
-function win(){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";document.body.classList.add("winFlash");trumpets();confetti();setTimeout(confetti,900);setTimeout(()=>scrollTo({top:0,behavior:"smooth"}),100)}
+function win(){if(window.MathWorksWinner&&typeof MathWorksWinner.show==="function"){MathWorksWinner.show({message:"You completed this lesson!",continueText:"Continue"});}else{document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";}}
 function norm(s){return String(s).trim().toLowerCase().replace("−","-").replace(/\s+/g," ").replace(" over ","/")}
 function ans(inp){let set=new Set();[inp.dataset.answer||"",inp.dataset.alt||""].forEach(a=>{let n=norm(a);if(n){set.add(n);set.add(n.replace(" ",""))}});return set}
 function clear(r){let m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}

@@ -420,7 +420,8 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
   font-family: MJXTEX-VB;
   src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
 }
-</style></head>
+</style><script src="MathWorksWinner.js"></script>
+</head>
 <body data-mw-object-manager-ready="1" data-mw-math-select-ready="1">
 <div class="lesson">
 <div class="banner" id="banner">YOU ARE A WINNER!</div>
@@ -478,7 +479,7 @@ document.getElementById("speakIntro").addEventListener("click",()=>speakText("Si
 function norm(s){return String(s).trim().toLowerCase().replace("−","-").replace(/\s+/g,"").replace(/\*/g,"")}
 function answerSet(inp){const raw=[inp.dataset.answer||"",inp.dataset.alt||""];const set=new Set();raw.forEach(a=>{const n=norm(a);if(!n)return;set.add(n)});return set}
 function clearRowMessage(r){const m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
-function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),80);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");launchConfetti();setTimeout(launchConfetti,900);setTimeout(launchConfetti,1800)}}
+function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){if(window.MathWorksWinner&&typeof MathWorksWinner.show==="function"){MathWorksWinner.show({message:"You completed this lesson!",continueText:"Continue"});}else{document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";}}}
 function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];let ok=true;inputs.forEach(inp=>{const val=norm(inp.value),allowed=answerSet(inp);inp.classList.remove("ok","bad");if(allowed.has(val)){inp.classList.add("ok")}else{inp.classList.add("bad");ok=false}});const msg=document.getElementById("rowMsg_"+r);if(ok){inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=inp.dataset.answer;inp.replaceWith(s)});msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";playGood();flash("good");maybeCelebrateWorksheet()}else{msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";playBad();flash("bad")}}
 document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
 document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
