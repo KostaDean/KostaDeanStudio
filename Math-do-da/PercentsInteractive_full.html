@@ -132,10 +132,27 @@ function launchConfetti(){const c=document.getElementById("confetti");c.innerHTM
 function speakText(t){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.95;window.speechSynthesis.speak(u)}
 document.getElementById("speakIntro").addEventListener("click",()=>speakText("Percent means per hundred. Fifteen percent means fifteen out of one hundred. To change a decimal to a percent, move the decimal point two places to the right and put the percent sign next to it."))
 function clearRowMessage(r){const m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
-function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),80);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");launchConfetti();setTimeout(launchConfetti,900);setTimeout(launchConfetti,1800)}}
+function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){mwShowCommonWinner()}}
 function finishRow(r){const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];let ok=true;inputs.forEach(inp=>{const ans=String(inp.dataset.answer).trim(),val=String(inp.value).trim();inp.classList.remove("ok","bad");if(val===ans)inp.classList.add("ok");else{inp.classList.add("bad");ok=false}});const msg=document.getElementById("rowMsg_"+r);if(ok){inputs.forEach(inp=>{const s=document.createElement("span");s.className="answerText";s.textContent=inp.dataset.answer;inp.replaceWith(s)});msg.className="rowMsg good";msg.innerHTML='✨ <span style="color:#7c3aed">You are so correct!</span> ✨';const done=document.querySelector('.doneBtn[data-row="'+r+'"]');if(done)done.parentElement.style.display="none";playGood();flash("good");maybeCelebrateWorksheet()}else{msg.className="rowMsg bad";msg.textContent="Some answers need fixing.";playBad();flash("bad")}}
 document.querySelectorAll(".doneBtn").forEach(b=>b.addEventListener("click",()=>finishRow(b.dataset.row)));
 document.querySelectorAll(".blankInput").forEach(inp=>{inp.addEventListener("focus",()=>{if(inp.classList.contains("bad")){inp.value="";inp.classList.remove("bad")}clearRowMessage(inp.dataset.row)});inp.addEventListener("input",()=>clearRowMessage(inp.dataset.row));inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()})});
 </script>
+
+<script src="MathWorksWinner.js"></script>
+<script>
+/* Math-do-da common WinnerWindow adapter */
+let mwCommonWinnerShown=false;
+function mwShowCommonWinner(){
+  if(mwCommonWinnerShown) return;
+  mwCommonWinnerShown=true;
+  if(window.MathWorksWinner && typeof window.MathWorksWinner.show==="function"){
+    window.MathWorksWinner.show({
+      message:"You completed this lesson!",
+      continueText:"Continue"
+    });
+  }
+}
+</script>
+
 </body>
 </html>

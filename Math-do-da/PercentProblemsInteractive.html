@@ -443,7 +443,7 @@ let audioCtx=null;function getAudio(){if(!audioCtx){audioCtx=new (window.AudioCo
 function tone(f,s,d,type="square"){try{const c=getAudio(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,c.currentTime+s);g.gain.setValueAtTime(.001,c.currentTime+s);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+s+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+s+d);o.connect(g).connect(c.destination);o.start(c.currentTime+s);o.stop(c.currentTime+s+d+.05)}catch(e){}}
 function good(){tone(523,0,.15,"triangle");tone(659,.12,.18,"triangle");tone(784,.25,.2,"triangle")}function bad(){tone(220,0,.18,"sawtooth");tone(180,.13,.2,"sawtooth")}function trumpets(){[523,659,784,1046,1318].forEach((f,i)=>tone(f,i*.13,.28,"square"))}
 function confetti(){let c=document.getElementById("confetti");c.innerHTML="";let colors=["#f87171","#facc15","#4ade80","#60a5fa","#c084fc","#fb7185"];for(let i=0;i<160;i++){let p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.7+Math.random()*1.4)+"s";c.appendChild(p)}setTimeout(()=>c.innerHTML="",3500)}
-function win(){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";document.body.classList.add("winFlash");trumpets();confetti();setTimeout(confetti,900);setTimeout(()=>scrollTo({top:0,behavior:"smooth"}),100)}
+function win(){mwShowCommonWinner()}
 function norm(s){return String(s).trim().toLowerCase().replace("−","-").replace("%","").replace(/\s+/g,"").replace(/[()]/g,"")}
 function ans(inp){let set=new Set();[inp.dataset.answer||"",inp.dataset.alt||""].forEach(a=>{let n=norm(a);if(n)set.add(n)});return set}
 function clear(r){let m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
@@ -470,4 +470,21 @@ if(typeof finishRow==="function"){
       if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
     }
   }
-}</script><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Learning to set up and solve percent problems is a very useful first step to learning how to solve word problems. Have your young learner first identify the words that convert easily into math. Express the problem in words which can then be written in math. Focus on expressing the problem and not what the answer is. As students too often feel they should already know the answer and become impatient and frustrated. Let them use a calculator to do the calculations that will give the answer. A life lesson: the answer to a problem is found in the problem itself.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Learning to set up and solve percent problems is a very useful first step to learning how to solve word problems. Have your young learner first identify the words that convert easily into math. Express the problem in words which can then be written in math. Focus on expressing the problem and not what the answer is. As students too often feel they should already know the answer and become impatient and frustrated. Let them use a calculator to do the calculations that will give the answer.&nbsp;<div>A life lesson: the answer to a problem is found in the problem itself.</div></div></section></body></html>
+}</script><section class="card mw-extra-section" data-section-type="parentNote"><h2>Notes to Parents</h2><div class="parentGuidanceBox"><button class="speakBtn" onclick="speak(&quot;Notes to Parents: Learning to set up and solve percent problems is a very useful first step to learning how to solve word problems. Have your young learner first identify the words that convert easily into math. Express the problem in words which can then be written in math. Focus on expressing the problem and not what the answer is. As students too often feel they should already know the answer and become impatient and frustrated. Let them use a calculator to do the calculations that will give the answer. A life lesson: the answer to a problem is found in the problem itself.&quot;)">🔊</button><br><br><b>Notes to Parents:</b><br>Learning to set up and solve percent problems is a very useful first step to learning how to solve word problems. Have your young learner first identify the words that convert easily into math. Express the problem in words which can then be written in math. Focus on expressing the problem and not what the answer is. As students too often feel they should already know the answer and become impatient and frustrated. Let them use a calculator to do the calculations that will give the answer.&nbsp;<div>A life lesson: the answer to a problem is found in the problem itself.</div></div></section>
+<script src="MathWorksWinner.js"></script>
+<script>
+/* Math-do-da common WinnerWindow adapter */
+let mwCommonWinnerShown=false;
+function mwShowCommonWinner(){
+  if(mwCommonWinnerShown) return;
+  mwCommonWinnerShown=true;
+  if(window.MathWorksWinner && typeof window.MathWorksWinner.show==="function"){
+    window.MathWorksWinner.show({
+      message:"You completed this lesson!",
+      continueText:"Continue"
+    });
+  }
+}
+</script>
+
+</body></html>

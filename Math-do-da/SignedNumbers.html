@@ -573,7 +573,7 @@ function speakText(t){if(!("speechSynthesis" in window))return;window.speechSynt
 document.getElementById("speakIntro").addEventListener("click",()=>speakText("Signed numbers. Moving right is positive. Moving left is negative. A number to the right of another number is greater. A signed number can also be shown as an arrow. The sign tells direction and the number tells length."))
 function norm(s){return String(s).trim().toLowerCase().replace("−","-").replace(/\s+/g,"")}
 function clearRowMessage(r){const m=document.getElementById("rowMsg_"+r);m.className="rowMsg";m.textContent=""}
-function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){document.getElementById("banner").style.display="block";document.getElementById("donateWrap").style.display="block";setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),80);playWin();setTimeout(playWin,500);setTimeout(playWin,1000);setTimeout(playWin,1500);flash("win");launchConfetti();setTimeout(launchConfetti,900);setTimeout(launchConfetti,1800)}}
+function maybeCelebrateWorksheet(){if(document.querySelectorAll(".blankInput").length===0){mwShowCommonWinner()}}
 function finishRow(r){
  const inputs=[...document.querySelectorAll('.blankInput[data-row="'+r+'"]')];
  let ok=true;
@@ -614,4 +614,21 @@ if(typeof finishRow==="function"){
       if(typeof playBad==="function")playBad();if(typeof flash==="function")flash("bad");
     }
   }
-}</script><section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: Signed numbers are first examples of what in more advanced math will be vectors. These will further develop the intimate connection between Algebra and Geometry.&quot;)">🔊</button><br><br><b>About Math:</b><br>Signed numbers are first examples of what in more advanced math will be vectors. These will further develop the intimate connection between Algebra and Geometry.</div></section></body></html>
+}</script><section class="card mw-extra-section" data-section-type="aboutMath"><h2>About Math</h2><div class="aboutMathBox"><button class="speakBtn" onclick="speak(&quot;About Math: Signed numbers are first examples of what in more advanced math will be vectors. These will further develop the intimate connection between Algebra and Geometry.&quot;)">🔊</button><br><br><b>About Math:</b><br>Signed numbers are first examples of what in more advanced math will be vectors. These will further develop the intimate connection between Algebra and Geometry.</div></section>
+<script src="MathWorksWinner.js"></script>
+<script>
+/* Math-do-da common WinnerWindow adapter */
+let mwCommonWinnerShown=false;
+function mwShowCommonWinner(){
+  if(mwCommonWinnerShown) return;
+  mwCommonWinnerShown=true;
+  if(window.MathWorksWinner && typeof window.MathWorksWinner.show==="function"){
+    window.MathWorksWinner.show({
+      message:"You completed this lesson!",
+      continueText:"Continue"
+    });
+  }
+}
+</script>
+
+</body></html>
