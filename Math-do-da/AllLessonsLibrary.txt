@@ -1,0 +1,51 @@
+# Math-do-da All Lessons Library
+# Edit this file directly in GitHub.
+# One lesson per line:
+# Title|FileName.html|Category|Description|Emoji|Badge
+# Leave Badge blank when none is wanted.
+# Lines beginning with # are ignored.
+
+Unseen Zeros of Decimal Numbers|UnseenZerosDecimalNumbersInteractive.html|Decimals|Learn how unseen zeros help when multiplying and dividing decimal numbers.|0️⃣🔟➗|New
+Close Enough Multiplication|CloseEnoughMultiplicationInteractive.html|Numbers|Estimate multiplication and division quickly using nearby easy numbers.|✖️≈|New
+Close Enough Calculations|CloseEnoughCalculationsInteractive.html|Numbers|Learn how to estimate answers using nearby easy numbers like 100, 200, and 1000.|≈🔢|New
+Mental Add/Subtract with Easy Numbers|MentalAddSubtractEasyNumbersInteractive.html|Numbers|Practice mental addition and subtraction using easy numbers like 10, 20, 30, 100, and 200.|🧠🔢|New
+Mental Arithmetic|MentalArithmeticInteractive.html|Numbers|Learn quick ways to add and subtract mentally without a calculator.|🧠➕➖|New
+Times Table|TimesTable.html|Numbers|Explore the multiplication table and practise random products, selected rows, and missing factors.|✖️🔢|New
+Along the Coordinate Plane|AlongTheCoordinatePlaneInteractive.html|Graphs|Learn how x- and y-coordinates locate points and practice moving horizontally and vertically.|📍xy|New
+Along the Number Line|AlongTheNumberLineInteractive.html|Numbers|Practice moving left and right along the number line using steps from zero.|↔️🔢|New
+Roots and Radicals|RootsAndRadicalsInteractive.html|Algebra|Learn roots, radicals, square roots, cube roots, and how roots undo exponents.|√x|New
+Algebraic Equations|AlgebraicEquations.html|Algebra|Learn how to solve algebraic equations step by step.|🟰|
+Algebraic Expressions|AlgebraicExpressions.html|Algebra|Understand variables, terms, and algebraic expressions.|🔤|
+Arithmetic Expressions|ArithmeticExpressions.html|Arithmetic|Practice evaluating arithmetic expressions correctly.|➕➖✖️➗|
+Common Algebra Mistakes|CommonMistakes.html|Algebra|Avoid making these very common Algebra mistakes.|⚠️|
+Converting Fractions & Decimals|ConvertingFractionsDecimals.html|Fractions|Convert fractions into decimals and decimals into fractions.|🔄|
+Coordinates and Graphs|CoordinatesAndGraphs.html|Graphs|Plot points and understand coordinate planes.|📍|
+Decimal Addition & Multiplication|DecimalAdditionMultiplication.html|Decimals|Practice decimal operations clearly and visually.|🔟|
+Decimal Numbers|DecimalNumbers.html|Decimals|Learn place value and decimal number concepts.|🔢.|
+Equal Fractions|EqualFractions.html|Fractions|Explore equivalent fractions visually and interactively.|🍕|
+Exponents|ExponentsInteractive.html|Algebra|Learn repeated multiplication, exponent rules, and powers interactively.|xⁿ|New
+Fraction Addition|FractionAddition.html|Fractions|Practice adding fractions step by step.|➕|
+Fraction Multiplication|FractionMultiplication.html|Fractions|Understand multiplying fractions with examples.|✖️|
+Fractions|Fractions.html|Fractions|Introduction to fractions and fractional thinking.|🍰|
+Fraction Rules Interactive|FractionsRulesInteractive.html|Fractions|Learn and practice the basic rules of fractions.|📏|
+From Words to Math|FromWordsToMathInteractive.html|Algebra|Learn how words like of, is, what, per, and percent become math operations.|🗣️➗|New
+Graphs|Graphs.html|Graphs|Learn how graphs show relationships.|📈|
+Graphs of Equations|GraphsOfEquations.html|Graphs|Connect equations with their graphs.|📊|
+Laws of Exponents|Laws_of_Exponents_Interactive.html|Algebra|Learn and practice the main laws of exponents step by step.|xⁿ⚙️|New
+Linear Equations|LinearEquations.html|Algebra|Explore straight lines, slope, and equations.|📐|
+Moving Decimal Point|MovingDecimalPoint.html|Decimals|Understand how decimal points move in multiplication and division.|➡️🔟|
+Number Sequences 1|NumberSequences1.html|Numbers|More practice with sequence patterns and rules.|🔢|New
+Numbers Interactive|NumbersInteractive_regenerated.html|Numbers|Interactive number sense and calculation practice.|🧮|
+Percent Problems|PercentProblemsInteractive.html|Percents|Solve the three basic types of percent problems step by step.|💯❓|New
+Percents|PercentsInteractive_full.html|Percents|Learn percents through interactive examples.|💯|
+Quantities of an Expression|QuantitiesInExpressions.html|Algebra|All algebra expressions are made up of quantities. Recognizing these is very important.|🧮🧩|
+Signed Numbers|SignedNumbers.html|Numbers|Learn positive and negative numbers visually.|➕➖|
+Signed Numbers Addition|SignedNumbersAddition.html|Numbers|Practice adding positive and negative numbers.|➕🔢|
+Signed Numbers Multiplication|SignedNumbersMultiplication.html|Numbers|Learn multiplication rules for signed numbers.|✖️🔢|
+Simplifying Expressions|SimplifyingExpressions.html|Algebra|Combine like terms and simplify algebraic expressions.|🧹|
+Slope|Slope.html|Graphs|Understand slope as rise over run and rate of change.|📐📈|
+Number Line Sequences|Number_Line_Sequences.html|Numbers|Recognize number patterns and complete sequences along the number line.|↔️🔢|
+Ratios|RatiosInteractive_revised.html|Fractions|Learn how ratios compare quantities and connect to fractions.|⚖️|
+Proportions|ProportionsInteractive_revised.html|Fractions|Learn how equal ratios form proportions.|⚖️🟰|
+Rates|RatesInteractive.html|Numbers|Learn how one quantity changes relative to another quantity.|🚗⏱️|
+Special Numbers: Multiply and Divide|SpecialNumbersMultiplyDivideInteractive.html|Numbers|Multiply and divide easily by 10, 100, 1000, and similar numbers.|🔟✖️➗|

@@ -1090,70 +1090,48 @@ body.parentLibraryMode #comments.parentPaneHidden{
 <script>
 const ADMIN_PASSWORD="mathworks";
 const ADMIN_PASSWORDS=["mathworks","MathWorks","admin","Admin"];
-const DEFAULT_INSTRUCTIONS = `Welcome parents!
 
-MathWorks lets you preview every lesson fully before assigning it.
+// ===== EXTERNAL CONTENT FILES =====
+// Routine site updates now live outside index.html:
+//   AllLessonsLibrary.txt
+//   ParentInstructions.txt
+//   Comments.txt (read by the common WinnerWindow)
+let LESSONS = [];
 
-To create a Learning Path:
-• Open a lesson from the lesson list.
-• Complete all of its exercises yourself.
-• At the Winner Window, tap “Select for Learning Path.”
-• Return to the lesson list and preview another lesson.
-• Near the top of the lesson page, tap “Name/Save Learning Path” when your selections are complete.
+function parseLessonLibrary(text){
+  return String(text || "")
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(line => line && !line.startsWith("#"))
+    .map(line => {
+      const parts = line.split("|");
+      if(parts.length < 2) return null;
+      const title = (parts[0] || "").trim();
+      const file = (parts[1] || "").trim();
+      const category = (parts[2] || "Lessons").trim() || "Lessons";
+      const description = (parts[3] || "").trim();
+      const emoji = (parts[4] || "📘").trim() || "📘";
+      const badge = (parts[5] || "").trim();
+      if(!title || !file) return null;
+      return {title,file,description,category,emoji,badge};
+    })
+    .filter(Boolean);
+}
 
-Your young learner can then follow the saved Learning Path on this same phone, tablet, or computer. Completed lessons receive check marks, and the next lesson opens automatically until the path is finished.
+async function loadLessonLibrary(){
+  const response = await fetch("AllLessonsLibrary.txt?ts=" + Date.now(), {cache:"no-store"});
+  if(!response.ok) throw new Error("AllLessonsLibrary.txt could not be loaded.");
+  const loaded = parseLessonLibrary(await response.text());
+  if(!loaded.length) throw new Error("AllLessonsLibrary.txt contains no usable lessons.");
+  LESSONS = loaded;
+}
 
-Keep sessions friendly, short, and low-pressure. Encourage discovery rather than speed.
+async function loadParentInstructions(){
+  const response = await fetch("ParentInstructions.txt?ts=" + Date.now(), {cache:"no-store"});
+  if(!response.ok) throw new Error("ParentInstructions.txt could not be loaded.");
+  return await response.text();
+}
 
-These free lessons were first written by a retired mathematics teacher for his two granddaughters.`;
-
-// ===== LESSON CATALOGUE: add future lessons here only =====
-const LESSONS = [
-{title:"Unseen Zeros of Decimal Numbers",file:"UnseenZerosDecimalNumbersInteractive.html",description:"Learn how unseen zeros help when multiplying and dividing decimal numbers.",category:"Decimals",emoji:"0️⃣🔟➗",badge:"New"},
-{title:"Close Enough Multiplication",file:"CloseEnoughMultiplicationInteractive.html",description:"Estimate multiplication and division quickly using nearby easy numbers.",category:"Numbers",emoji:"✖️≈",badge:"New"},
-{title:"Close Enough Calculations",file:"CloseEnoughCalculationsInteractive.html",description:"Learn how to estimate answers using nearby easy numbers like 100, 200, and 1000.",category:"Numbers",emoji:"≈🔢",badge:"New"},
-{title:"Mental Add/Subtract with Easy Numbers",file:"MentalAddSubtractEasyNumbersInteractive.html",description:"Practice mental addition and subtraction using easy numbers like 10, 20, 30, 100, and 200.",category:"Numbers",emoji:"🧠🔢",badge:"New"},
-{title:"Mental Arithmetic",file:"MentalArithmeticInteractive.html",description:"Learn quick ways to add and subtract mentally without a calculator.",category:"Numbers",emoji:"🧠➕➖",badge:"New"},
-{title:"Times Table",file:"TimesTable.html",description:"Explore the multiplication table and practise random products, selected rows, and missing factors.",category:"Numbers",emoji:"✖️🔢",badge:"New"},
-{title:"Along the Coordinate Plane",file:"AlongTheCoordinatePlaneInteractive.html",description:"Learn how x- and y-coordinates locate points and practice moving horizontally and vertically.",category:"Graphs",emoji:"📍xy",badge:"New"},
-{title:"Along the Number Line",file:"AlongTheNumberLineInteractive.html",description:"Practice moving left and right along the number line using steps from zero.",category:"Numbers",emoji:"↔️🔢",badge:"New"},
-{title:"Roots and Radicals",file:"RootsAndRadicalsInteractive.html",description:"Learn roots, radicals, square roots, cube roots, and how roots undo exponents.",category:"Algebra",emoji:"√x",badge:"New"},
-{title:"Algebraic Equations",file:"AlgebraicEquations.html",description:"Learn how to solve algebraic equations step by step.",category:"Algebra",emoji:"🟰",badge:""},
-{title:"Algebraic Expressions",file:"AlgebraicExpressions.html",description:"Understand variables, terms, and algebraic expressions.",category:"Algebra",emoji:"🔤",badge:""},
-{title:"Arithmetic Expressions",file:"ArithmeticExpressions.html",description:"Practice evaluating arithmetic expressions correctly.",category:"Arithmetic",emoji:"➕➖✖️➗",badge:""},
-{title:"Common Algebra Mistakes",file:"CommonMistakes.html",description:"Avoid making these very common Algebra mistakes.",category:"Algebra",emoji:"⚠️",badge:""},
-{title:"Converting Fractions & Decimals",file:"ConvertingFractionsDecimals.html",description:"Convert fractions into decimals and decimals into fractions.",category:"Fractions",emoji:"🔄",badge:""},
-{title:"Coordinates and Graphs",file:"CoordinatesAndGraphs.html",description:"Plot points and understand coordinate planes.",category:"Graphs",emoji:"📍",badge:""},
-{title:"Decimal Addition & Multiplication",file:"DecimalAdditionMultiplication.html",description:"Practice decimal operations clearly and visually.",category:"Decimals",emoji:"🔟",badge:""},
-{title:"Decimal Numbers",file:"DecimalNumbers.html",description:"Learn place value and decimal number concepts.",category:"Decimals",emoji:"🔢.",badge:""},
-{title:"Equal Fractions",file:"EqualFractions.html",description:"Explore equivalent fractions visually and interactively.",category:"Fractions",emoji:"🍕",badge:""},
-{title:"Exponents",file:"ExponentsInteractive.html",description:"Learn repeated multiplication, exponent rules, and powers interactively.",category:"Algebra",emoji:"xⁿ",badge:"New"},
-{title:"Fraction Addition",file:"FractionAddition.html",description:"Practice adding fractions step by step.",category:"Fractions",emoji:"➕",badge:""},
-{title:"Fraction Multiplication",file:"FractionMultiplication.html",description:"Understand multiplying fractions with examples.",category:"Fractions",emoji:"✖️",badge:""},
-{title:"Fractions",file:"Fractions.html",description:"Introduction to fractions and fractional thinking.",category:"Fractions",emoji:"🍰",badge:""},
-{title:"Fraction Rules Interactive",file:"FractionsRulesInteractive.html",description:"Learn and practice the basic rules of fractions.",category:"Fractions",emoji:"📏",badge:""},
-{title:"From Words to Math",file:"FromWordsToMathInteractive.html",description:"Learn how words like of, is, what, per, and percent become math operations.",category:"Algebra",emoji:"🗣️➗",badge:"New"},
-{title:"Graphs",file:"Graphs.html",description:"Learn how graphs show relationships.",category:"Graphs",emoji:"📈",badge:""},
-{title:"Graphs of Equations",file:"GraphsOfEquations.html",description:"Connect equations with their graphs.",category:"Graphs",emoji:"📊",badge:""},
-{title:"Laws of Exponents",file:"Laws_of_Exponents_Interactive.html",description:"Learn and practice the main laws of exponents step by step.",category:"Algebra",emoji:"xⁿ⚙️",badge:"New"},
-{title:"Linear Equations",file:"LinearEquations.html",description:"Explore straight lines, slope, and equations.",category:"Algebra",emoji:"📐",badge:""},
-{title:"Moving Decimal Point",file:"MovingDecimalPoint.html",description:"Understand how decimal points move in multiplication and division.",category:"Decimals",emoji:"➡️🔟",badge:""},
-{title:"Number Sequences 1",file:"NumberSequences1.html",description:"More practice with sequence patterns and rules.",category:"Numbers",emoji:"🔢",badge:"New"},
-{title:"Numbers Interactive",file:"NumbersInteractive_regenerated.html",description:"Interactive number sense and calculation practice.",category:"Numbers",emoji:"🧮",badge:""},
-{title:"Percent Problems",file:"PercentProblemsInteractive.html",description:"Solve the three basic types of percent problems step by step.",category:"Percents",emoji:"💯❓",badge:"New"},
-{title:"Percents",file:"PercentsInteractive_full.html",description:"Learn percents through interactive examples.",category:"Percents",emoji:"💯",badge:""},
-{title:"Quantities of an Expression",file:"QuantitiesInExpressions.html",description:"All algebra expressions are made up of quantities. Recognizing these is very important.",category:"Algebra",emoji:"🧮🧩",badge:""},
-{title:"Signed Numbers",file:"SignedNumbers.html",description:"Learn positive and negative numbers visually.",category:"Numbers",emoji:"➕➖",badge:""},
-{title:"Signed Numbers Addition",file:"SignedNumbersAddition.html",description:"Practice adding positive and negative numbers.",category:"Numbers",emoji:"➕🔢",badge:""},
-{title:"Signed Numbers Multiplication",file:"SignedNumbersMultiplication.html",description:"Learn multiplication rules for signed numbers.",category:"Numbers",emoji:"✖️🔢",badge:""},
-{title:"Simplifying Expressions",file:"SimplifyingExpressions.html",description:"Combine like terms and simplify algebraic expressions.",category:"Algebra",emoji:"🧹",badge:""},
-{title:"Slope",file:"Slope.html",description:"Understand slope as rise over run and rate of change.",category:"Graphs",emoji:"📐📈",badge:""},
-{title:"Number Line Sequences",file:"Number_Line_Sequences.html",description:"Recognize number patterns and complete sequences along the number line.",category:"Numbers",emoji:"↔️🔢",badge:""},
-{title:"Ratios",file:"RatiosInteractive_revised.html",description:"Learn how ratios compare quantities and connect to fractions.",category:"Fractions",emoji:"⚖️",badge:""},
-{title:"Proportions",file:"ProportionsInteractive_revised.html",description:"Learn how equal ratios form proportions.",category:"Fractions",emoji:"⚖️🟰",badge:""},
-{title:"Rates",file:"RatesInteractive.html",description:"Learn how one quantity changes relative to another quantity.",category:"Numbers",emoji:"🚗⏱️",badge:""},
-{title:"Special Numbers: Multiply and Divide",file:"SpecialNumbersMultiplyDivideInteractive.html",description:"Multiply and divide easily by 10, 100, 1000, and similar numbers.",category:"Numbers",emoji:"🔟✖️➗",badge:""}
-];
 // ===== BUILT-IN CATEGORIES / LEARNING GROUPS =====
 let PLAYLISTS = [
  {name:"Getting Started", files:["AlongTheNumberLineInteractive.html","NumbersInteractive_regenerated.html","MentalArithmeticInteractive.html","TimesTable.html","CloseEnoughCalculationsInteractive.html"]},
@@ -1666,8 +1644,17 @@ function handleCategoryMenu(){
 }
 searchBox.addEventListener('input',e=>renderLessons(e.target.value)); categoryMenu.addEventListener('change',handleCategoryMenu); clearBtn.onclick=()=>{pickSet.clear(); renderLessons(searchBox.value); updateStatus();}; createBtn.onclick=()=>{if(!pickSet.size) return alert('Please check at least one lesson first.'); createBtn.classList.add('hidden'); nameSaveBtn.classList.remove('hidden'); statusEl.textContent='Now tap Name/Save to give this custom category a name.'}; nameSaveBtn.onclick=()=>openNameSave();
 function openModal(html){modalContent.innerHTML=html; modal.classList.remove('hidden'); document.body.style.overflow='hidden'; modal.scrollTop=0;} function closeModal(){modal.classList.add('hidden'); modalContent.innerHTML=''; document.body.style.overflow=''; if(categoryMenu.value.startsWith('action:')){categoryMenu.value='all'; mode='categories'; createBtn.classList.add('hidden'); nameSaveBtn.classList.add('hidden'); clearBtn.classList.add('hidden'); updateStatus(); renderLessons(searchBox.value);}}
-function openInstructions(){let txt=localStorage.getItem('mw_parent_instructions')||DEFAULT_INSTRUCTIONS; openModal('<div class="instructionsTop"><h2>Instructions to Parents</h2><button class="secondary" onclick="closeModal()">Close</button></div><textarea id="instructionsText"></textarea><div class="modalBtns"><button class="good" onclick="saveInstructions()">Save Instructions</button><button class="secondary" onclick="closeModal()">Close</button></div>'); document.getElementById('instructionsText').value=txt;}
-function saveInstructions(){localStorage.setItem('mw_parent_instructions',document.getElementById('instructionsText').value); alert('Instructions saved on this device.');}
+async function openInstructions(){
+  openModal('<div class="instructionsTop"><h2>Instructions to Parents</h2><button class="secondary" onclick="closeModal()">Close</button></div><div id="instructionsTextDisplay" style="white-space:pre-wrap;text-align:left;line-height:1.55;font-size:1.05rem;padding:8px 2px">Loading instructions…</div><div class="modalBtns"><button class="secondary" onclick="closeModal()">Close</button></div>');
+  try{
+    const txt = await loadParentInstructions();
+    const box = document.getElementById("instructionsTextDisplay");
+    if(box) box.textContent = txt.trim();
+  }catch(e){
+    const box = document.getElementById("instructionsTextDisplay");
+    if(box) box.textContent = "Parent instructions are temporarily unavailable.";
+  }
+}
 function openNameSave(){openModal('<h2>Name/Save Category</h2><input id="pname" class="playName" placeholder="Example: Maria Week 1"><div class="modalBtns"><button class="secondary" onclick="closeModal()">Cancel</button><button class="good" onclick="saveNamedPlaylist()">Save</button></div>')}
 function saveNamedPlaylist(){let name=document.getElementById('pname').value.trim(); if(!name) return alert('Please enter a category name.'); let arr=savedCustom(); arr.push({name,files:[...pickSet]}); saveCustom(arr); pickSet.clear(); closeModal(); populatePlaylists('playlist:'+(allPlaylists().length-1)); setMode('categories');}
 function openLearningPathSave(){
@@ -2046,8 +2033,23 @@ function openLessonSearchFromHome(){
     }
   },120);
 }
-window.openLessonSearchFromHome=openLessonSearchFromHome; window.startThemeMusic=startThemeMusic; window.toggleThemeMusic=toggleThemeMusic; window.enterMathPlayground=enterMathPlayground; window.parentEnter=parentEnter; window.frontAdminEnter=frontAdminEnter; window.returnHome=returnHome; window.openStudentProgress=openStudentProgress; window.openPathHistory=openPathHistory; window.openAdminAccess=openAdminAccess; window.checkPasswordAndShowCategories=checkPasswordAndShowCategories; window.openLearningPathSave=openLearningPathSave; window.saveLearningPath=saveLearningPath; window.reviewSelectedLessons=reviewSelectedLessons; window.removeDraftLesson=removeDraftLesson; window.selectCurrentLessonForPath=selectCurrentLessonForPath; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveInstructions=saveInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
-populatePlaylists(); renderLessons(); updateStatus(); updateParentPathStatus(); document.body.classList.add('homeMode'); document.body.style.overflow='hidden';
+window.openLessonSearchFromHome=openLessonSearchFromHome; window.startThemeMusic=startThemeMusic; window.toggleThemeMusic=toggleThemeMusic; window.enterMathPlayground=enterMathPlayground; window.parentEnter=parentEnter; window.frontAdminEnter=frontAdminEnter; window.returnHome=returnHome; window.openStudentProgress=openStudentProgress; window.openPathHistory=openPathHistory; window.openAdminAccess=openAdminAccess; window.checkPasswordAndShowCategories=checkPasswordAndShowCategories; window.openLearningPathSave=openLearningPathSave; window.saveLearningPath=saveLearningPath; window.reviewSelectedLessons=reviewSelectedLessons; window.removeDraftLesson=removeDraftLesson; window.selectCurrentLessonForPath=selectCurrentLessonForPath; window.closeLessonPlayer=closeLessonPlayer; window.previousPathLesson=previousPathLesson; window.nextPathLesson=nextPathLesson; window.closeModal=closeModal; window.openInstructions=openInstructions; window.saveNamedPlaylist=saveNamedPlaylist; window.openPersonalEditor=openPersonalEditor; window.savePersonalCategory=savePersonalCategory; window.deletePersonalCategory=deletePersonalCategory; window.checkPassword=checkPassword; window.openAdminEditor=openAdminEditor; window.addBuiltCategory=addBuiltCategory; window.saveBuiltCategory=saveBuiltCategory; window.deleteBuiltCategory=deleteBuiltCategory; window.commitChanges=commitChanges; window.copyExportCode=copyExportCode;
+async function initializeMathDoDa(){
+  document.body.classList.add('homeMode');
+  document.body.style.overflow='hidden';
+  try{
+    await loadLessonLibrary();
+    populatePlaylists();
+    renderLessons();
+    updateStatus();
+    updateParentPathStatus();
+  }catch(e){
+    console.error(e);
+    const grid=document.getElementById("lessonGrid");
+    if(grid) grid.innerHTML='<p style="font-weight:800;color:#b91c1c">The All Lessons Library could not be loaded. Please reload the page.</p>';
+  }
+}
+initializeMathDoDa();
 </script>
 <script src="parent-contact.js"></script>
 </body>

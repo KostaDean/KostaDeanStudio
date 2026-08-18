@@ -1,0 +1,104 @@
+# Math-do-da approved public comments
+# Edit this file directly in GitHub.
+#
+# Put comments under the lesson FILE NAME in square brackets.
+# You may put several comments under the same lesson.
+# Example:
+#
+# [Slope.html]
+# A parent: The rise-over-run explanation was very helpful.
+#
+# [TimesTable.html]
+# A parent: My child enjoyed seeing the symmetry of the table.
+#
+# Lines beginning with # are notes for you and are not displayed.
+# Sections with no text will show “No comments yet.” in the Winner Window.
+
+[UnseenZerosDecimalNumbersInteractive.html]
+
+[CloseEnoughMultiplicationInteractive.html]
+
+[CloseEnoughCalculationsInteractive.html]
+
+[MentalAddSubtractEasyNumbersInteractive.html]
+
+[MentalArithmeticInteractive.html]
+
+[TimesTable.html]
+
+[AlongTheCoordinatePlaneInteractive.html]
+
+[AlongTheNumberLineInteractive.html]
+
+[RootsAndRadicalsInteractive.html]
+
+[AlgebraicEquations.html]
+
+[AlgebraicExpressions.html]
+
+[ArithmeticExpressions.html]
+
+[CommonMistakes.html]
+
+[ConvertingFractionsDecimals.html]
+
+[CoordinatesAndGraphs.html]
+
+[DecimalAdditionMultiplication.html]
+
+[DecimalNumbers.html]
+
+[EqualFractions.html]
+
+[ExponentsInteractive.html]
+
+[FractionAddition.html]
+
+[FractionMultiplication.html]
+
+[Fractions.html]
+
+[FractionsRulesInteractive.html]
+
+[FromWordsToMathInteractive.html]
+
+[Graphs.html]
+
+[GraphsOfEquations.html]
+
+[Laws_of_Exponents_Interactive.html]
+
+[LinearEquations.html]
+
+[MovingDecimalPoint.html]
+
+[NumberSequences1.html]
+
+[NumbersInteractive_regenerated.html]
+
+[PercentProblemsInteractive.html]
+
+[PercentsInteractive_full.html]
+
+[QuantitiesInExpressions.html]
+
+[SignedNumbers.html]
+
+[SignedNumbersAddition.html]
+
+[SignedNumbersMultiplication.html]
+
+[SimplifyingExpressions.html]
+
+[Slope.html]
+
+[Number_Line_Sequences.html]
+
+[RatiosInteractive_revised.html]
+
+[ProportionsInteractive_revised.html]
+
+[RatesInteractive.html]
+
+[SpecialNumbersMultiplyDivideInteractive.html]
+

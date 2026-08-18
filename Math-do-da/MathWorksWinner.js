@@ -67,6 +67,19 @@
         font-weight:900; font-size:1.2rem; text-decoration:none;
         border:4px solid #92400e; box-shadow:0 8px 20px rgba(0,0,0,.25);
       }
+      #mwWinnerCommentsBtn{
+        display:inline-block; margin-top:12px; padding:12px 20px;
+        border-radius:16px; border:2px solid #cbd5e1;
+        background:white; color:#17324d; font-size:1rem;
+        font-weight:900; cursor:pointer;
+      }
+      #mwCommentsPanel{
+        display:none; margin:16px auto 0; max-height:32vh; overflow:auto;
+        text-align:left; white-space:pre-wrap; padding:16px;
+        border-radius:16px; background:#f8fafc; color:#172033;
+        font-size:1rem; line-height:1.5;
+      }
+      #mwCommentsPanel.show{display:block}
       .mwConfetti{
         position:fixed; top:-40px; z-index:2147483100;
         pointer-events:none; animation:mwFall linear forwards;
@@ -109,6 +122,8 @@
         <h2 id="mwWinnerTitle">You are a Winner!</h2>
         <p id="mwWinnerMessage">You mastered this lesson!</p>
         <button id="mwWinnerContinue">Continue</button><br>
+        <button id="mwWinnerCommentsBtn" type="button">💬 View Comments</button>
+        <div id="mwCommentsPanel" aria-live="polite"></div><br>
         <a id="mwWinnerDonate"
            href="${DONATE_URL}"
            target="_blank" rel="noopener">❤️ Support this work!</a>
@@ -117,6 +132,7 @@
     document.body.appendChild(overlay);
 
     document.getElementById("mwWinnerClose").addEventListener("click", close);
+    document.getElementById("mwWinnerCommentsBtn").addEventListener("click", toggleComments);
     document.getElementById("mwWinnerContinue").addEventListener("click", function(){
       const cb = onContinueCallback;
       close();
@@ -129,7 +145,8 @@
   function setRewardControlsEnabled(enabled){
     const closeBtn = document.getElementById("mwWinnerClose");
     const continueBtn = document.getElementById("mwWinnerContinue");
-    [closeBtn, continueBtn].forEach(btn=>{
+    const commentsBtn = document.getElementById("mwWinnerCommentsBtn");
+    [closeBtn, continueBtn, commentsBtn].forEach(btn=>{
       if(!btn) return;
       btn.disabled = !enabled;
       btn.setAttribute("aria-disabled", enabled ? "false" : "true");
@@ -184,6 +201,62 @@
     }
   }
 
+
+  function currentLessonFile(){
+    try{
+      const name = decodeURIComponent((global.location.pathname || "").split("/").pop() || "");
+      return name || "";
+    }catch(e){ return ""; }
+  }
+
+  function commentsForLesson(text, file){
+    const lines = String(text || "").split(/\r?\n/);
+    const target = String(file || "").trim().toLowerCase();
+    let active = false;
+    const collected = [];
+
+    for(const raw of lines){
+      const line = raw.trimEnd();
+      const trimmed = line.trim();
+
+      if(trimmed.startsWith("#")) continue;
+
+      const header = trimmed.match(/^\[(.+?)\]$/);
+      if(header){
+        active = header[1].trim().toLowerCase() === target;
+        continue;
+      }
+      if(active) collected.push(line);
+    }
+
+    return collected.join("\n").trim();
+  }
+
+  async function toggleComments(){
+    const panel = document.getElementById("mwCommentsPanel");
+    const btn = document.getElementById("mwWinnerCommentsBtn");
+    if(!panel || !btn) return;
+
+    if(panel.classList.contains("show")){
+      panel.classList.remove("show");
+      btn.textContent = "💬 View Comments";
+      return;
+    }
+
+    panel.classList.add("show");
+    btn.textContent = "Hide Comments";
+    panel.textContent = "Loading comments…";
+
+    try{
+      const response = await fetch("Comments.txt?ts=" + Date.now(), {cache:"no-store"});
+      if(!response.ok) throw new Error("Comments.txt unavailable");
+      const body = commentsForLesson(await response.text(), currentLessonFile());
+      panel.textContent = body || "No comments yet.";
+    }catch(e){
+      panel.textContent = "Comments are temporarily unavailable.";
+    }
+  }
+
   function show(options){
     build();
     options = options || {};
@@ -194,6 +267,10 @@
     const btn = document.getElementById("mwWinnerContinue");
     const donate = document.getElementById("mwWinnerDonate");
     const overlay = document.getElementById("mwWinnerOverlay");
+    const commentsPanel = document.getElementById("mwCommentsPanel");
+    const commentsBtn = document.getElementById("mwWinnerCommentsBtn");
+    if(commentsPanel){ commentsPanel.classList.remove("show"); commentsPanel.textContent=""; }
+    if(commentsBtn) commentsBtn.textContent="💬 View Comments";
 
     msg.textContent = options.message || "You mastered this lesson!";
     btn.textContent = options.continueText || "Continue";
