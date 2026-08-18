@@ -1026,6 +1026,50 @@ body.parentLibraryMode #comments.parentPaneHidden{
   display:none!important;
 }
 
+
+/* ============================================================
+   Math-do-da full-screen playground — 2026-08-18
+   Fill the child's entire visible screen. The artwork may crop
+   slightly at the side edges on tall/narrow phones; no letterbox.
+   ============================================================ */
+body.homeMode{
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+}
+body.homeMode #playgroundHome,
+body.homeMode header.playgroundHome{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  padding:0!important;
+  margin:0!important;
+  overflow:hidden!important;
+}
+body.homeMode #playgroundHome .heroBanner{
+  position:absolute!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  margin:0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+body.homeMode #playgroundHome .heroBanner img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:100%!important;
+  min-height:100%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  background:none!important;
+}
+
 </style>
   <link rel="preload" as="image" href="Math-do-da-playground.png?v=20260815-hero3">
 </head>
