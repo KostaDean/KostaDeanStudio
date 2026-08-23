@@ -361,6 +361,49 @@ function fillShape(shape, fill, stroke, width){
   ctx.restore();
 }
 
+/* Staging-cell treatment:
+   diagonal player-coloured hatching distinguishes Rim staging cells
+   from the solid-filled Track cells while keeping the stamped signs visible. */
+function hatchShape(shape, stroke, spacing=14, hatchWidth=3){
+  if(!shape || !shape.points || !shape.points.length) return;
+
+  const xs = shape.points.map(p => p.x);
+  const ys = shape.points.map(p => p.y);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+
+  ctx.save();
+
+  // Clip all hatch strokes to the staging compartment.
+  pathPolygon(shape.points);
+  ctx.clip();
+
+  ctx.strokeStyle = stroke;
+  ctx.globalAlpha = 0.78;
+  ctx.lineWidth = hatchWidth;
+  ctx.lineCap = "round";
+
+  // 45-degree diagonal hatching.
+  const span = (maxY - minY) + (maxX - minX);
+  for(let offset = -span; offset <= span; offset += spacing){
+    ctx.beginPath();
+    ctx.moveTo(minX - span + offset, maxY + span);
+    ctx.lineTo(maxX + span + offset, minY - span);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+
+  // A modest outline keeps the exact staging-cell boundary readable.
+  pathPolygon(shape.points);
+  ctx.save();
+  ctx.strokeStyle = stroke;
+  ctx.globalAlpha = 0.95;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawOffDiskMarkers(){ return; }
 
 function draw(activeStepTrack=null, landedTrack=null){
@@ -379,7 +422,8 @@ function draw(activeStepTrack=null, landedTrack=null){
   const rMap = rimShapeMap();
 
   state.players.forEach(p => {
-    if(p.stagingRim && !state.gameOver) fillShape(rMap[p.stagingRim], p.fill, p.stroke, 3);
+    // Rim staging cells are hatched; Track cells remain solid-filled.
+    if(p.stagingRim && !state.gameOver) hatchShape(rMap[p.stagingRim], p.stroke, 14, 3);
   });
 
   state.players.forEach(p => {
