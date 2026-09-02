@@ -1945,9 +1945,21 @@ function runHomeActionAfterTheme(action){
     return;
   }
 
-  /* Ignore extra entrance taps while the opening song is already playing.
-     The first selected entrance wins, keeping the flow simple. */
-  if(pendingHomeAction) return;
+  /* First entrance tap starts the opening song and queues that entrance.
+     A second entrance tap while the song is playing skips the rest of the
+     theme and immediately continues with the entrance already chosen. */
+  if(pendingHomeAction){
+    try{ audio.pause(); }catch(e){}
+    try{ audio.currentTime=0; }catch(e){}
+    themeMusicFinished=true;
+    themeMusicStarted=true;
+    const chosen=pendingHomeAction;
+    pendingHomeAction=null;
+    const btn=document.getElementById('musicToggle');
+    if(btn) btn.setAttribute('aria-pressed','false');
+    if(chosen) chosen();
+    return;
+  }
   pendingHomeAction=action;
 
   try{ audio.currentTime=0; }catch(e){}
